@@ -44,6 +44,10 @@ namespace winrt::StarlightGUI::implementation
     {
         InitializeComponent();
 
+        TotalLineGraph().AddSeries(L"CPU", Colors::LightSkyBlue());
+        TotalLineGraph().AddSeries(L"内存", Colors::DodgerBlue());
+        TotalLineGraph().AddSeries(L"磁盘", Colors::LimeGreen());
+        TotalLineGraph().AddSeries(L"GPU", Colors::MediumPurple());
 
         this->Loaded([this](auto&&, auto&&) -> IAsyncAction {
             SetGreetingText();

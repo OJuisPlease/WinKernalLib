@@ -66,6 +66,9 @@
     <Page Include="MonitorPage.xaml">
       <Filter>Pages</Filter>
     </Page>
+    <Page Include="DeuteriumPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />

@@ -7,6 +7,10 @@
 #include <string>
 #include <random>
 #include <limits>
+#include <cwctype>
+
+#undef max
+#undef min
 
 namespace winrt::StarlightGUI::implementation {
     const static uint64_t KB = 1024;
@@ -116,6 +120,137 @@ namespace winrt::StarlightGUI::implementation {
         if (uppercase) ss << std::uppercase;
         ss << value;
         return ss.str();
+    }
+
+    bool HexStringToULong(const std::wstring& input, ULONG64& out)
+    {
+        out = 0;
+
+        size_t begin = 0;
+        while (begin < input.size() && iswspace(input[begin])) ++begin;
+
+        size_t end = input.size();
+        while (end > begin && iswspace(input[end - 1])) --end;
+
+        if (begin >= end) return false;
+
+        size_t i = begin;
+        if ((end - i) >= 2 && input[i] == L'0' && (input[i + 1] == L'x' || input[i + 1] == L'X')) {
+            i += 2;
+            if (i >= end) return false;
+        }
+
+        ULONG64 value = 0;
+        bool hasDigit = false;
+
+        for (; i < end; ++i) {
+            wchar_t c = input[i];
+            if (!iswxdigit(c)) {
+                return false;
+            }
+
+            hasDigit = true;
+
+            int digit = 0;
+            if (c >= L'0' && c <= L'9') digit = c - L'0';
+            else {
+                c = towupper(c);
+                digit = 10 + (c - L'A'); // A-F
+            }
+
+            // 溢出检测
+            if (value > (0xFFFFFFFFFFFFFFFFULL - (ULONG64)digit) / 16ULL) {
+                return false;
+            }
+
+            value = value * 16ULL + (ULONG64)digit;
+        }
+
+        if (!hasDigit) return false;
+
+        out = value;
+        return true;
+    }
+
+    bool StringToNumber(const std::wstring& input, LONG64& out)
+    {
+        out = 0;
+
+        size_t begin = 0;
+        while (begin < input.size() && iswspace(input[begin])) ++begin;
+
+        size_t end = input.size();
+        while (end > begin && iswspace(input[end - 1])) --end;
+
+        if (begin >= end) return false;
+
+        bool negative = false;
+        size_t i = begin;
+
+        if (input[i] == L'+' || input[i] == L'-') {
+            negative = (input[i] == L'-');
+            ++i;
+            if (i >= end) return false;
+        }
+
+        LONG64 value = 0;
+        bool hasDigit = false;
+
+        for (; i < end; ++i) {
+            wchar_t c = input[i];
+            if (!iswdigit(c)) {
+                return false;
+            }
+
+            hasDigit = true;
+            int digit = c - L'0';
+
+            value = value * 10LL + digit;
+        }
+
+        if (!hasDigit) return false;
+
+        out = negative ? -value : value;
+        return true;
+    }
+
+    bool StringToNumber(const std::wstring& input, ULONG64& out)
+    {
+        out = 0;
+
+        size_t begin = 0;
+        while (begin < input.size() && iswspace(input[begin])) ++begin;
+
+        size_t end = input.size();
+        while (end > begin && iswspace(input[end - 1])) --end;
+
+        if (begin >= end) return false;
+
+        size_t i = begin;
+
+        if (input[i] == L'-') {
+            return false;
+        }
+
+        ULONG64 value = 0;
+        bool hasDigit = false;
+
+        for (; i < end; ++i) {
+            wchar_t c = input[i];
+            if (!iswdigit(c)) {
+                return false;
+            }
+
+            hasDigit = true;
+            int digit = c - L'0';
+
+            value = value * 10ULL + digit;
+        }
+
+        if (!hasDigit) return false;
+
+        out = value;
+        return true;
     }
 
     std::wstring FormatMemorySize(double bytes)

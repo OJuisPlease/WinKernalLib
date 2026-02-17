@@ -80,14 +80,29 @@
 
                 <!--  选项，从上到下  -->
                 <NavigationView.MenuItems>
-                    <NavigationViewItem Content="线程" Icon="List" />
-                    <NavigationViewItem Content="句柄" Icon="Tag" />
-                    <NavigationViewItem Content="模块" Icon="AddFriend" />
-                    <NavigationViewItem Content="内核回调表" Icon="NewWindow" />
+                    <NavigationViewItem
+                        Content="线程"
+                        Icon="List"
+                        Tag="Thread" />
+                    <NavigationViewItem
+                        Content="句柄"
+                        Icon="Tag"
+                        Tag="Handle" />
+                    <NavigationViewItem
+                        Content="模块"
+                        Icon="AddFriend"
+                        Tag="Module" />
+                    <NavigationViewItem
+                        Content="内核回调表"
+                        Icon="NewWindow"
+                        Tag="KCT" />
                 </NavigationView.MenuItems>
 
                 <!--  内容  -->
-                <Frame x:Name="MainFrame" Grid.Row="1" />
+                <Frame
+                    x:Name="MainFrame"
+                    Grid.Row="1"
+                    CacheSize="2" />
             </NavigationView>
         </Grid>
         <StackPanel

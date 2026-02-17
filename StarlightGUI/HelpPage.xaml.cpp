@@ -22,10 +22,13 @@ namespace winrt::StarlightGUI::implementation
         InitializeComponent();
 
         this->Loaded([this](auto&&, auto&&) -> winrt::Windows::Foundation::IAsyncAction {
+            auto weak_this = get_weak();
             if (sponsorList.empty()) {
                 co_await GetSponsorListFromCloud();
             }
-            SetSponsorList();
+            if (auto strong_this = weak_this.get()) {
+                SetSponsorList();
+            }
             });
 
         LOG_INFO(L"HelpPage", L"HelpPage initialized.");

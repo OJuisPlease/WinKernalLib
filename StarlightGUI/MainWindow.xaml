@@ -86,47 +86,61 @@
 
                 <!--  选项，从上到下  -->
                 <NavigationView.MenuItems>
-                    <NavigationViewItem Content="主页" Icon="Home" />
-                    <NavigationViewItem Content="任务管理">
+                    <NavigationViewItem
+                        Content="主页"
+                        Icon="Home"
+                        Tag="Home" />
+                    <NavigationViewItem Content="任务管理" Tag="Task">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xf120;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="模块管理">
+                    <NavigationViewItem Content="模块管理" Tag="KernelModule">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe8ce;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="文件管理">
+                    <NavigationViewItem Content="文件管理" Tag="File">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xec50;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="窗口管理">
+                    <NavigationViewItem Content="窗口管理" Tag="Window">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe74c;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="系统功能">
+                    <NavigationViewItem Content="系统功能" Tag="Utility">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xec7a;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="监视器">
+                    <NavigationViewItem Content="监视器" Tag="Monitor">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xea8f;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                 </NavigationView.MenuItems>
 
-                <!--  从下到上  -->
+                <!--  从上到下  -->
                 <!--  最下面是设置  -->
                 <NavigationView.FooterMenuItems>
-                    <NavigationViewItem Content="关于" Icon="Help" />
+                    <NavigationViewItem Content="Deuterium" Tag="Deuterium">
+                        <NavigationViewItem.Icon>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe945;" />
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                    <NavigationViewItem
+                        Content="关于"
+                        Icon="Help"
+                        Tag="Help" />
                 </NavigationView.FooterMenuItems>
 
                 <!--  内容  -->
-                <Frame x:Name="MainFrame" Grid.Row="1">
+                <Frame
+                    x:Name="MainFrame"
+                    Grid.Row="1"
+                    CacheSize="4">
                     <ProgressRing
                         x:Name="LoadingRing"
                         HorizontalAlignment="Center"

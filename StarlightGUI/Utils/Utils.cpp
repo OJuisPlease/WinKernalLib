@@ -33,7 +33,7 @@ namespace winrt::StarlightGUI::implementation {
         return infobar;
     }
 
-    void DisplayInfoBar(InfoBar infobar, Panel parent) {
+    void DisplayInfoBar(InfoBar infobar, Panel parent, int time) {
         if (!infobar || !parent) return;
 
         // Entrance animation
@@ -48,7 +48,7 @@ namespace winrt::StarlightGUI::implementation {
 
         // Auto close timer
         auto timer = DispatcherTimer();
-        timer.Interval(std::chrono::milliseconds(1500));
+        timer.Interval(std::chrono::milliseconds(time));
         timer.Tick([infobar, parent, timer](auto&&, auto&&) {
             // Run fade out animation first
             Storyboard storyboard;
@@ -75,16 +75,16 @@ namespace winrt::StarlightGUI::implementation {
         timer.Start();
     }
 
-    void CreateInfoBarAndDisplay(hstring title, hstring message, InfoBarSeverity severity, XamlRoot xamlRoot, Panel parent) {
-        DisplayInfoBar(CreateInfoBar(title, message, severity, xamlRoot), parent);
+    void CreateInfoBarAndDisplay(hstring title, hstring message, InfoBarSeverity severity, XamlRoot xamlRoot, Panel parent, int time) {
+        DisplayInfoBar(CreateInfoBar(title, message, severity, xamlRoot), parent, time);
     }
 
-    void CreateInfoBarAndDisplay(hstring title, hstring message, InfoBarSeverity severity, winrt::StarlightGUI::implementation::MainWindow* instance) {
-        DisplayInfoBar(CreateInfoBar(title, message, severity, instance->MainWindowGrid().XamlRoot()), instance->InfoBarPanel());
+    void CreateInfoBarAndDisplay(hstring title, hstring message, InfoBarSeverity severity, winrt::StarlightGUI::implementation::MainWindow* instance, int time) {
+        DisplayInfoBar(CreateInfoBar(title, message, severity, instance->MainWindowGrid().XamlRoot()), instance->InfoBarPanel(), time);
     }
 
-    void CreateInfoBarAndDisplay(hstring title, hstring message, InfoBarSeverity severity, winrt::StarlightGUI::implementation::InfoWindow* instance) {
-        DisplayInfoBar(CreateInfoBar(title, message, severity, instance->InfoWindowGrid().XamlRoot()), instance->InfoBarPanel());
+    void CreateInfoBarAndDisplay(hstring title, hstring message, InfoBarSeverity severity, winrt::StarlightGUI::implementation::InfoWindow* instance, int time) {
+        DisplayInfoBar(CreateInfoBar(title, message, severity, instance->InfoWindowGrid().XamlRoot()), instance->InfoBarPanel(), time);
     }
 
     ContentDialog CreateContentDialog(hstring title, hstring content, hstring closeMessage, XamlRoot xamlRoot) {

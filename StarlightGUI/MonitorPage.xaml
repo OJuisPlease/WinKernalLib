@@ -7,6 +7,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{StaticResource WindowBackgroundBrush}"
+    NavigationCacheMode="Enabled"
     mc:Ignorable="d">
 
     <Grid Padding="20,10,20,10">
@@ -26,146 +27,144 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ScrollViewer
+            <ScrollView
+                ContentOrientation="Horizontal"
                 HorizontalScrollBarVisibility="Auto"
                 HorizontalScrollMode="Enabled"
                 VerticalScrollMode="Disabled">
-                <essential:RevealFocusPanel x:Name="RevealFocusPanel">
-                    <essential:Segmented
-                        x:Name="MainSegmented"
-                        Grid.Column="0"
-                        HorizontalAlignment="Left"
-                        essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
-                        SelectionChanged="MainSegmented_SelectionChanged">
-                        <essential:SegmentedItem>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xf0b2;" />
-                                <TextBlock Text="对象" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xebe8;" />
-                                <TextBlock Text="调试信息" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="CallbackSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe77e;" />
-                                <TextBlock Text="回调" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="MiniFilterSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe7e3;" />
-                                <TextBlock Text="微过滤驱动" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="StdFilterSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe7ec;" />
-                                <TextBlock Text="标准过滤驱动" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="SSDTSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xf0b9;" />
-                                <TextBlock Text="SSDT" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="SSSDTSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe727;" />
-                                <TextBlock Text="Shadow SSDT" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="IoTimerSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe916;" />
-                                <TextBlock Text="I/O 定时器" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="ExCallbackSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe7f2;" />
-                                <TextBlock Text="ExCallback" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="IDTSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe950;" />
-                                <TextBlock Text="中断描述符表" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="GDTSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xe964;" />
-                                <TextBlock Text="全局描述符表" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="PiDDBSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xf0e3;" />
-                                <TextBlock Text="PiDDB 缓存表" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="HALDPTSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xf590;" />
-                                <TextBlock Text="HAL 分发表" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                        <essential:SegmentedItem x:Name="HALPDPTSegmentedItem">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="14"
-                                    Glyph="&#xf58f;" />
-                                <TextBlock Text="HAL 私有分发表" />
-                            </StackPanel>
-                        </essential:SegmentedItem>
-                    </essential:Segmented>
-                </essential:RevealFocusPanel>
-            </ScrollViewer>
+                <essential:Segmented
+                    x:Name="MainSegmented"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    SelectionChanged="MainSegmented_SelectionChanged">
+                    <essential:SegmentedItem>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xf0b2;" />
+                            <TextBlock Text="对象" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xebe8;" />
+                            <TextBlock Text="调试信息" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="CallbackSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe77e;" />
+                            <TextBlock Text="回调" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="MiniFilterSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe7e3;" />
+                            <TextBlock Text="微过滤驱动" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="StdFilterSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe7ec;" />
+                            <TextBlock Text="标准过滤驱动" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="SSDTSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xf0b9;" />
+                            <TextBlock Text="SSDT" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="SSSDTSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe727;" />
+                            <TextBlock Text="Shadow SSDT" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="IoTimerSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe916;" />
+                            <TextBlock Text="I/O 定时器" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="ExCallbackSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe7f2;" />
+                            <TextBlock Text="ExCallback" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="IDTSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe950;" />
+                            <TextBlock Text="中断描述符表" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="GDTSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xe964;" />
+                            <TextBlock Text="全局描述符表" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="PiDDBSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xf0e3;" />
+                            <TextBlock Text="PiDDB 缓存表" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="HALDPTSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xf590;" />
+                            <TextBlock Text="HAL 分发表" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                    <essential:SegmentedItem x:Name="HALPDPTSegmentedItem">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xf58f;" />
+                            <TextBlock Text="HAL 私有分发表" />
+                        </StackPanel>
+                    </essential:SegmentedItem>
+                </essential:Segmented>
+            </ScrollView>
             <CommandBar
                 Grid.Column="2"
                 HorizontalAlignment="Right"

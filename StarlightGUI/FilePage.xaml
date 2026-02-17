@@ -8,6 +8,7 @@
     xmlns:local="using:StarlightGUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{StaticResource WindowBackgroundBrush}"
+    NavigationCacheMode="Enabled"
     mc:Ignorable="d">
 
     <Grid>

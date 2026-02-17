@@ -17,10 +17,10 @@
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/GroupBox_Resource.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <x:String x:Key="Version">v2.0.0</x:String>
+            <x:String x:Key="Version">v2.1.0 [Branch.ModernImplementation.Deuterium]</x:String>
             <!--  x(Major) xx(Minor) x(Patch) x(Hotfix) x(Preview) → x.xx.x(.x)(-prex)  -->
-            <x:Int32 x:Key="BuildNumber">200010</x:Int32>
-            <x:String x:Key="ReleaseDate">2026/2/5</x:String>
+            <x:Int32 x:Key="BuildNumber">201000</x:Int32>
+            <x:String x:Key="ReleaseDate">2026/2/16</x:String>
             <x:String x:Key="Author">Stars</x:String>
 
             <!--  透明  -->

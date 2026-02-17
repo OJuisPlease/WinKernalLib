@@ -99,6 +99,9 @@ namespace winrt::StarlightGUI::implementation {
 		// Object
 		static BOOL GetObjectDetails(std::wstring fullPath, std::wstring type, winrt::StarlightGUI::ObjectEntry& object) noexcept;
 
+		// Deuterium
+		static BOOL DeuteriumInvoke(DEUTERIUM_PROXY_INVOKE& function) noexcept;
+
 	private:
 		static BOOL GetDriverDevice() noexcept;
 		static BOOL GetDriverDevice2() noexcept;

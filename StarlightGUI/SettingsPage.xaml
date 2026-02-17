@@ -5,7 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:essential="using:WinUI3Package"
-    Background="{StaticResource WindowBackgroundBrush}">
+    Background="{StaticResource WindowBackgroundBrush}"
+    NavigationCacheMode="Disabled">
 
     <ScrollViewer Padding="20">
         <essential:RevealFocusPanel x:Name="RevealFocusPanel">

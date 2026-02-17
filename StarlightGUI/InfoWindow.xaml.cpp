@@ -79,24 +79,24 @@ namespace winrt::StarlightGUI::implementation
 
     void InfoWindow::RootNavigation_ItemInvoked(Microsoft::UI::Xaml::Controls::NavigationView sender, Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs args)
     {
-        auto invokedItem = args.InvokedItem().try_as<winrt::hstring>();
+        auto invokedItem = unbox_value<winrt::hstring>(args.InvokedItemContainer().Tag());
 
-        if (invokedItem == L"线程")
+        if (invokedItem == L"Thread")
         {
             MainFrame().Navigate(xaml_typename<StarlightGUI::Process_ThreadPage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
         }
-        else if (invokedItem == L"句柄")
+        else if (invokedItem == L"Handle")
         {
             MainFrame().Navigate(xaml_typename<StarlightGUI::Process_HandlePage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(1));
         }
-        else if (invokedItem == L"模块")
+        else if (invokedItem == L"Module")
         {
             MainFrame().Navigate(xaml_typename<StarlightGUI::Process_ModulePage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(2));
         }
-        else if (invokedItem == L"内核回调表")
+        else if (invokedItem == L"KCT")
         {
             MainFrame().Navigate(xaml_typename<StarlightGUI::Process_KCTPage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(3));

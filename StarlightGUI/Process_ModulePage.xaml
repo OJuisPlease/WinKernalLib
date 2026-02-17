@@ -2,11 +2,12 @@
     x:Class="StarlightGUI.Process_ModulePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:essential="using:WinUI3Package"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:StarlightGUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{StaticResource WindowBackgroundBrush}"
+    NavigationCacheMode="Enabled"
     mc:Ignorable="d">
 
     <Grid>
@@ -93,72 +94,75 @@
                         IsActive="False" />
 
                     <essential:RevealFocusPanel x:Name="ModuleListViewRevealFocusPanel">
-<ListView
-                        x:Name="ModuleListView"
-                        Background="Transparent"
-                        RightTapped="ModuleListView_RightTapped" ItemContainerStyle="{StaticResource ListViewItemStyle}" ContainerContentChanging="ModuleListView_ContainerContentChanging" Tag="{x:Bind ModuleListViewRevealFocusPanel}">
+                        <ListView
+                            x:Name="ModuleListView"
+                            Background="Transparent"
+                            ContainerContentChanging="ModuleListView_ContainerContentChanging"
+                            ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                            RightTapped="ModuleListView_RightTapped"
+                            Tag="{x:Bind ModuleListViewRevealFocusPanel}">
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Height="50">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="150" />
-                                        <ColumnDefinition Width="80" />
-                                    </Grid.ColumnDefinitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="50">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="80" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <!--  模块  -->
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <!--  模块  -->
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock
+                                                FontSize="14"
+                                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                Text="{Binding Name}" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                Text="{Binding Path}" />
+                                        </StackPanel>
+
+                                        <Border
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Stretch"
+                                            BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                                            BorderThickness="0,0,1,0" />
+
+                                        <!--  地址  -->
                                         <TextBlock
-                                            FontSize="14"
-                                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            Text="{Binding Name}" />
-                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="24,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
                                             FontSize="12"
                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                            Text="{Binding Path}" />
-                                    </StackPanel>
+                                            Text="{Binding Address}" />
 
-                                    <Border
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Stretch"
-                                        BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                                        BorderThickness="0,0,1,0" />
+                                        <Border
+                                            Grid.Column="2"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Stretch"
+                                            BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                                            BorderThickness="0,0,1,0" />
 
-                                    <!--  地址  -->
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        Margin="24,0,0,0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontSize="12"
-                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                        Text="{Binding Address}" />
-
-                                    <Border
-                                        Grid.Column="2"
-                                        Margin="12,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Stretch"
-                                        BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                                        BorderThickness="0,0,1,0" />
-
-                                    <!--  大小  -->
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        Margin="24,0,0,0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontSize="12"
-                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                        Text="{Binding Size}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-</essential:RevealFocusPanel>
+                                        <!--  大小  -->
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Margin="24,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                            Text="{Binding Size}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </essential:RevealFocusPanel>
                 </Grid>
             </Border>
         </Grid>

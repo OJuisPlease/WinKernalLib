@@ -78,11 +78,11 @@ namespace winrt::StarlightGUI::implementation
                 MainFrame().Navigate(xaml_typename<StarlightGUI::HomePage>());
                 RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
 
-                // 检查更新
-                co_await CheckUpdate();
-                
                 RootNavigation().IsEnabled(true);
                 loaded = true;
+
+                // 检查更新
+                CheckUpdate();
                 LOG_INFO(L"MainWindow", L"Completed all loading-stage tasks.");
             }
             });
@@ -113,50 +113,50 @@ namespace winrt::StarlightGUI::implementation
 
     void MainWindow::RootNavigation_ItemInvoked(Microsoft::UI::Xaml::Controls::NavigationView, Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs args)
     {
-        if (!loaded) {
-            RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
-            return;
-        }
         if (args.IsSettingsInvoked())
         {
             MainFrame().Navigate(xaml_typename<StarlightGUI::SettingsPage>());
             return;
         }
 
-        auto invokedItem = args.InvokedItem().try_as<winrt::hstring>();
+        auto invokedItem = unbox_value<winrt::hstring>(args.InvokedItemContainer().Tag());
 
-        if (invokedItem == L"主页")
+        if (invokedItem == L"Home")
         {
             MainFrame().Navigate(xaml_typename<StarlightGUI::HomePage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
         }
-        else if (invokedItem == L"任务管理") {
+        else if (invokedItem == L"Task") {
             MainFrame().Navigate(xaml_typename<StarlightGUI::TaskPage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(1));
         }
-        else if (invokedItem == L"模块管理") {
+        else if (invokedItem == L"KernelModule") {
             MainFrame().Navigate(xaml_typename<StarlightGUI::KernelModulePage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(2));
         }
-        else if (invokedItem == L"文件管理") {
+        else if (invokedItem == L"File") {
             MainFrame().Navigate(xaml_typename<StarlightGUI::FilePage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(3));
         }
-        else if (invokedItem == L"窗口管理") {
+        else if (invokedItem == L"Window") {
             MainFrame().Navigate(xaml_typename<StarlightGUI::WindowPage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(4));
         }
-        else if (invokedItem == L"系统功能") {
+        else if (invokedItem == L"Utility") {
             MainFrame().Navigate(xaml_typename<StarlightGUI::UtilityPage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(5));
         }
-        else if (invokedItem == L"监视器") {
+        else if (invokedItem == L"Monitor") {
             MainFrame().Navigate(xaml_typename<StarlightGUI::MonitorPage>());
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(6));
         }
-        else if (invokedItem == L"关于") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::HelpPage>());
+        else if (invokedItem == L"Deuterium") {
+            MainFrame().Navigate(xaml_typename<StarlightGUI::DeuteriumPage>());
             RootNavigation().SelectedItem(RootNavigation().FooterMenuItems().GetAt(0));
+        }
+        else if (invokedItem == L"Help") {
+            MainFrame().Navigate(xaml_typename<StarlightGUI::HelpPage>());
+            RootNavigation().SelectedItem(RootNavigation().FooterMenuItems().GetAt(1));
         }
     }
 
