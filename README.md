@@ -1,26 +1,34 @@
-# Starlight GUI
+<h1 align="center">
+  <p align="center">
+    <img src="header.png" alt="Header">
+  </p>
+    Starlight GUI
+  <p align="center">
+    <a href="https://www.apache.org/licenses/LICENSE-2.0.html">
+      <img src="https://img.shields.io/badge/License-Apache%202.0-blue?logo=cloudera&logoColor=white" alt="License">
+    </a>
+    <a href="https://opensource.org/license/apache-2-0">
+      <img src="https://img.shields.io/badge/OSI-Certified-brightgreen?logo=opensourceinitiative" alt="OSI Certified">
+    </a>
+    <a href="https://github.com/microsoft/cppwinrt">
+      <img src="https://img.shields.io/badge/Language-C++/WinRT-0078d7?logo=cplusplus" alt="Language">
+    </a>
+    <a href="https://space.bilibili.com/670866766">
+      <img src="https://img.shields.io/badge/Bilibili-Stars_Azusa-white?logo=bilibili&logoColor=white&labelColor=ff69b4" alt="Bilibili">
+    </a>
+    <a href="https://afdian.com/a/StarsAzusa">
+      <img src="https://img.shields.io/badge/Afdian-Stars_Azusa-white?logo=afdian&labelColor=green" alt="Bilibili">
+    </a>
+  </p>
+</h1>
 
-<p>
-  <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License">
-  <img src="https://img.shields.io/badge/OSI-Certified-brightgreen.svg" alt="OSI Certified">
-  <img src="https://img.shields.io/badge/Language-C++/WinRT-0078d7.svg" alt="Language">
-</p>
-
-**主页**: [![Bilibili](https://img.shields.io/badge/Bilibili-Stars_Azusa-white?style=flat-square&logo=bilibili&logoColor=white&labelColor=ff69b4)](https://space.bilibili.com/670866766)  
-**赞助**: <a href="https://afdian.com/a/StarsAzusa" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="30" width="130"></a>  
-**常驻下载链接**: `https://pan.quark.cn/s/ee7a29ca2a76`  **提取码**: `vVmj`  
-
-## 简介
-
-Starlight GUI 是一个基于 C++/WinRT 的 WinUI3 开源项目，为开发者的兴趣作品，致力于打造一个功能强大、界面美观、易于使用的开源 Windows 11 内核级工具箱。项目采用原生的 WinUI3 设计，完美贴合 Windows 11 系统的操作习惯和视觉风格。拥有很多实用功能和自定义设置，增强电脑的使用体验。  
-**注意：本软件的大部分功能需要在管理员权限下才能正常运行！**  
-**更新：软件现已兼容 Windows 10！**  
+Starlight GUI 是一个基于 C++/WinRT 的 WinUI3 开源项目，为开发者的兴趣作品，致力于打造一个功能强大、界面美观、易于使用的开源 Windows 10 / 11 内核级工具箱。项目采用原生的 WinUI3 设计，完美贴合 Windows 11 系统的操作习惯和视觉风格。拥有很多实用功能和自定义设置，增强电脑的使用体验。  
 
 **开发者**: Stars  
 **许可证**: Apache 2.0 License | OSI Certified  
-**Copyright © 2026 Starlight. Some Rights Reserved.**
+**Copyright © 2026 Starlight. Some Rights Reserved.**  
+**常驻下载链接**: `https://pan.quark.cn/s/ee7a29ca2a76`  **提取码**: `vVmj`  
 
-*我们活跃接受社区建议，欢迎您向我们提出 Issues 或 Pull requests！开发人员会第一时间查看的！如果您想要加入开发组，可以联系我们！*
 ![Alt](https://repobeats.axiom.co/api/embed/33edd92df6ac6348e3eb2c6c1ba38046ca12e037.svg "Repobeats analytics image")
 
 ## 主要功能
