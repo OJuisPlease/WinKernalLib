@@ -364,10 +364,10 @@ namespace winrt::StarlightGUI::implementation
 
                 auto kernelFile = co_await StorageFile::GetFileFromPathAsync(GetInstalledLocationPath() + L"\\Assets\\kernel.sys");
                 auto astralFile = co_await StorageFile::GetFileFromPathAsync(GetInstalledLocationPath() + L"\\Assets\\AstralX.sys");
-                auto wtmFile = co_await StorageFile::GetFileFromPathAsync(GetInstalledLocationPath() + L"\\Assets\\WindowTopMost.dll");
-                auto iamKeyHackerFile = co_await StorageFile::GetFileFromPathAsync(GetInstalledLocationPath() + L"\\Assets\\IAMKeyHacker.dll");
+                auto wtmFile = co_await StorageFile::GetFileFromPathAsync(GetInstalledLocationPath() + L"\\WindowTopMost.dll");
+                auto iamKeyHackerFile = co_await StorageFile::GetFileFromPathAsync(GetInstalledLocationPath() + L"\\IAMKeyHacker.dll");
 
-                if (kernelFile && KernelInstance::IsRunningAsAdmin()) {
+                if (kernelFile) {
                     kernelPath = kernelFile.Path();
 
                     LOG_INFO(L"Driver", L"kernel.sys path [%s], loading...", kernelPath.c_str());
@@ -375,7 +375,7 @@ namespace winrt::StarlightGUI::implementation
                     LOG_INFO(L"Driver", L"kernel.sys initialization result: %s, GetLastError() = %d", unused.c_str(), GetLastError());
                 }
 
-                if (astralFile && KernelInstance::IsRunningAsAdmin()) {
+                if (astralFile) {
                     astralPath = astralFile.Path();
 
                     LOG_INFO(L"Driver", L"AstralX.sys path [%s], loading...", astralPath.c_str());
@@ -386,27 +386,13 @@ namespace winrt::StarlightGUI::implementation
                 if (wtmFile) {
                     wtmPath = wtmFile.Path();
 
-                    LOG_INFO(L"Driver", L"WindowTopMost.dll path [%s], loading...", wtmPath.c_str());
-					HMODULE hModule = LoadLibraryW(wtmPath.c_str());
-                    if (hModule) {
-                        LOG_INFO(L"Driver", L"WindowTopMost.dll initialized successfully.");
-                    }
-                    else {
-                        LOG_ERROR(L"Driver", L"Failed to initialize WindowTopMost.dll, GetLastError() = %d", GetLastError());
-                    }
+                    LOG_INFO(L"Driver", L"WindowTopMost.dll path [%s].", wtmPath.c_str());
                 }
 
                 if (iamKeyHackerFile) {
                     iamKeyHackerPath = iamKeyHackerFile.Path();
 
-                    LOG_INFO(L"Driver", L"IAMKeyHacker.dll path [%s], loading...", iamKeyHackerPath.c_str());
-					HMODULE hModule = LoadLibraryW(iamKeyHackerPath.c_str());
-                    if (hModule) {
-                        LOG_INFO(L"Driver", L"IAMKeyHacker.dll initialized successfully.");
-                    }
-                    else {
-                        LOG_ERROR(L"Driver", L"Failed to initialize IAMKeyHacker.dll, GetLastError() = %d", GetLastError());
-					}
+                    LOG_INFO(L"Driver", L"IAMKeyHacker.dll path [%s].", iamKeyHackerPath.c_str());
                 }
 
                 LOG_INFO(L"Driver", L"Loaded successfully.", kernelPath.c_str());

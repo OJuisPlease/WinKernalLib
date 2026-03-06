@@ -123,9 +123,6 @@ namespace winrt::StarlightGUI::implementation
             else CreateInfoBarAndDisplay(L"失败", L"无法终止束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
-        if (!KernelInstance::IsRunningAsAdmin()) {
-            item1_2.IsEnabled(false);
-        }
 
         // 选项1.3
         MenuFlyoutItem item1_3;
@@ -146,7 +143,6 @@ namespace winrt::StarlightGUI::implementation
             }
             co_return;
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item1_3.IsEnabled(false);
 
         // 分割线1
         MenuFlyoutSeparator separator1;
@@ -182,7 +178,6 @@ namespace winrt::StarlightGUI::implementation
             co_return;
             });
         item2_1.Items().Append(item2_1_sub2);
-        if (!KernelInstance::IsRunningAsAdmin()) item2_1.IsEnabled(false);
 
         // 选项2.2
         MenuFlyoutItem item2_2;
@@ -197,7 +192,6 @@ namespace winrt::StarlightGUI::implementation
             else CreateInfoBarAndDisplay(L"失败", L"无法隐藏进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_2.IsEnabled(false);
 
         // 选项2.3
         MenuFlyoutSubItem item2_3;
@@ -302,7 +296,6 @@ namespace winrt::StarlightGUI::implementation
             co_return;
             });
         item2_3.Items().Append(item2_3_sub8);
-        if (!KernelInstance::IsRunningAsAdmin()) item2_3.IsEnabled(false);
 
         // 选项2.4
         MenuFlyoutItem item2_4;
@@ -323,7 +316,6 @@ namespace winrt::StarlightGUI::implementation
             }
             co_return;
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_4.IsEnabled(false);
 
         // 选项2.5
         MenuFlyoutItem item2_5;
@@ -334,7 +326,6 @@ namespace winrt::StarlightGUI::implementation
             InjectDLL(item.Id());
             co_return;
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_5.IsEnabled(false);
 
         // 选项2.6
         MenuFlyoutItem item2_6;
@@ -345,7 +336,6 @@ namespace winrt::StarlightGUI::implementation
             ModifyToken(item.Id());
             co_return;
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_6.IsEnabled(false);
 
         // 选项2.7
         MenuFlyoutItem item2_7;
@@ -375,7 +365,6 @@ namespace winrt::StarlightGUI::implementation
             infoWindow.Activate();
             co_return;
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item3_1.IsEnabled(false);
 
         // 选项3.2
         MenuFlyoutSubItem item3_2;
@@ -430,7 +419,6 @@ namespace winrt::StarlightGUI::implementation
             co_return;
             });
         item3_2.Items().Append(item3_2_sub4);
-        if (!KernelInstance::IsRunningAsAdmin()) item3_2_sub4.IsEnabled(false);
 
         // 选项3.3
         MenuFlyoutItem item3_3;
@@ -924,22 +912,16 @@ namespace winrt::StarlightGUI::implementation
                 int permission = dialog.Permission();
                 bool fullPrivileges = dialog.FullPrivileges();
 
-                if (permission == 2) {
-                    if (KernelInstance::IsRunningAsAdmin()) {
-                        int status = CreateProcessElevated(processPath.c_str(), fullPrivileges, g_mainWindowInstance);
-                        if (status != 1) {
-                            std::wstring content = L"程序启动成功，PID: " + std::to_wstring(status);
-                            CreateInfoBarAndDisplay(L"成功", content.c_str(),
-                                InfoBarSeverity::Success, g_mainWindowInstance);
-                        }
-                        else {
-                            std::wstring content = L"程序启动失败，错误码: " + std::to_wstring(GetLastError());
-                            CreateInfoBarAndDisplay(L"失败", content.c_str(),
-                                InfoBarSeverity::Error, g_mainWindowInstance);
-                        }
+                if (permission == 1) {
+                    int status = CreateProcessElevated(processPath.c_str(), fullPrivileges, g_mainWindowInstance);
+                    if (status != 1) {
+                        std::wstring content = L"程序启动成功，PID: " + std::to_wstring(status);
+                        CreateInfoBarAndDisplay(L"成功", content.c_str(),
+                            InfoBarSeverity::Success, g_mainWindowInstance);
                     }
                     else {
-                        CreateInfoBarAndDisplay(L"失败", L"请以管理员身份运行！",
+                        std::wstring content = L"程序启动失败，错误码: " + std::to_wstring(GetLastError());
+                        CreateInfoBarAndDisplay(L"失败", content.c_str(),
                             InfoBarSeverity::Error, g_mainWindowInstance);
                     }
                 }
@@ -948,7 +930,7 @@ namespace winrt::StarlightGUI::implementation
                     sei.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI;
                     sei.lpFile = processPath.c_str();
                     sei.nShow = SW_SHOWNORMAL;
-                    if (permission == 1) sei.lpVerb = L"runas";
+                    sei.lpVerb = L"runas";
 
                     BOOL stauts = ShellExecuteExW(&sei);
 
@@ -1068,29 +1050,16 @@ namespace winrt::StarlightGUI::implementation
                 co_return;
             }
 
-            if (KernelInstance::IsRunningAsAdmin()) {
-                // 管理员权限时，尝试使用内核结束
-                if (KernelInstance::_ZwTerminateProcess(item.Id())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_mainWindowInstance);
-                    WaitAndReloadAsync(1000);
-                }
-                else {
-                    // 无法结束，尝试使用常规结束
-                    if (TaskUtils::_TerminateProcess(item.Id())) {
-                        CreateInfoBarAndDisplay(L"成功", L"成功结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_mainWindowInstance);
-                        WaitAndReloadAsync(1000);
-                    }
-                    else CreateInfoBarAndDisplay(L"失败", L"无法结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
-                }
+            // 管理员权限时，尝试使用内核结束
+            if (TaskUtils::_TerminateProcess(item.Id())) {
+                CreateInfoBarAndDisplay(L"成功", L"成功结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
             }
-            else {
-                // 用户权限时，直接使用常规结束
-                if (TaskUtils::_TerminateProcess(item.Id())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_mainWindowInstance);
-                    WaitAndReloadAsync(1000);
-                }
-                else CreateInfoBarAndDisplay(L"失败", L"无法结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else if (KernelInstance::_ZwTerminateProcess(item.Id())) {
+                CreateInfoBarAndDisplay(L"成功", L"成功结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
             }
+            else CreateInfoBarAndDisplay(L"失败", L"无法结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
         }
         co_return;
     }

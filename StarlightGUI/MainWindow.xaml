@@ -107,7 +107,7 @@
                     </NavigationViewItem>
                     <NavigationViewItem Content="窗口管理" Tag="Window">
                         <NavigationViewItem.Icon>
-                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe74c;" />
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe737;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem Content="系统功能" Tag="Utility">

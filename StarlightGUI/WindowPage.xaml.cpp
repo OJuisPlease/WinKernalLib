@@ -35,12 +35,21 @@ using namespace Windows::Storage::Streams;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::System;
 
+typedef BOOL(*WTMInit_t)(void);
+typedef BOOL(*WTMUninit_t)(void);
+typedef BOOL(*WTMSetWindowBand_t)(HWND hWnd, HWND hWndInsertAfter, DWORD dwBand);
+typedef BOOL(*WTMGetWindowBand_t)(HWND hWnd, PDWORD pdwBand);
+
 namespace winrt::StarlightGUI::implementation
 {
     static std::unordered_map<hstring, std::optional<winrt::Microsoft::UI::Xaml::Media::ImageSource>> iconCache;
     static std::chrono::steady_clock::time_point lastRefresh;
     static HDC hdc{ nullptr };
     static int safeAcceptedImage = -1;
+    static WTMInit_t WTMInit = nullptr;
+    static WTMUninit_t WTMUninit = nullptr;
+    static WTMSetWindowBand_t WTMSetWindowBand = nullptr;
+    static WTMGetWindowBand_t WTMGetWindowBand = nullptr;
 
     WindowPage::WindowPage() {
         InitializeComponent();
@@ -50,9 +59,19 @@ namespace winrt::StarlightGUI::implementation
         WindowListView().ItemContainerTransitions().Append(EntranceThemeTransition());
 		ShowVisibleOnlyCheckBox().IsChecked(m_showVisibleOnly);
 
-        this->Loaded([this](auto&&, auto&&) {
+        this->Loaded([this](auto&&, auto&&) -> IAsyncAction {
+            // 初始化一次，后面不释放，程序退出时自动释放
+            HMODULE hModule = LoadLibraryW(wtmPath.c_str());
+
+            if (hModule) {
+                WTMInit = (WTMInit_t)GetProcAddress(hModule, "WTMInit");
+                WTMUninit = (WTMUninit_t)GetProcAddress(hModule, "WTMUninit");
+                WTMSetWindowBand = (WTMSetWindowBand_t)GetProcAddress(hModule, "WTMSetWindowBand");
+                WTMGetWindowBand = (WTMGetWindowBand_t)GetProcAddress(hModule, "WTMGetWindowBand");
+            }
             hdc = GetDC(NULL);
             LoadWindowList();
+            co_return;
             });
 
         this->Unloaded([this](auto&&, auto&&) {
@@ -199,16 +218,220 @@ namespace winrt::StarlightGUI::implementation
         item2_2.Text(L"设置 ZBID");
         MenuFlyoutItem item2_2_sub1;
         item2_2_sub1.Style(style);
-        item2_2_sub1.Text(L"Default");
+        item2_2_sub1.Text(L"Desktop");
         item2_2_sub1.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
-            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_DEFAULT)) {
-                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Default", InfoBarSeverity::Success, g_mainWindowInstance);
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_DESKTOP)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Desktop", InfoBarSeverity::Success, g_mainWindowInstance);
                 WaitAndReloadAsync(1000);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Default, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Desktop, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
         item2_2.Items().Append(item2_2_sub1);
+        MenuFlyoutItem item2_2_sub2;
+        item2_2_sub2.Style(style);
+        item2_2_sub2.Text(L"UIAccess");
+        item2_2_sub2.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_UIACCESS)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 UIAccess", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 UIAccess, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub2);
+        MenuFlyoutItem item2_2_sub3;
+        item2_2_sub3.Style(style);
+        item2_2_sub3.Text(L"Immersive-IHM");
+        item2_2_sub3.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_IHM)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-IHM", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-IHM, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub3);
+        MenuFlyoutItem item2_2_sub4;
+        item2_2_sub4.Style(style);
+        item2_2_sub4.Text(L"Immersive-Notification");
+        item2_2_sub4.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_NOTIFICATION)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-Notification", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-Notification, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub4);
+        MenuFlyoutItem item2_2_sub5;
+        item2_2_sub5.Style(style);
+        item2_2_sub5.Text(L"Immersive-AppChrome");
+        item2_2_sub5.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_APPCHROME)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-AppChrome", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-AppChrome, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub5);
+        MenuFlyoutItem item2_2_sub6;
+        item2_2_sub6.Style(style);
+        item2_2_sub6.Text(L"Immersive-MOGO");
+        item2_2_sub6.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_MOGO)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-MOGO", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-MOGO, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub6);
+        MenuFlyoutItem item2_2_sub7;
+        item2_2_sub7.Style(style);
+        item2_2_sub7.Text(L"Immersive-EDGY");
+        item2_2_sub7.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_EDGY)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-EDGY", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-EDGY, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub7);
+        MenuFlyoutItem item2_2_sub8;
+        item2_2_sub8.Style(style);
+        item2_2_sub8.Text(L"Immersive-InactiveMobody");
+        item2_2_sub8.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_INACTIVEMOBODY)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-InactiveMobody", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-InactiveMobody, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub8);
+        MenuFlyoutItem item2_2_sub9;
+        item2_2_sub9.Style(style);
+        item2_2_sub9.Text(L"Immersive-InactiveDock");
+        item2_2_sub9.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_INACTIVEDOCK)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-InactiveDock", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-InactiveDock, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub9);
+        MenuFlyoutItem item2_2_sub10;
+        item2_2_sub10.Style(style);
+        item2_2_sub10.Text(L"Immersive-ActiveMobody");
+        item2_2_sub10.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_ACTIVEMOBODY)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-ActiveMobody", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-ActiveMobody, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub10);
+        MenuFlyoutItem item2_2_sub11;
+        item2_2_sub11.Style(style);
+        item2_2_sub11.Text(L"Immersive-ActiveDock");
+        item2_2_sub11.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_ACTIVEDOCK)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-ActiveDock", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-ActiveDock, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub11);
+        MenuFlyoutItem item2_2_sub12;
+        item2_2_sub12.Style(style);
+        item2_2_sub12.Text(L"Immersive-Background");
+        item2_2_sub12.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_BACKGROUND)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-Background", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-Background, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub12);
+        MenuFlyoutItem item2_2_sub13;
+        item2_2_sub13.Style(style);
+        item2_2_sub13.Text(L"Immersive-Search");
+        item2_2_sub13.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_SEARCH)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-Search", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-Search, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub13);
+        MenuFlyoutItem item2_2_sub14;
+        item2_2_sub14.Style(style);
+        item2_2_sub14.Text(L"Immersive-Restricted");
+        item2_2_sub14.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_IMMERSIVE_RESTRICTED)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Immersive-Restricted", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Immersive-Restricted, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub14);
+        MenuFlyoutItem item2_2_sub15;
+        item2_2_sub15.Style(style);
+        item2_2_sub15.Text(L"GenuineWindows");
+        item2_2_sub15.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_GENUINE_WINDOWS)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 GenuineWindows", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 GenuineWindows, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub15);
+        MenuFlyoutItem item2_2_sub16;
+        item2_2_sub16.Style(style);
+        item2_2_sub16.Text(L"SystemTools");
+        item2_2_sub16.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_SYSTEM_TOOLS)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 SystemTools", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 SystemTools, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub16);
+        MenuFlyoutItem item2_2_sub17;
+        item2_2_sub17.Style(style);
+        item2_2_sub17.Text(L"Lock");
+        item2_2_sub17.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_LOCK)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 Lock", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 Lock, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub17);
+        MenuFlyoutItem item2_2_sub18;
+        item2_2_sub18.Style(style);
+        item2_2_sub18.Text(L"AboveLockUX");
+        item2_2_sub18.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+            if (SetWindowZBID((HWND)item.Hwnd(), ZBID_ABOVELOCK_UX)) {
+                CreateInfoBarAndDisplay(L"成功", L"成功设置窗口 ZBID 为 AboveLockUX", InfoBarSeverity::Success, g_mainWindowInstance);
+                WaitAndReloadAsync(1000);
+            }
+            else CreateInfoBarAndDisplay(L"失败", L"无法设置窗口 ZBID 为 AboveLockUX, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            co_return;
+            });
+        item2_2.Items().Append(item2_2_sub18);
 
         // 选项2.3
         MenuFlyoutItem item2_3;
@@ -511,29 +734,29 @@ namespace winrt::StarlightGUI::implementation
     {
         EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL {
             std::vector<winrt::StarlightGUI::WindowInfo>& windowsRef = *reinterpret_cast<std::vector<winrt::StarlightGUI::WindowInfo>*>(lParam);
-            if (!IsWindow(hwnd)) return TRUE;
 
             if (m_showVisibleOnly && !IsWindowVisible(hwnd)) return TRUE;
 
+            std::wstring windowTitle = L"(未知)";
             int length = GetWindowTextLengthW(hwnd);
-            if (length == 0) return TRUE;
+            if (length > 0) {
+                windowTitle = std::wstring(length + 1, '\0');
+                GetWindowTextW(hwnd, &windowTitle[0], length + 1);
+            }
 
-            std::wstring windowTitle(length + 1, '\0');
-            GetWindowTextW(hwnd, &windowTitle[0], length + 1);
-
-            DWORD processId;
+            DWORD processId = 0;
             GetWindowThreadProcessId(hwnd, &processId);
             HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ, FALSE, processId);
             std::wstring processName;
             if (hProcess) {
                 wchar_t processNameTemp[MAX_PATH];
-                if (GetModuleFileNameExW(hProcess, nullptr, processNameTemp, MAX_PATH)) {
+                if (K32GetModuleFileNameExW(hProcess, nullptr, processNameTemp, MAX_PATH)) {
                     processName = processNameTemp;
                 }
                 CloseHandle(hProcess);
             }
 
-            std::wstring className;
+            std::wstring className = L"(未知)";
             wchar_t classNameTmp[MAX_PATH];
             GetClassNameW(hwnd, &classNameTmp[0], MAX_PATH);
             className = classNameTmp;
@@ -548,6 +771,9 @@ namespace winrt::StarlightGUI::implementation
                 windowStyleEx = pwndInfo.dwExStyle;
             }
 
+            DWORD band = 0;
+			WTMGetWindowBand(hwnd, &band);
+
             winrt::StarlightGUI::WindowInfo windowInfo = winrt::make<winrt::StarlightGUI::implementation::WindowInfo>();
             windowInfo.Name(windowTitle);
             windowInfo.Process(processName);
@@ -555,6 +781,7 @@ namespace winrt::StarlightGUI::implementation
             windowInfo.FromPID(processId);
             windowInfo.WindowStyle(windowStyle);
             windowInfo.WindowStyleEx(windowStyleEx);
+            windowInfo.Band(band);
             windowInfo.Hwnd((uint64_t)hwnd);
             windowInfo.Description(ExtractFileName(processName) + L" / " + className);
             windowsRef.push_back(windowInfo);
@@ -624,38 +851,20 @@ namespace winrt::StarlightGUI::implementation
     }
 
     bool WindowPage::SetWindowZBID(HWND hwnd, ZBID zbid) {
-        HMODULE hModule = GetModuleHandleW(L"WindowTopMost.dll");
-
-        if (!hModule)
+        static bool inited = false;
+        inited = WTMInit();
+        if (!inited)
         {
-            LOG_ERROR(__WFUNCTION__, L"WindowTopMost module not found! Is it loaded?");
-            return false;
-		}
-
-        typedef BOOL(*WTMInit_t)(void);
-        typedef BOOL(*WTMUninit_t)(void);
-        typedef BOOL(*WTMSetWindowBand_t)(HWND hWnd, HWND hWndInsertAfter, DWORD dwBand);
-
-        WTMInit_t WTMInit = (WTMInit_t)GetProcAddress(hModule, "WTMInit");
-        WTMUninit_t WTMUninit = (WTMUninit_t)GetProcAddress(hModule, "WTMUninit");
-        WTMSetWindowBand_t WTMSetWindowBand = (WTMSetWindowBand_t)GetProcAddress(hModule, "WTMSetWindowBand");
-
-        if (!WTMInit || !WTMUninit || !WTMSetWindowBand)
+            LOG_ERROR(L"WindowPage", L"WindowTopMost failed to initialize.");
+        }
+        if (!WTMSetWindowBand)
         {
             LOG_ERROR(__WFUNCTION__, L"WindowTopMost failed to load! Is the module broken?");
             return false;
         }
 
-        if (!WTMInit())
-        {
-            LOG_ERROR(__WFUNCTION__, L"WindowTopMost failed to initialize.");
-            return false;
-        }
-
-        LOG_INFO(__WFUNCTION__, L"Setting window band to %d.", zbid);
-		BOOL result = WTMSetWindowBand(hwnd, HWND_TOPMOST, zbid);
-
-		WTMUninit();
+        LOG_INFO(__WFUNCTION__, L"Setting window band to %d.", (DWORD)zbid);
+		BOOL result = WTMSetWindowBand(hwnd, NULL, (DWORD)zbid);
 
         return result;
     }
@@ -669,6 +878,10 @@ namespace winrt::StarlightGUI::implementation
         {
             ApplySort(m_isNameAscending, "Name");
         }
+        else if (columnName == L"Band")
+        {
+            ApplySort(m_isBandAscending, "Band");
+        }
         else if (columnName == L"Hwnd")
         {
             ApplySort(m_isHwndAscending, "Hwnd");
@@ -679,6 +892,8 @@ namespace winrt::StarlightGUI::implementation
     slg::coroutine WindowPage::ApplySort(bool& isAscending, const std::string& column)
     {
         NameHeaderButton().Content(box_value(L"窗口"));
+        BandHeaderButton().Content(box_value(L"ZBID"));
+        HwndHeaderButton().Content(box_value(L"HWND"));
 
         std::vector<winrt::StarlightGUI::WindowInfo> sortedWindows;
 
@@ -708,6 +923,21 @@ namespace winrt::StarlightGUI::implementation
                     std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
 
                     return aName > bName;
+                    });
+            }
+        }
+        else if (column == "Band") {
+            if (isAscending) {
+                BandHeaderButton().Content(box_value(L"ZBID ↓"));
+                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
+                    return a.Band() < b.Band();
+                    });
+
+            }
+            else {
+                BandHeaderButton().Content(box_value(L"ZBID ↑"));
+                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
+                    return a.Band() > b.Band();
                     });
             }
         }

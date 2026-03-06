@@ -476,10 +476,10 @@
     <None Include="Assets\fix_services.bat">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Assets\IAMKeyHacker.dll">
+    <None Include="IAMKeyHacker.dll">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Assets\WindowTopMost.dll">
+    <None Include="WindowTopMost.dll">
       <Filter>Assets</Filter>
     </None>
   </ItemGroup>

@@ -131,7 +131,7 @@
       <DataExecutionPrevention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DataExecutionPrevention>
     </Link>
     <Link>
-      <UACExecutionLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HighestAvailable</UACExecutionLevel>
+      <UACExecutionLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">RequireAdministrator</UACExecutionLevel>
       <EnableUAC Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EnableUAC>
       <AllowIsolation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</AllowIsolation>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalDependencies)</AdditionalDependencies>
@@ -152,7 +152,7 @@
       <OptimizeReferences>false</OptimizeReferences>
       <UACExecutionLevel Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">HighestAvailable</UACExecutionLevel>
       <UACExecutionLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HighestAvailable</UACExecutionLevel>
-      <UACExecutionLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HighestAvailable</UACExecutionLevel>
+      <UACExecutionLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">RequireAdministrator</UACExecutionLevel>
       <EnableUAC Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</EnableUAC>
       <EnableUAC Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableUAC>
       <EnableUAC Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableUAC>
@@ -670,9 +670,6 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="Assets\IAMKeyHacker.dll">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-    </None>
     <None Include="Assets\kernel.sys">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
@@ -681,7 +678,7 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="Assets\WindowTopMost.dll">
+    <None Include="IAMKeyHacker.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>
     <None Include="nvml.dll">
@@ -690,6 +687,9 @@
     </None>
     <None Include="packages.config" />
     <None Include="StarlightGUI_TemporaryKey.pfx" />
+    <None Include="WindowTopMost.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\MuLin.png" />

@@ -32,6 +32,9 @@ namespace winrt::StarlightGUI::implementation
 		int32_t WindowStyleEx() { return m_windowStyleEx; }
 		void WindowStyleEx(int32_t value) { m_windowStyleEx = value; }
 
+		int32_t Band() { return m_band; }
+		void Band(int32_t value) { m_band = value; }
+
 		winrt::Microsoft::UI::Xaml::Media::ImageSource Icon() { return m_icon; }
 		void Icon(winrt::Microsoft::UI::Xaml::Media::ImageSource const& value) { m_icon = value; }
 
@@ -44,6 +47,7 @@ namespace winrt::StarlightGUI::implementation
 		int32_t m_fromPID{ 0 };
 		int32_t m_windowStyle{ 0 };
 		int32_t m_windowStyleEx{ 0 };
+		int32_t m_band{ 0 };
 		winrt::Microsoft::UI::Xaml::Media::ImageSource m_icon{ nullptr };
 	};
 }

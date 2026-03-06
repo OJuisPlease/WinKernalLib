@@ -44,18 +44,9 @@ namespace winrt::StarlightGUI::implementation
         KernelModuleListView().ItemsSource(m_kernelModuleList);
         if (!list_animation) KernelModuleListView().ItemContainerTransitions().Clear();
 
-        if (!KernelInstance::IsRunningAsAdmin()) {
-            RefreshKernelModuleListButton().IsEnabled(false);
-            LoadDriverButton().IsEnabled(false);
-            UnloadModuleButton().IsEnabled(false);
-            KernelModuleCountText().Text(L"请以管理员身份运行！");
-            CreateInfoBarAndDisplay(L"警告", L"请以管理员身份运行！", InfoBarSeverity::Warning, g_mainWindowInstance);
-        }
-        else {
-            this->Loaded([this](auto&&, auto&&) {
-                LoadKernelModuleList();
-                });
-        }
+        this->Loaded([this](auto&&, auto&&) {
+            LoadKernelModuleList();
+            });
 
         LOG_INFO(L"KernelModulePage", L"KernelModulePage initialized.");
     }
@@ -194,9 +185,6 @@ namespace winrt::StarlightGUI::implementation
 
     winrt::Windows::Foundation::IAsyncAction KernelModulePage::LoadKernelModuleList()
     {
-        if (!KernelInstance::IsRunningAsAdmin()) {
-            co_return;
-        }
         if (m_isLoadingKernelModules) {
             co_return;
         }

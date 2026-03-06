@@ -14,14 +14,6 @@ namespace winrt::StarlightGUI::implementation
     RunProcessDialog::RunProcessDialog()
     {
         InitializeComponent();
-
-        if (!KernelInstance::IsRunningAsAdmin()) {
-            TIComboBoxItem().IsEnabled(false);
-            FullPrivilegesCheckBox().Visibility(Visibility::Collapsed);
-        }
-        else {
-            UserComboBoxItem().IsEnabled(false);
-        }
     }
 
     void RunProcessDialog::OnPrimaryButtonClick(ContentDialog const& sender,

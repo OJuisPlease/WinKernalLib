@@ -116,7 +116,7 @@ namespace winrt::StarlightGUI::implementation
 	}
 
 	winrt::Windows::Foundation::IAsyncAction MonitorPage::LoadGeneralList(bool force) {
-		if (m_isLoading || !KernelInstance::IsRunningAsAdmin()) {
+		if (m_isLoading) {
 			co_return;
 		}
 		m_isLoading = true;

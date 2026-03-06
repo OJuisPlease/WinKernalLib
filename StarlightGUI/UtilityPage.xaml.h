@@ -8,8 +8,6 @@ namespace winrt::StarlightGUI::implementation
     {
         UtilityPage();
 
-        slg::coroutine FindButtonsAndDisable(DependencyObject obj);
-
         slg::coroutine Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         slg::coroutine Button_Click2(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };

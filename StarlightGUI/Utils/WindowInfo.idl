@@ -14,6 +14,7 @@
 		Int32 FromPID{ get; set; };
 		Int32 WindowStyle{ get; set; };
 		Int32 WindowStyleEx{ get; set; };
+		Int32 Band{ get; set; };
 		Microsoft.UI.Xaml.Media.ImageSource Icon{ get; set; };
 	}
 }

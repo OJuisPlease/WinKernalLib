@@ -148,7 +148,6 @@ namespace winrt::StarlightGUI::implementation
                 else CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_2.IsEnabled(false);
 
         // 选项2.3
         MenuFlyoutItem item2_3;
@@ -164,7 +163,6 @@ namespace winrt::StarlightGUI::implementation
                 else CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_3.IsEnabled(false);
 
         // 选项2.4
         MenuFlyoutItem item2_4;
@@ -180,7 +178,6 @@ namespace winrt::StarlightGUI::implementation
                 else CreateInfoBarAndDisplay(L"失败", L"无法锁定文件: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_4.IsEnabled(false);
 
         // 选项2.5
         MenuFlyoutItem item2_5;
@@ -190,7 +187,6 @@ namespace winrt::StarlightGUI::implementation
         item2_5.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             CopyFiles();
             });
-        if (!KernelInstance::IsRunningAsAdmin()) item2_5.IsEnabled(false);
 
         MenuFlyoutSeparator separator2;
 
@@ -384,26 +380,12 @@ namespace winrt::StarlightGUI::implementation
 
         m_allFiles.clear();
 
-        bool useKernelEnum = KernelInstance::IsRunningAsAdmin();
-        if (useKernelEnum) {
-            KernelInstance::QueryFile(path, m_allFiles);
-            LOG_INFO(__WFUNCTION__, L"Enumerated files (kernel mode), %d entry(s).", m_allFiles.size());
-        }
-        else {
-            QueryFile(path, m_allFiles);
-            LOG_INFO(__WFUNCTION__, L"Enumerated files (user mode), %d entry(s).", m_allFiles.size());
-        }
+        KernelInstance::QueryFile(path, m_allFiles);
+        LOG_INFO(__WFUNCTION__, L"Enumerated files (kernel mode), %d entry(s).", m_allFiles.size());
 
-        if (useKernelEnum) {
-            for (const auto& file : m_allFiles) {
-                co_await GetFileInfoAsync(file);
-                file.Path(FixBackSplash(file.Path()));
-            }
-        }
-        else {
-            for (const auto& file : m_allFiles) {
-                file.Path(FixBackSplash(file.Path()));
-            }
+        for (const auto& file : m_allFiles) {
+            co_await GetFileInfoAsync(file);
+            file.Path(FixBackSplash(file.Path()));
         }
 
         co_await wil::resume_foreground(DispatcherQueue());
@@ -744,64 +726,6 @@ namespace winrt::StarlightGUI::implementation
             parent = VisualTreeHelper::GetParent(parent);
         }
         return parent.try_as<T>();
-    }
-
-    void FilePage::QueryFile(std::wstring path, std::vector<winrt::StarlightGUI::FileInfo>& files) {
-        std::wstring searchPath = path + L"\\*";
-
-        WIN32_FIND_DATA findFileData;
-        HANDLE hFind = FindFirstFile(searchPath.c_str(), &findFileData);
-
-        if (hFind == INVALID_HANDLE_VALUE) {
-            return;
-        }
-
-        do {
-            if (findFileData.cFileName[0] == L'.') {
-                continue;
-            }
-
-            auto fileInfo = winrt::make<winrt::StarlightGUI::implementation::FileInfo>();
-            fileInfo.Name(findFileData.cFileName);
-            fileInfo.Directory((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
-            fileInfo.Flag((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ? MFT_RECORD_FLAG_FILE : MFT_RECORD_FLAG_DIRECTORY);
-            fileInfo.Path(path + L"\\" + findFileData.cFileName);
-
-            // 直接用枚举数据填充大小和修改时间，避免逐文件 stat IO
-            if (!fileInfo.Directory()) {
-                ULONG64 size = (static_cast<ULONG64>(findFileData.nFileSizeHigh) << 32) | findFileData.nFileSizeLow;
-                fileInfo.SizeULong(size);
-                fileInfo.Size(FormatMemorySize(size));
-            }
-            else {
-                fileInfo.Size(L"");
-            }
-
-            fileInfo.ModifyTimeULong((static_cast<ULONG64>(findFileData.ftLastAccessTime.dwHighDateTime) << 32)
-                | findFileData.ftLastAccessTime.dwLowDateTime);
-
-            SYSTEMTIME st;
-            if (FileTimeToSystemTime(&findFileData.ftLastAccessTime, &st))
-            {
-                std::wstringstream ss;
-                ss << std::setw(4) << std::setfill(L'0') << st.wYear << L"/"
-                    << std::setw(2) << std::setfill(L'0') << st.wMonth << L"/"
-                    << std::setw(2) << std::setfill(L'0') << st.wDay << L" "
-                    << std::setw(2) << std::setfill(L'0') << st.wHour << L":"
-                    << std::setw(2) << std::setfill(L'0') << st.wMinute << L":"
-                    << std::setw(2) << std::setfill(L'0') << st.wSecond;
-                fileInfo.ModifyTime(ss.str());
-            }
-            else
-            {
-                fileInfo.ModifyTime(L"(未知)");
-            }
-
-            files.push_back(fileInfo);
-
-        } while (FindNextFile(hFind, &findFileData) != 0);
-
-        FindClose(hFind);
     }
 
     slg::coroutine FilePage::CopyFiles() {

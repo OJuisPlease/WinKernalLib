@@ -13,8 +13,6 @@
 namespace winrt::StarlightGUI::implementation {
 	class KernelInstance {
 	public:
-		static bool IsRunningAsAdmin() noexcept;
-
 		// Process
 		static BOOL _ZwTerminateProcess(ULONG pid) noexcept;
 		static BOOL MurderProcess(ULONG pid) noexcept;

@@ -14,13 +14,6 @@ namespace winrt::StarlightGUI::implementation{
 
 	UtilityPage::UtilityPage() {
 		InitializeComponent();
-		
-		if (!KernelInstance::IsRunningAsAdmin()) {
-			CreateInfoBarAndDisplay(L"警告", L"请以管理员身份运行！", InfoBarSeverity::Warning, g_mainWindowInstance);
-			this->Loaded([this](auto&&, auto&&) {
-				FindButtonsAndDisable(*this);
-				});
-		}
 
 		if (hypervisor_mode) {
 			ObCallbackCard().Header(box_value(L"注册对象操作回调 (Hypervisor mode)"));
@@ -30,25 +23,8 @@ namespace winrt::StarlightGUI::implementation{
 		LOG_INFO(L"UtilityPage", L"UtilityPage initialized.");
 	}
 
-	slg::coroutine UtilityPage::FindButtonsAndDisable(DependencyObject obj) {
-		if (auto button = obj.try_as<Button>()) {
-			button.IsEnabled(false);
-		}
-		auto childrenCount = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetChildrenCount(obj);
-		for (int i = 0; i < childrenCount; ++i) {
-			auto child = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetChild(obj, i);
-			FindButtonsAndDisable(child);
-		}
-		co_return;
-	}
-
 	slg::coroutine UtilityPage::Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
-		if (!KernelInstance::IsRunningAsAdmin()) {
-			CreateInfoBarAndDisplay(L"警告", L"请以管理员身份运行！", InfoBarSeverity::Warning, g_mainWindowInstance);
-			co_return;
-		}
-
 		auto button = sender.as<Button>();
 		std::wstring tag = button.Tag().as<winrt::hstring>().c_str();
 
@@ -168,11 +144,6 @@ namespace winrt::StarlightGUI::implementation{
 
 	slg::coroutine UtilityPage::Button_Click2(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
-		if (!KernelInstance::IsRunningAsAdmin()) {
-			CreateInfoBarAndDisplay(L"警告", L"请以管理员身份运行！", InfoBarSeverity::Warning, g_mainWindowInstance);
-			co_return;
-		}
-
 		auto button = sender.as<Button>();
 		std::wstring tag = button.Tag().as<winrt::hstring>().c_str();
 

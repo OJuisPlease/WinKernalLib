@@ -85,7 +85,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="80" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
                     </Grid.ColumnDefinitions>
@@ -99,8 +99,19 @@
                         CornerRadius="0"
                         Tag="Name" />
                     <Button
-                        x:Name="WindowStyleHeaderButton"
+                        x:Name="BandHeaderButton"
                         Grid.Column="1"
+                        Height="32"
+                        HorizontalAlignment="Stretch"
+                        BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                        BorderThickness="1,0,0,0"
+                        Click="ColumnHeader_Click"
+                        Content="ZBID"
+                        CornerRadius="0"
+                        Tag="Band" />
+                    <Button
+                        x:Name="WindowStyleHeaderButton"
+                        Grid.Column="2"
                         Height="32"
                         HorizontalAlignment="Stretch"
                         BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
@@ -109,17 +120,6 @@
                         Content="样式"
                         CornerRadius="0"
                         Tag="WindowStyle" />
-                    <Button
-                        x:Name="WindowStyleExHeaderButton"
-                        Grid.Column="2"
-                        Height="32"
-                        HorizontalAlignment="Stretch"
-                        BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                        BorderThickness="1,0,0,0"
-                        Click="ColumnHeader_Click"
-                        Content="拓展样式"
-                        CornerRadius="0"
-                        Tag="WindowStyleEx" />
                     <Button
                         x:Name="HwndHeaderButton"
                         Grid.Column="3"
@@ -163,7 +163,7 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="80" />
                                             <ColumnDefinition Width="100" />
                                             <ColumnDefinition Width="100" />
                                         </Grid.ColumnDefinitions>
@@ -196,7 +196,7 @@
                                             BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                                             BorderThickness="0,0,1,0" />
 
-                                        <!--  样式  -->
+                                        <!--  ZBID  -->
                                         <TextBlock
                                             Grid.Column="2"
                                             Margin="24,0,0,0"
@@ -204,7 +204,7 @@
                                             VerticalAlignment="Center"
                                             FontSize="12"
                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                            Text="{Binding WindowStyle}" />
+                                            Text="{Binding Band}" />
 
                                         <Border
                                             Grid.Column="3"
@@ -214,7 +214,7 @@
                                             BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                                             BorderThickness="0,0,1,0" />
 
-                                        <!--  拓展样式  -->
+                                        <!--  样式  -->
                                         <TextBlock
                                             Grid.Column="3"
                                             Margin="24,0,0,0"
@@ -222,7 +222,7 @@
                                             VerticalAlignment="Center"
                                             FontSize="12"
                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                            Text="{Binding WindowStyleEx}" />
+                                            Text="{Binding WindowStyle}" />
 
                                         <Border
                                             Grid.Column="4"

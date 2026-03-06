@@ -40,6 +40,7 @@ namespace winrt::StarlightGUI::implementation
         inline static bool m_showVisibleOnly = false;
         inline static bool m_isLoading = false;
         inline static bool m_isNameAscending = true;
+        inline static bool m_isBandAscending = true;
         inline static bool m_isHwndAscending = true;
         inline static bool currentSortingOption;
         inline static std::string currentSortingType;

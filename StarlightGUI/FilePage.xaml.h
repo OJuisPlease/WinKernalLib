@@ -28,7 +28,6 @@ namespace winrt::StarlightGUI::implementation
         winrt::Windows::Foundation::IAsyncAction WaitAndReloadAsync(int interval);
         winrt::Windows::Foundation::IAsyncAction GetFileInfoAsync(const winrt::StarlightGUI::FileInfo& file);
         winrt::Windows::Foundation::IAsyncAction GetFileIconAsync(const winrt::StarlightGUI::FileInfo& file);
-        void QueryFile(std::wstring path, std::vector<winrt::StarlightGUI::FileInfo>& files);
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::StarlightGUI::FileInfo> m_fileList{
             winrt::multi_threaded_observable_vector<winrt::StarlightGUI::FileInfo>()
