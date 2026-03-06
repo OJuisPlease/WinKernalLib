@@ -108,7 +108,7 @@ namespace winrt::StarlightGUI::implementation
         MenuFlyout menuFlyout;
 
         auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", L"关闭", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
-            if (PostMessageW((HWND)item.Hwnd(), WM_DESTROY, 0, 0)) {
+            if (PostMessageW((HWND)item.Hwnd(), WM_CLOSE, 0, 0)) {
                 slg::CreateInfoBarAndDisplay(L"成功", L"成功关闭窗口: " + item.Name() + L" (" + to_hstring(item.Hwnd()) + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                 WaitAndReloadAsync(1000);
             }
