@@ -70,7 +70,7 @@ namespace winrt::StarlightGUI::implementation
             if (!loaded) {
                 RootNavigation().IsEnabled(false);
                 // 加载模块
-                CreateInfoBarAndDisplay(L"信息", L"正在加载模块，这可能需要一点时间...", InfoBarSeverity::Informational, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"信息", L"正在加载模块，这可能需要一点时间...", InfoBarSeverity::Informational, g_mainWindowInstance);
                 co_await LoadModules();
 
                 // 进入主页
@@ -314,15 +314,15 @@ namespace winrt::StarlightGUI::implementation
 
                 if (latestBuildNumber == 0) {
                     LOG_WARNING(L"Updater", L"Latest = 0, check failed.");
-                    CreateInfoBarAndDisplay(L"警告", L"检查更新失败！", InfoBarSeverity::Warning, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"警告", L"检查更新失败！", InfoBarSeverity::Warning, g_mainWindowInstance);
                 }
                 else if (latestBuildNumber == currentBuildNumber) {
                     LOG_INFO(L"Updater", L"Latest = current, we are on the latest version.");
-                    CreateInfoBarAndDisplay(L"信息", L"你正在使用最新版本的 Starlight GUI！", InfoBarSeverity::Informational, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"信息", L"你正在使用最新版本的 Starlight GUI！", InfoBarSeverity::Informational, g_mainWindowInstance);
                 }
                 else if (latestBuildNumber > currentBuildNumber) {
                     LOG_INFO(L"Updater", L"Latest > current, new version avaliable. Calling up update dialog.");
-                    CreateInfoBarAndDisplay(L"信息", L"检测到新版本的 Starlight GUI！", InfoBarSeverity::Informational, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"信息", L"检测到新版本的 Starlight GUI！", InfoBarSeverity::Informational, g_mainWindowInstance);
                     auto dialog = winrt::make<winrt::StarlightGUI::implementation::UpdateDialog>();
                     dialog.IsUpdate(true);
                     dialog.LatestVersion(json.GetNamedString(L"version"));
@@ -335,16 +335,16 @@ namespace winrt::StarlightGUI::implementation
                         auto result = co_await Launcher::LaunchUriAsync(target);
 
                         if (result) {
-                            CreateInfoBarAndDisplay(L"成功", L"已在浏览器打开网页！", InfoBarSeverity::Success, g_mainWindowInstance);
+                            slg::CreateInfoBarAndDisplay(L"成功", L"已在浏览器打开网页！", InfoBarSeverity::Success, g_mainWindowInstance);
                         }
                         else {
-                            CreateInfoBarAndDisplay(L"失败", L"无法打开网页！", InfoBarSeverity::Error, g_mainWindowInstance);
+                            slg::CreateInfoBarAndDisplay(L"失败", L"无法打开网页！", InfoBarSeverity::Error, g_mainWindowInstance);
                         }
                     }
                 }
                 else if (latestBuildNumber < currentBuildNumber) {
                     LOG_INFO(L"Updater", L"Latest < current, maybe we are on a dev environment.", kernelPath.c_str());
-                    CreateInfoBarAndDisplay(L"信息", L"你正在使用 Starlight GUI 的开发版本！", InfoBarSeverity::Informational, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"信息", L"你正在使用 Starlight GUI 的开发版本！", InfoBarSeverity::Informational, g_mainWindowInstance);
                 }
             }
         } 
@@ -398,11 +398,11 @@ namespace winrt::StarlightGUI::implementation
                 LOG_INFO(L"Driver", L"Loaded successfully.", kernelPath.c_str());
 
                 co_await wil::resume_foreground(DispatcherQueue());
-                CreateInfoBarAndDisplay(L"成功", L"模块加载成功！", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"模块加载成功！", InfoBarSeverity::Success, g_mainWindowInstance);
             }
             catch (const hresult_error& e) {
                 LOG_ERROR(L"Driver", L"Failed to load modules! winrt::hresult_error: %s (%d)", e.message().c_str(), e.code().value);
-                CreateInfoBarAndDisplay(L"警告", L"一个或多个模块文件未找到或无法加载，部分功能可能不可用！", InfoBarSeverity::Warning, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"警告", L"一个或多个模块文件未找到或无法加载，部分功能可能不可用！", InfoBarSeverity::Warning, g_mainWindowInstance);
             }
         }
     }

@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 #include "InfoWindow.g.h"
-#include <SLG.h>
 #include <Utils/ProcessInfo.h>
+
+namespace slg { struct coroutine; }
 
 namespace winrt::StarlightGUI::implementation
 {

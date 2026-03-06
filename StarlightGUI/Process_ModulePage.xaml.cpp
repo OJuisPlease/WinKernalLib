@@ -66,16 +66,11 @@ namespace winrt::StarlightGUI::implementation
 
         auto item = listView.SelectedItem().as<winrt::StarlightGUI::MokuaiInfo>();
 
-        auto style = unbox_value<Microsoft::UI::Xaml::Style>(Application::Current().Resources().TryLookup(box_value(L"MenuFlyoutItemStyle")));
-        auto styleSub = unbox_value<Microsoft::UI::Xaml::Style>(Application::Current().Resources().TryLookup(box_value(L"MenuFlyoutSubItemStyle")));
+        auto flyoutStyles = slg::GetStyles();
 
         MenuFlyout menuFlyout;
 
-        MenuFlyoutItem itemRefresh;
-        itemRefresh.Style(style);
-        itemRefresh.Icon(CreateFontIcon(L"\ue72c"));
-        itemRefresh.Text(L"刷新");
-        itemRefresh.Click([this](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto itemRefresh = slg::CreateMenuItem(flyoutStyles, L"\ue72c", L"刷新", [this](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             LoadModuleList();
             co_return;
             });
@@ -83,43 +78,28 @@ namespace winrt::StarlightGUI::implementation
         MenuFlyoutSeparator separatorR;
 
         // 选项1.1
-        MenuFlyoutSubItem item1_1;
-        item1_1.Style(styleSub);
-        item1_1.Icon(CreateFontIcon(L"\ue8c8"));
-        item1_1.Text(L"复制信息");
-        MenuFlyoutItem item1_1_sub1;
-        item1_1_sub1.Style(style);
-        item1_1_sub1.Icon(CreateFontIcon(L"\ue943"));
-        item1_1_sub1.Text(L"名称");
-        item1_1_sub1.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item1_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
+        auto item1_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"名称", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(item.Name().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item1_1.Items().Append(item1_1_sub1);
-        MenuFlyoutItem item1_1_sub2;
-        item1_1_sub2.Style(style);
-        item1_1_sub2.Icon(CreateFontIcon(L"\uec6c"));
-        item1_1_sub2.Text(L"路径");
-        item1_1_sub2.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item1_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"路径", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(item.Path().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item1_1.Items().Append(item1_1_sub2);
-        MenuFlyoutItem item1_1_sub3;
-        item1_1_sub3.Style(style);
-        item1_1_sub3.Icon(CreateFontIcon(L"\ueb1d"));
-        item1_1_sub3.Text(L"地址");
-        item1_1_sub3.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item1_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"地址", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(item.Address().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item1_1.Items().Append(item1_1_sub3);
@@ -128,7 +108,7 @@ namespace winrt::StarlightGUI::implementation
         menuFlyout.Items().Append(separatorR);
         menuFlyout.Items().Append(item1_1);
 
-        menuFlyout.ShowAt(listView, e.GetPosition(listView));
+        slg::ShowAt(menuFlyout, listView, e);
     }
 
     void Process_ModulePage::ModuleListView_ContainerContentChanging(
@@ -148,7 +128,7 @@ namespace winrt::StarlightGUI::implementation
         if (!processForInfoWindow) co_return;
         // 跳过内核进程，获取可能导致异常或蓝屏
         if (processForInfoWindow.Id() >= 0 && processForInfoWindow.Id() <= 272) {
-            CreateInfoBarAndDisplay(L"警告", L"该进程不包含任何此类型的信息！", InfoBarSeverity::Warning, g_infoWindowInstance);
+            slg::CreateInfoBarAndDisplay(L"警告", L"该进程不包含任何此类型的信息！", InfoBarSeverity::Warning, g_infoWindowInstance);
             co_return;
         }
 
@@ -172,7 +152,7 @@ namespace winrt::StarlightGUI::implementation
         co_await wil::resume_foreground(DispatcherQueue());
 
         if (modules.size() >= 1000) {
-            CreateInfoBarAndDisplay(L"警告", L"该进程持有过多模块，程序无法完整显示，将显示前1000条！", InfoBarSeverity::Warning, g_infoWindowInstance);
+            slg::CreateInfoBarAndDisplay(L"警告", L"该进程持有过多模块，程序无法完整显示，将显示前1000条！", InfoBarSeverity::Warning, g_infoWindowInstance);
         }
 
         for (const auto& module : modules) {

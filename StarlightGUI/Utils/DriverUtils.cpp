@@ -149,12 +149,12 @@ namespace winrt::StarlightGUI::implementation {
 			CloseHandle(sei.hProcess);
 			CloseHandle(sei.hIcon);
 			std::wstring content = L"启动脚本成功，PID: " + std::to_wstring(processId);
-			CreateInfoBarAndDisplay(L"成功", content.c_str(),
+			slg::CreateInfoBarAndDisplay(L"成功", content.c_str(),
 				InfoBarSeverity::Success, g_mainWindowInstance);
 		}
 		else {
 			std::wstring content = L"启动脚本失败，错误码: " + std::to_wstring(GetLastError());
-			CreateInfoBarAndDisplay(L"失败", content.c_str(),
+			slg::CreateInfoBarAndDisplay(L"失败", content.c_str(),
 				InfoBarSeverity::Error, g_mainWindowInstance);
 		}
 	}

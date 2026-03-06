@@ -30,6 +30,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock
@@ -48,13 +49,20 @@
                     Text="正在加载..." />
 
                 <CheckBox
-                    x:Name="ShowVisibleOnlyCheckBox"
+                    x:Name="ShowNoTitleCheckBox"
                     Grid.Column="3"
-                    Click="ShowVisibleOnlyCheckBox_Checked"
-                    Content="只显示可见窗口" />
+                    Click="CheckBox_Checked"
+                    Content="显示无标题窗口" />
+
+                <CheckBox
+                    x:Name="ShowVisibleOnlyCheckBox"
+                    Grid.Column="4"
+                    Click="CheckBox_Checked"
+                    Margin="10,0,0,0"
+                    Content="仅显示可见窗口" />
 
                 <CommandBar
-                    Grid.Column="4"
+                    Grid.Column="5"
                     HorizontalAlignment="Right"
                     DefaultLabelPosition="Right">
                     <AppBarButton
@@ -69,7 +77,7 @@
 
                 <TextBox
                     x:Name="SearchBox"
-                    Grid.Column="5"
+                    Grid.Column="6"
                     Width="300"
                     Height="32"
                     HorizontalAlignment="Right"

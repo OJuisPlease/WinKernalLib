@@ -78,7 +78,7 @@
 #include <Utils/Elevator.h>
 #include <Utils/Config.h>
 #include <Utils/CppUtils.h>
-#include <SLG.h>
+
 
 extern winrt::hstring kernelPath, astralPath, wtmPath, iamKeyHackerPath;
 extern std::wstring unused;

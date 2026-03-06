@@ -77,7 +77,7 @@ namespace winrt::StarlightGUI::implementation
             if ((item.Name() == L"Windows" || item.Name() == L"Boot" || item.Name() == L"System32" || item.Name() == L"SysWOW64" || item.Name() == L"Microsoft") && 
                 (safeAcceptedName != L"Windows" && safeAcceptedName != L"Boot" && safeAcceptedName != L"System32" && safeAcceptedName != L"SysWOW64" && safeAcceptedName != L"Microsoft")) {
                 safeAcceptedName = item.Name();
-                CreateInfoBarAndDisplay(L"警告", L"该文件可能为重要文件，如果确认继续请再次点击！", InfoBarSeverity::Warning, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"警告", L"该文件可能为重要文件，如果确认继续请再次点击！", InfoBarSeverity::Warning, g_mainWindowInstance);
                 return;
             }
             selectedFiles.push_back(item);
@@ -85,8 +85,7 @@ namespace winrt::StarlightGUI::implementation
 
         safeAcceptedName = L"";
 
-        auto style = unbox_value<Microsoft::UI::Xaml::Style>(Application::Current().Resources().TryLookup(box_value(L"MenuFlyoutItemStyle")));
-        auto styleSub = unbox_value<Microsoft::UI::Xaml::Style>(Application::Current().Resources().TryLookup(box_value(L"MenuFlyoutSubItemStyle")));
+        auto flyoutStyles = slg::GetStyles();
 
         MenuFlyout menuFlyout;
 
@@ -94,11 +93,7 @@ namespace winrt::StarlightGUI::implementation
         * 注意，由于这里是磁盘 IO，我们不要使用异步，否则刷新时可能会出问题
         */
         // 选项1.1
-        MenuFlyoutItem item1_1;
-        item1_1.Style(style);
-        item1_1.Icon(CreateFontIcon(L"\ue8e5"));
-        item1_1.Text(L"打开");
-        item1_1.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue8e5", L"打开", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (item.Directory()) {
                     currentDirectory = currentDirectory + L"\\" + item.Name();
@@ -120,142 +115,99 @@ namespace winrt::StarlightGUI::implementation
         MenuFlyoutSeparator separator1;
 
         // 选项2.1
-        MenuFlyoutItem item2_1;
-        item2_1.Style(style);
-        item2_1.Icon(CreateFontIcon(L"\ue74d"));
-        item2_1.Text(L"删除");
-        item2_1.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_1 = slg::CreateMenuItem(flyoutStyles, L"\ue74d", L"删除", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::DeleteFileAuto(item.Path().c_str())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.2
-        MenuFlyoutItem item2_2;
-        item2_2.Style(style);
-        item2_2.Icon(CreateFontIcon(L"\ue733"));
-        item2_2.Text(L"删除 (内核)");
-        item2_2.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_2 = slg::CreateMenuItem(flyoutStyles, L"\ue733", L"删除 (内核)", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::_DeleteFileAuto(item.Path().c_str())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.3
-        MenuFlyoutItem item2_3;
-        item2_3.Style(style);
-        item2_3.Icon(CreateFontIcon(L"\uf5ab"));
-        item2_3.Text(L"删除 (内存抹杀)");
-        item2_3.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_3 = slg::CreateMenuItem(flyoutStyles, L"\uf5ab", L"删除 (内存抹杀)", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::MurderFileAuto(item.Path().c_str())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.4
-        MenuFlyoutItem item2_4;
-        item2_4.Style(style);
-        item2_4.Icon(CreateFontIcon(L"\ue72e"));
-        item2_4.Text(L"锁定");
-        item2_4.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_4 = slg::CreateMenuItem(flyoutStyles, L"\ue72e", L"锁定", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::LockFile(item.Path().c_str())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功锁定文件: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"成功", L"成功锁定文件: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else CreateInfoBarAndDisplay(L"失败", L"无法锁定文件: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(L"失败", L"无法锁定文件: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.5
-        MenuFlyoutItem item2_5;
-        item2_5.Style(style);
-        item2_5.Icon(CreateFontIcon(L"\ue8c8"));
-        item2_5.Text(L"复制");
-        item2_5.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_5 = slg::CreateMenuItem(flyoutStyles, L"\ue8c8", L"复制", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             CopyFiles();
             });
 
         MenuFlyoutSeparator separator2;
 
         // 选项3.1
-        MenuFlyoutSubItem item3_1;
-        item3_1.Style(styleSub);
-        item3_1.Icon(CreateFontIcon(L"\ue8c8"));
-        item3_1.Text(L"复制信息");
-        MenuFlyoutItem item3_1_sub1;
-        item3_1_sub1.Style(style);
-        item3_1_sub1.Icon(CreateFontIcon(L"\ue8ac"));
-        item3_1_sub1.Text(L"名称");
-        item3_1_sub1.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
+        auto item3_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue8ac", L"名称", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(selectedFiles[0].Name().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub1);
-        MenuFlyoutItem item3_1_sub2;
-        item3_1_sub2.Style(style);
-        item3_1_sub2.Icon(CreateFontIcon(L"\uec6c"));
-        item3_1_sub2.Text(L"路径");
-        item3_1_sub2.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"路径", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(selectedFiles[0].Path().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub2);
-        MenuFlyoutItem item3_1_sub3;
-        item3_1_sub3.Style(style);
-        item3_1_sub3.Icon(CreateFontIcon(L"\uec92"));
-        item3_1_sub3.Text(L"修改日期");
-        item3_1_sub3.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\uec92", L"修改日期", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(selectedFiles[0].ModifyTime().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub3);
 
         // 选项3.2
-        MenuFlyoutItem item3_2;
-        item3_2.Style(style);
-        item3_2.Icon(CreateFontIcon(L"\uec50"));
-        item3_2.Text(L"在文件管理器内打开");
-        item3_2.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_2 = slg::CreateMenuItem(flyoutStyles, L"\uec50", L"在文件管理器内打开", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::OpenFolderAndSelectFile(selectedFiles[0].Path().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已打开文件夹", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已打开文件夹", InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法打开文件夹, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法打开文件夹, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
 
 
         // 选项3.3
-        MenuFlyoutItem item3_3;
-        item3_3.Style(style);
-        item3_3.Icon(CreateFontIcon(L"\ue8ec"));
-        item3_3.Text(L"属性");
-        item3_3.Click([this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_3 = slg::CreateMenuItem(flyoutStyles, L"\ue8ec", L"属性", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::OpenFileProperties(selectedFiles[0].Path().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已打开文件属性", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已打开文件属性", InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法打开文件属性, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法打开文件属性, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
 
@@ -279,7 +231,7 @@ namespace winrt::StarlightGUI::implementation
         menuFlyout.Items().Append(item3_2);
         menuFlyout.Items().Append(item3_3);
 
-        menuFlyout.ShowAt(listView, e.GetPosition(listView));
+        slg::ShowAt(menuFlyout, listView, e);
 	}
 
 	void FilePage::FileListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e)
@@ -748,10 +700,10 @@ namespace winrt::StarlightGUI::implementation
 
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::_CopyFile(std::wstring(item.Path().c_str()).substr(0, item.Path().size() - item.Name().size()), copyPath + L"\\" + item.Name().c_str(), item.Name().c_str())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功复制文件至: " + dialog.CopyPath(), InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"成功", L"成功复制文件至: " + dialog.CopyPath(), InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else CreateInfoBarAndDisplay(L"失败", L"无法复制文件, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制文件, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
         }
     }

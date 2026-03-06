@@ -1,10 +1,11 @@
 ﻿#pragma once
 
 #include "MainWindow.g.h"
-#include <SLG.h>
 #include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.UI.h>
+
+namespace slg { struct coroutine; }
 
 namespace winrt::StarlightGUI::implementation
 {

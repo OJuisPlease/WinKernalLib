@@ -101,7 +101,7 @@ namespace winrt::StarlightGUI::implementation
     void SettingsPage::EnumFileModeComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
     {
         if (!loaded) return;
-        if (CheckIllegalComboBoxAction(sender, e)) return;
+        if (slg::CheckIllegalComboBoxAction(sender, e)) return;
 
         if (EnumFileModeComboBox().SelectedIndex() == 1)
         {
@@ -131,7 +131,7 @@ namespace winrt::StarlightGUI::implementation
     void SettingsPage::BackgroundComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
     {
         if (!loaded) return;
-        if (CheckIllegalComboBoxAction(sender, e)) return;
+        if (slg::CheckIllegalComboBoxAction(sender, e)) return;
 
         if (BackgroundComboBox().SelectedIndex() == 1)
         {
@@ -155,7 +155,7 @@ namespace winrt::StarlightGUI::implementation
     void SettingsPage::MicaTypeComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
     {
         if (!loaded) return;
-        if (CheckIllegalComboBoxAction(sender, e)) return;
+        if (slg::CheckIllegalComboBoxAction(sender, e)) return;
 
         if (MicaTypeComboBox().SelectedIndex() == 0)
         {
@@ -174,7 +174,7 @@ namespace winrt::StarlightGUI::implementation
     void SettingsPage::AcrylicTypeComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
     {
         if (!loaded) return;
-        if (CheckIllegalComboBoxAction(sender, e)) return;
+        if (slg::CheckIllegalComboBoxAction(sender, e)) return;
 
         if (AcrylicTypeComboBox().SelectedIndex() == 1)
         {
@@ -197,7 +197,7 @@ namespace winrt::StarlightGUI::implementation
     void SettingsPage::NavigationComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
     {
         if (!loaded) return;
-        if (CheckIllegalComboBoxAction(sender, e)) return;
+        if (slg::CheckIllegalComboBoxAction(sender, e)) return;
 
         if (NavigationComboBox().SelectedIndex() == 1)
         {
@@ -281,7 +281,7 @@ namespace winrt::StarlightGUI::implementation
     void SettingsPage::ImageStretchComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
     {
         if (!loaded) return;
-        if (CheckIllegalComboBoxAction(sender, e)) return;
+        if (slg::CheckIllegalComboBoxAction(sender, e)) return;
 
         if (ImageStretchComboBox().SelectedIndex() == 0)
         {

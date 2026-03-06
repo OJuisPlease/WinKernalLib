@@ -67,16 +67,11 @@ namespace winrt::StarlightGUI::implementation
 
         auto item = listView.SelectedItem().as<winrt::StarlightGUI::ThreadInfo>();
 
-        auto style = unbox_value<Microsoft::UI::Xaml::Style>(Application::Current().Resources().TryLookup(box_value(L"MenuFlyoutItemStyle")));
-        auto styleSub = unbox_value<Microsoft::UI::Xaml::Style>(Application::Current().Resources().TryLookup(box_value(L"MenuFlyoutSubItemStyle")));
+        auto flyoutStyles = slg::GetStyles();
 
         MenuFlyout menuFlyout;
 
-        MenuFlyoutItem itemRefresh;
-        itemRefresh.Style(style);
-        itemRefresh.Icon(CreateFontIcon(L"\ue72c"));
-        itemRefresh.Text(L"刷新");
-        itemRefresh.Click([this](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto itemRefresh = slg::CreateMenuItem(flyoutStyles, L"\ue72c", L"刷新", [this](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             LoadThreadList();
             co_return;
             });
@@ -84,49 +79,37 @@ namespace winrt::StarlightGUI::implementation
         MenuFlyoutSeparator separatorR;
 
         // 选项1.1
-        MenuFlyoutItem item1_1;
-        item1_1.Style(style);
-        item1_1.Icon(CreateFontIcon(L"\ue711"));
-        item1_1.Text(L"终止");
-        item1_1.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", L"终止", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::_TerminateThread(item.Id())) {
-                CreateInfoBarAndDisplay(L"成功", L"成功终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"成功终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
                 LoadThreadList();
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
 
         // 选项1.2
-        MenuFlyoutItem item1_2;
-        item1_2.Style(style);
-        item1_2.Icon(CreateFontIcon(L"\ue8f0"));
-        item1_2.Text(L"终止 (内核)");
-        item1_2.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item1_2 = slg::CreateMenuItem(flyoutStyles, L"\ue8f0", L"终止 (内核)", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (KernelInstance::_ZwTerminateThread(item.Id())) {
-                CreateInfoBarAndDisplay(L"成功", L"成功终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"成功终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
                 LoadThreadList();
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
 
         // 选项1.3
-        MenuFlyoutItem item1_3;
-        item1_3.Style(style);
-        item1_3.Icon(CreateFontIcon(L"\ue945"));
-        item1_3.Text(L"终止 (内存抹杀)");
-        item1_3.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item1_3 = slg::CreateMenuItem(flyoutStyles, L"\ue945", L"终止 (内存抹杀)", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (safeAcceptedPID == item.Id() || !dangerous_confirm) {
                 if (KernelInstance::MurderThread(item.Id())) {
-                    CreateInfoBarAndDisplay(L"成功", L"成功终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
+                    slg::CreateInfoBarAndDisplay(L"成功", L"成功终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
                     LoadThreadList();
                 }
-                else CreateInfoBarAndDisplay(L"失败", L"无法终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+                else slg::CreateInfoBarAndDisplay(L"失败", L"无法终止线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             }
             else {
                 safeAcceptedPID = item.Id();
-                CreateInfoBarAndDisplay(L"警告", L"该操作可能导致系统崩溃或进程数据丢失，如果确认继续请再次点击！", InfoBarSeverity::Warning, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"警告", L"该操作可能导致系统崩溃或进程数据丢失，如果确认继续请再次点击！", InfoBarSeverity::Warning, g_infoWindowInstance);
             }
             co_return;
             });
@@ -135,33 +118,22 @@ namespace winrt::StarlightGUI::implementation
         MenuFlyoutSeparator separator1;
 
         // 选项2.1
-        MenuFlyoutSubItem item2_1;
-        item2_1.Style(styleSub);
-        item2_1.Icon(CreateFontIcon(L"\ue912"));
-        item2_1.Text(L"设置状态");
-        MenuFlyoutItem item2_1_sub1;
-        item2_1_sub1.Style(style);
-        item2_1_sub1.Icon(CreateFontIcon(L"\ue769"));
-        item2_1_sub1.Text(L"暂停");
-        item2_1_sub1.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue912", L"设置状态");
+        auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue769", L"暂停", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (KernelInstance::_SuspendThread(item.Id())) {
-                CreateInfoBarAndDisplay(L"成功", L"成功暂停线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"成功暂停线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
                 LoadThreadList();
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法暂停线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法暂停线程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item2_1.Items().Append(item2_1_sub1);
-        MenuFlyoutItem item2_1_sub2;
-        item2_1_sub2.Style(style);
-        item2_1_sub2.Icon(CreateFontIcon(L"\ue768"));
-        item2_1_sub2.Text(L"恢复");
-        item2_1_sub2.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\ue768", L"恢复", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (KernelInstance::_ResumeThread(item.Id())) {
-                CreateInfoBarAndDisplay(L"成功", L"成功恢复进程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"成功恢复进程: " + item.Address() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_infoWindowInstance);
                 LoadThreadList();
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法恢复进程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法恢复进程: " + item.Address() + L" (" + to_hstring(item.Id()) + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item2_1.Items().Append(item2_1_sub2);
@@ -170,43 +142,28 @@ namespace winrt::StarlightGUI::implementation
         MenuFlyoutSeparator separator2;
 
         // 选项3.1
-        MenuFlyoutSubItem item3_1;
-        item3_1.Style(styleSub);
-        item3_1.Icon(CreateFontIcon(L"\ue8c8"));
-        item3_1.Text(L"复制信息");
-        MenuFlyoutItem item3_1_sub1;
-        item3_1_sub1.Style(style);
-        item3_1_sub1.Icon(CreateFontIcon(L"\ue943"));
-        item3_1_sub1.Text(L"TID");
-        item3_1_sub1.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
+        auto item3_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"TID", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(std::to_wstring(item.Id()))) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub1);
-        MenuFlyoutItem item3_1_sub2;
-        item3_1_sub2.Style(style);
-        item3_1_sub2.Icon(CreateFontIcon(L"\ueb19"));
-        item3_1_sub2.Text(L"ETHREAD");
-        item3_1_sub2.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", L"ETHREAD", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(item.EThread().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub2);
-        MenuFlyoutItem item3_1_sub3;
-        item3_1_sub3.Style(style);
-        item3_1_sub3.Icon(CreateFontIcon(L"\ueb1d"));
-        item3_1_sub3.Text(L"地址");
-        item3_1_sub3.Click([this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"地址", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(item.Address().c_str())) {
-                CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_infoWindowInstance);
             }
-            else CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
+            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_infoWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub3);
@@ -221,7 +178,7 @@ namespace winrt::StarlightGUI::implementation
         menuFlyout.Items().Append(separator2);
         menuFlyout.Items().Append(item3_1);
 
-        menuFlyout.ShowAt(listView, e.GetPosition(listView));
+        slg::ShowAt(menuFlyout, listView, e);
     }
 
     void Process_ThreadPage::ThreadListView_ContainerContentChanging(

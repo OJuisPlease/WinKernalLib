@@ -257,7 +257,6 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="SLG.h" />
     <ClInclude Include="TaskPage.xaml.h">
       <DependentUpon>TaskPage.xaml</DependentUpon>
       <SubType>Code</SubType>

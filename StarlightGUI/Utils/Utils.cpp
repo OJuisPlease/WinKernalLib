@@ -2,7 +2,106 @@
 #include "Utils.h"
 #include <winrt/XamlToolkit.WinUI.Controls.h>
 
-namespace winrt::StarlightGUI::implementation {
+namespace slg {
+    coroutine::coroutine() = default;
+
+    coroutine coroutine::promise_type::get_return_object() const noexcept { return {}; }
+
+    void coroutine::promise_type::return_void() const noexcept {}
+
+    std::suspend_never coroutine::promise_type::initial_suspend() const noexcept { return {}; }
+
+    std::suspend_never coroutine::promise_type::final_suspend() const noexcept { return {}; }
+
+    void coroutine::promise_type::unhandled_exception() const noexcept
+    {
+        try {
+            std::rethrow_exception(std::current_exception());
+        }
+        catch (const winrt::hresult_error& e) {
+            LOG_ERROR(L"App", L"===== Unhandled exception detected! =====");
+            LOG_ERROR(L"App", L"Type: 'winrt::hresult_error'");
+            LOG_ERROR(L"App", L"Code: %d", e.code().value);
+            LOG_ERROR(L"App", L"Message: %s", e.message().c_str());
+            LOG_ERROR(L"App", L"=========================================");
+        }
+        catch (const std::exception& e) {
+            LOG_ERROR(L"App", L"===== Unhandled exception detected! =====");
+            LOG_ERROR(L"App", L"Type: 'std::exception'");
+            LOG_ERROR(L"App", L"Message: %hs", e.what());
+            LOG_ERROR(L"App", L"=========================================");
+        }
+        catch (...) {
+            LOG_ERROR(L"App", L"===== Unhandled exception detected! =====");
+            LOG_ERROR(L"App", L"Type: OTHER/UNKNOWN");
+            LOG_ERROR(L"App", L"This should not happen!");
+            LOG_ERROR(L"App", L"=========================================");
+        }
+    }
+    Styles GetStyles()
+    {
+        auto resources = winrt::Microsoft::UI::Xaml::Application::Current().Resources();
+        return {
+            winrt::unbox_value<winrt::Microsoft::UI::Xaml::Style>(resources.TryLookup(winrt::box_value(L"MenuFlyoutItemStyle"))),
+            winrt::unbox_value<winrt::Microsoft::UI::Xaml::Style>(resources.TryLookup(winrt::box_value(L"MenuFlyoutSubItemStyle")))
+        };
+    }
+
+    MenuFlyoutItem CreateMenuItem(
+        Styles const& styles,
+        hstring const& glyph,
+        hstring const& text,
+        winrt::Microsoft::UI::Xaml::RoutedEventHandler const& click)
+    {
+        MenuFlyoutItem item;
+        item.Style(styles.Item);
+        item.Icon(CreateFontIcon(glyph));
+        item.Text(text);
+        if (click) item.Click(click);
+        return item;
+    }
+
+    MenuFlyoutItem CreateMenuItem(
+        Styles const& styles,
+        hstring const& text,
+        winrt::Microsoft::UI::Xaml::RoutedEventHandler const& click)
+    {
+        MenuFlyoutItem item;
+        item.Style(styles.Item);
+        item.Text(text);
+        if (click) item.Click(click);
+        return item;
+    }
+
+    MenuFlyoutSubItem CreateMenuSubItem(
+        Styles const& styles,
+        hstring const& glyph,
+        hstring const& text)
+    {
+        MenuFlyoutSubItem item;
+        item.Style(styles.SubItem);
+        item.Icon(CreateFontIcon(glyph));
+        item.Text(text);
+        return item;
+    }
+
+    MenuFlyoutSubItem CreateMenuSubItem(
+        Styles const& styles,
+        hstring const& text)
+    {
+        MenuFlyoutSubItem item;
+        item.Style(styles.SubItem);
+        item.Text(text);
+        return item;
+    }
+
+    void ShowAt(
+        winrt::Microsoft::UI::Xaml::Controls::MenuFlyout const& flyout,
+        winrt::Microsoft::UI::Xaml::Controls::ListView const& listView,
+        winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& e)
+    {
+        flyout.ShowAt(listView, e.GetPosition(listView));
+    }
     FontIcon CreateFontIcon(hstring glyph) {
         FontIcon fontIcon;
         fontIcon.Glyph(glyph);

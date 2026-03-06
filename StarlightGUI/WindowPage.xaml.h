@@ -14,7 +14,7 @@ namespace winrt::StarlightGUI::implementation
         void WindowListView_ContainerContentChanging(
             winrt::Microsoft::UI::Xaml::Controls::ListViewBase const& sender,
             winrt::Microsoft::UI::Xaml::Controls::ContainerContentChangingEventArgs const& args);
-        void ShowVisibleOnlyCheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void CheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
         void ColumnHeader_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         slg::coroutine ApplySort(bool& isAscending, const std::string& column);
@@ -37,7 +37,7 @@ namespace winrt::StarlightGUI::implementation
 
         winrt::Microsoft::UI::Xaml::DispatcherTimer reloadTimer;
 
-        inline static bool m_showVisibleOnly = false;
+        inline static bool m_showVisibleOnly, m_showNoTitle = false;
         inline static bool m_isLoading = false;
         inline static bool m_isNameAscending = true;
         inline static bool m_isBandAscending = true;
