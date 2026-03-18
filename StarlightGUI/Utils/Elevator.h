@@ -6,7 +6,7 @@
 #include <Utils/Utils.h>
 
 using namespace winrt;
-using namespace winrt::StarlightGUI::implementation;
+using namespace StarlightGUI::implementation;
 
 inline bool EnableAllPrivileges(HANDLE hToken) {
     DWORD dwSize;
