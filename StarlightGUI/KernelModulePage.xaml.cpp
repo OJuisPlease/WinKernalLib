@@ -304,7 +304,7 @@ namespace winrt::StarlightGUI::implementation
     {
         if (!IsLoaded()) return;
 
-        WaitAndReloadAsync(200);
+        WaitAndReloadAsync(100);
     }
 
     bool KernelModulePage::ApplyFilter(const winrt::StarlightGUI::KernelModuleInfo& kernelModule, hstring& query) {

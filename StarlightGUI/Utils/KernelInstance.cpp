@@ -528,11 +528,11 @@ namespace winrt::StarlightGUI::implementation {
 			UNICODE_STRING path[MAX_PATH];
 		};
 
-		LOG_WARNING(L"KernelInstance", L"Enum file mode: %s", to_hstring(enum_file_mode).c_str());
+		LOG_WARNING(L"KernelInstance", L"Enum file mode: %d", enum_file_mode);
 
 		INPUT inputs = { 0 };
 
-		if (enum_file_mode == "ENUM_FILE_IRP")
+		if (enum_file_mode == 1)
 		{
 			RtlInitUnicodeString(inputs.path, path.c_str());
 		}
@@ -546,7 +546,7 @@ namespace winrt::StarlightGUI::implementation {
 
 		inputs.nSize = sizeof(DATA_INFO) * 10000;
 		inputs.pBuffer = (DATA_INFO*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, inputs.nSize);
-		if (enum_file_mode == "ENUM_FILE_NTFSPARSER")
+		if (enum_file_mode == 2)
 		{
             LOG_WARNING(L"KernelInstance", L"Calling 0x%x from \"%s\"", IOCTL_NTFS_PARSER_ENUM_FILE2, __WFUNCTION__.c_str());
 			bRet = DeviceIoControl(driverDevice, IOCTL_NTFS_PARSER_ENUM_FILE2, &inputs, sizeof(INPUT), &nRet, sizeof(ULONG), 0, 0);
@@ -588,7 +588,7 @@ namespace winrt::StarlightGUI::implementation {
 				for (auto& [mft, idx] : keep) files.push_back(std::move(result[idx]));
 			}
 		}
-		else if (enum_file_mode == "ENUM_FILE_NTAPI")
+		else if (enum_file_mode == 0)
 		{
             LOG_WARNING(L"KernelInstance", L"Calling 0x%x from \"%s\"", IOCTL_QUERY_FILE2, __WFUNCTION__.c_str());
 			bRet = DeviceIoControl(driverDevice, IOCTL_QUERY_FILE2, &inputs, sizeof(INPUT), &nRet, sizeof(ULONG), 0, 0);
@@ -614,7 +614,7 @@ namespace winrt::StarlightGUI::implementation {
 				}
 			}
 		}
-		else if (enum_file_mode == "ENUM_FILE_IRP")
+		else if (enum_file_mode == 1)
 		{
             LOG_WARNING(L"KernelInstance", L"Calling 0x%x from \"%s\"", IOCTL_QUERY_FILE_IRP, __WFUNCTION__.c_str());
 			bRet = DeviceIoControl(driverDevice, IOCTL_QUERY_FILE_IRP, &inputs, sizeof(INPUT), &nRet, sizeof(ULONG), 0, 0);

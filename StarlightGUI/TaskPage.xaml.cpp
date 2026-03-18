@@ -847,8 +847,7 @@ namespace winrt::StarlightGUI::implementation
     void TaskPage::ProcessSearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
     {
         if (!IsLoaded()) return;
-        LoadingRing().IsActive(true);
-        WaitAndReloadAsync(200);
+        WaitAndReloadAsync(100);
     }
 
     bool TaskPage::ApplyFilter(const winrt::StarlightGUI::ProcessInfo& process, hstring& query) {

@@ -83,7 +83,7 @@
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="以 TrustedInstaller 权限运行 Starlight GUI"
-                    Header="高权限运行"
+                    Header="以高权限运行"
                     IsActionIconVisible="False"
                     IsClickEnabled="True">
                     <essential:SettingsCard.HeaderIcon>

@@ -20,12 +20,18 @@ namespace winrt::StarlightGUI::implementation {
         {
             auto userFolder = fs::path(GetInstalledLocationPath());
             auto configFilePath = userFolder / "StarlightGUI.json";
-            json configData;
+            json configData = json::object();
 
             if (fs::exists(configFilePath))
             {
-                std::ifstream configFile(configFilePath);
-                configFile >> configData;
+                try {
+                    std::ifstream configFile(configFilePath);
+                    configFile >> configData;
+                    if (!configData.is_object()) configData = json::object();
+                }
+                catch (...) {
+                    configData = json::object();
+                }
             }
 
             configData[key] = s_value;
@@ -40,31 +46,65 @@ namespace winrt::StarlightGUI::implementation {
     }
 
     template<typename T>
-    auto ReadConfig(std::string key, T defaultValue) {
+    T ReadConfig(std::string key, T defaultValue) {
         try
         {
             auto userFolder = fs::path(GetInstalledLocationPath());
             auto configFilePath = userFolder / "StarlightGUI.json";
+            json configData = json::object();
+            bool needWriteBack = false;
 
             if (fs::exists(configFilePath))
             {
-                std::ifstream configFile(configFilePath);
-                json configData;
-                configFile >> configData;
-
-                if (configData.contains(key))
-                {
-                    return configData[key];
+                try {
+                    std::ifstream configFile(configFilePath);
+                    configFile >> configData;
+                    if (!configData.is_object()) {
+                        configData = json::object();
+                        needWriteBack = true;
+                    }
+                }
+                catch (...) {
+                    configData = json::object();
+                    needWriteBack = true;
                 }
             }
+            else
+            {
+                needWriteBack = true;
+            }
+
+            if (configData.contains(key))
+            {
+                try {
+                    return configData[key].get<T>();
+                }
+                catch (...) {
+                    configData[key] = defaultValue;
+                    needWriteBack = true;
+                }
+            }
+            else
+            {
+                configData[key] = defaultValue;
+                needWriteBack = true;
+            }
+
+            if (needWriteBack)
+            {
+                try {
+                    std::ofstream configFile(configFilePath);
+                    configFile << configData.dump(4);
+                }
+                catch (...) {
+                }
+            }
+
+            return defaultValue;
         }
         catch (...)
         {
-            SaveConfig(key, defaultValue);
-            return ReadConfig(key, defaultValue);
+            return defaultValue;
         }
-
-        SaveConfig(key, defaultValue);
-        return ReadConfig(key, defaultValue);
     }
 }

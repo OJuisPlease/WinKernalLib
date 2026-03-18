@@ -140,7 +140,7 @@ bool Console::Initialize() {
 
 void Console::SetBackdropByConfig() {
     BOOL trueVal = TRUE;
-    auto type = background_type == "Static" ? DWMSBT_NONE : background_type == "Mica" ? (mica_type == "Base" ? DWMSBT_MAINWINDOW : DWMSBT_TABBEDWINDOW) : DWMSBT_TRANSIENTWINDOW;
+    auto type = background_type == 0 ? DWMSBT_NONE : background_type == 1 ? (mica_type == 0 ? DWMSBT_MAINWINDOW : DWMSBT_TABBEDWINDOW) : DWMSBT_TRANSIENTWINDOW;
     MARGINS margins = { -1 };
     DwmSetWindowAttribute(m_hConsoleWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &trueVal, sizeof(trueVal));
     DwmSetWindowAttribute(m_hConsoleWnd, DWMWA_SYSTEMBACKDROP_TYPE, &type, sizeof(type));

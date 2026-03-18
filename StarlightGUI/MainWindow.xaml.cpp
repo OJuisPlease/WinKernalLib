@@ -175,31 +175,31 @@ namespace winrt::StarlightGUI::implementation
 
     slg::coroutine MainWindow::LoadBackdrop()
     {
-        std::string option = "*";
+        int option = -1;
 
-        if (background_type == "Mica") {
+        if (background_type == 1) {
             CustomMicaBackdrop micaBackdrop = CustomMicaBackdrop();
 
             this->SystemBackdrop(micaBackdrop);
 
             option = mica_type;
-            if (option == "Base") {
+            if (option == 0) {
                 micaBackdrop.Kind(MicaKind::Base);
             }
             else {
                 micaBackdrop.Kind(MicaKind::BaseAlt);
             }
         }
-        else if (background_type == "Acrylic") {
+        else if (background_type == 2) {
             CustomAcrylicBackdrop acrylicBackdrop = CustomAcrylicBackdrop();
 
             this->SystemBackdrop(acrylicBackdrop);
 
             option = acrylic_type;
-            if (option == "Base") {
+            if (option == 1) {
                 acrylicBackdrop.Kind(DesktopAcrylicKind::Base);
             }
-            else if (option == "Thin") {
+            else if (option == 2) {
                 acrylicBackdrop.Kind(DesktopAcrylicKind::Thin);
             }
             else {
@@ -211,7 +211,7 @@ namespace winrt::StarlightGUI::implementation
             this->SystemBackdrop(nullptr);
         }
 
-        LOG_INFO(L"MainWindow", L"Loaded backdrop async with options: [%s, %s]", std::wstring(background_type.begin(), background_type.end()).c_str(), std::wstring(option.begin(), option.end()).c_str());
+        LOG_INFO(L"MainWindow", L"Loaded backdrop async with options: [%d, %d]", background_type, option);
         co_return;
     }
 
@@ -240,12 +240,12 @@ namespace winrt::StarlightGUI::implementation
                     bitmapImage.SetSource(stream);
                     brush.ImageSource(bitmapImage);
 
-                    brush.Stretch(image_stretch == "None" ? Stretch::None : image_stretch == "Uniform" ? Stretch::Uniform : image_stretch == "Fill" ? Stretch::Fill : Stretch::UniformToFill);
+                    brush.Stretch(image_stretch == 0 ? Stretch::None : image_stretch == 2 ? Stretch::Uniform : image_stretch == 1 ? Stretch::Fill : Stretch::UniformToFill);
                     brush.Opacity(image_opacity / 100.0);
 
                     MainWindowGrid().Background(brush);
 
-                    LOG_INFO(L"MainWindow", L"Loaded background async with options: [%s, %d, %s]", to_hstring(background_image).c_str(), image_opacity, to_hstring(image_stretch).c_str());
+                    LOG_INFO(L"MainWindow", L"Loaded background async with options: [%s, %d, %d]", to_hstring(background_image).c_str(), image_opacity, image_stretch);
                 }
             }
             catch (hresult_error) {
@@ -269,10 +269,10 @@ namespace winrt::StarlightGUI::implementation
 
     slg::coroutine MainWindow::LoadNavigation()
     {
-        if (navigation_style == "Left") {
+        if (navigation_style == 1) {
             RootNavigation().PaneDisplayMode(NavigationViewPaneDisplayMode::Left);
         }
-        else if (navigation_style == "Top") {
+        else if (navigation_style == 2) {
             RootNavigation().PaneDisplayMode(NavigationViewPaneDisplayMode::Top);
         }
         else
@@ -280,7 +280,7 @@ namespace winrt::StarlightGUI::implementation
             RootNavigation().PaneDisplayMode(NavigationViewPaneDisplayMode::LeftCompact);
         }
 
-        LOG_INFO(L"MainWindow", L"Loaded navigation async with options: [%s]", to_hstring(navigation_style).c_str());
+        LOG_INFO(L"MainWindow", L"Loaded navigation async with options: [%d]", navigation_style);
         co_return;
     }
 

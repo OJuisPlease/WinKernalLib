@@ -396,7 +396,7 @@ namespace winrt::StarlightGUI::implementation
             co_await LoadFileList();
         }
         if (failedCount > 0) {
-            slg::CreateInfoBarAndDisplay(L"失败", L"有" + to_hstring(failedCount) + L"个项目复制失败!", InfoBarSeverity::Error, g_mainWindowInstance);
+            slg::CreateInfoBarAndDisplay(L"失败", L"有" + to_hstring(failedCount) + L"个项目复制失败! 请尝试以高权限运行!", InfoBarSeverity::Error, g_mainWindowInstance);
         }
 
         co_return;
@@ -732,9 +732,7 @@ namespace winrt::StarlightGUI::implementation
 
     void FilePage::SearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) {
         if (!IsLoaded()) return;
-
-        LoadingRing().IsActive(true);
-        WaitAndReloadAsync(200);
+        WaitAndReloadAsync(100);
     }
 
     void FilePage::PathBox_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e) {
@@ -980,7 +978,7 @@ namespace winrt::StarlightGUI::implementation
                 co_await LoadFileList();
             }
             if (failedCount > 0) {
-                slg::CreateInfoBarAndDisplay(L"失败", L"有" + to_hstring(failedCount) + L"个文件复制失败!", InfoBarSeverity::Error, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(L"失败", L"有" + to_hstring(failedCount) + L"个文件复制失败! 请尝试以高权限运行!", InfoBarSeverity::Error, g_mainWindowInstance);
             }
         }
     }

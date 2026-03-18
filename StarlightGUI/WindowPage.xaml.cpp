@@ -827,7 +827,7 @@ namespace winrt::StarlightGUI::implementation
     {
         if (!IsLoaded()) return;
 
-        WaitAndReloadAsync(200);
+        WaitAndReloadAsync(100);
     }
 
     bool WindowPage::ApplyFilter(const winrt::StarlightGUI::WindowInfo& window, hstring& query) {

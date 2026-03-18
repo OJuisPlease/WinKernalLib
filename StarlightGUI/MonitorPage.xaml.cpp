@@ -954,7 +954,8 @@ namespace winrt::StarlightGUI::implementation
 
 	void MonitorPage::SearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
-		WaitAndReloadAsync(200);
+		if (!IsLoaded()) return;
+		WaitAndReloadAsync(100);
 	}
 
 	bool MonitorPage::ApplyFilter(const hstring& target, const hstring& query) {
