@@ -889,6 +889,11 @@ namespace winrt::StarlightGUI::implementation
     {
         if (m_isLoadingFiles || m_isPostLoading) co_return;
         RefreshButton().IsEnabled(false);
+
+        iconCache.clear();
+        iconLoadingKeys.clear();
+        iconPendingFiles.clear();
+
         co_await LoadFileList();
         RefreshButton().IsEnabled(true);
         co_return;

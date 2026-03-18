@@ -115,7 +115,7 @@ namespace winrt::StarlightGUI::implementation
     {
         if (!processForInfoWindow) co_return;
         // 跳过内核进程，获取可能导致异常或蓝屏
-        if (processForInfoWindow.Id() >= 0 && processForInfoWindow.Id() <= 272) {
+        if (processForInfoWindow.Name() == L"Idle" || processForInfoWindow.Name() == L"System" || processForInfoWindow.Name() == L"Registry" || processForInfoWindow.Name() == L"Memory Compression" || processForInfoWindow.Name() == L"Secure System" || processForInfoWindow.Name() == L"Unknown") {
             slg::CreateInfoBarAndDisplay(L"警告", L"该进程不包含任何此类型的信息！", InfoBarSeverity::Warning, g_infoWindowInstance);
             co_return;
         }

@@ -14,6 +14,8 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::StarlightGUI::implementation
 {
+    bool confirmed = false;
+
     DisasmPage::DisasmPage()
     {
         InitializeComponent();
@@ -129,6 +131,16 @@ namespace winrt::StarlightGUI::implementation
             }
         }
         else {
+            if (!confirmed) {
+                slg::CreateInfoBarAndDisplay(
+                    L"警告",
+                    L"写入内存可能会导致系统不稳定甚至崩溃! 请确保你知道自己在做什么!!! 再次点击以继续!!!",
+                    InfoBarSeverity::Warning,
+                    g_mainWindowInstance
+                );
+				confirmed = true;
+                co_return;
+			}
             ULONG64 address = 0, size = 0, data = 0;
             if (!HexStringToULong(AddressBox().Text().c_str(), address) || !StringToNumber(SizeBox().Text().c_str(), size) || !StringToNumber(ValueBox().Text().c_str(), data)) {
                 slg::CreateInfoBarAndDisplay(L"错误", L"输入的一个或多个值不合法!", InfoBarSeverity::Error, g_mainWindowInstance);
