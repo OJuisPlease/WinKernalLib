@@ -44,20 +44,6 @@ namespace winrt::StarlightGUI::implementation
         return value;
     }
 
-    template <typename T>
-    T FindVisualChild(winrt::Microsoft::UI::Xaml::DependencyObject const& parent)
-    {
-        if (!parent) return nullptr;
-
-        int count = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetChildrenCount(parent);
-        for (int i = 0; i < count; ++i) {
-            auto child = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetChild(parent, i);
-            if (auto typed = child.try_as<T>()) return typed;
-            if (auto nested = FindVisualChild<T>(child)) return nested;
-        }
-        return nullptr;
-    }
-
     static std::unordered_map<std::wstring, winrt::Microsoft::UI::Xaml::Media::ImageSource> iconCache;
     static std::unordered_map<std::wstring, winrt::hstring> descriptionCache;
     static HDC hdc{ nullptr };
@@ -452,7 +438,7 @@ namespace winrt::StarlightGUI::implementation
         int selectedItemId = -1;
         if (selectedItem) selectedItemId = selectedItem.as<winrt::StarlightGUI::ProcessInfo>().Id();
 
-        auto listScrollViewer = FindVisualChild<ScrollViewer>(ProcessListView());
+        auto listScrollViewer = slg::FindVisualChild<ScrollViewer>(ProcessListView());
         double verticalOffset = 0.0;
         if (listScrollViewer) verticalOffset = listScrollViewer.VerticalOffset();
 
@@ -737,7 +723,7 @@ namespace winrt::StarlightGUI::implementation
             int selectedItemId = -1;
             if (selectedItem) selectedItemId = selectedItem.as<winrt::StarlightGUI::ProcessInfo>().Id();
 
-            auto listScrollViewer = FindVisualChild<ScrollViewer>(ProcessListView());
+            auto listScrollViewer = slg::FindVisualChild<ScrollViewer>(ProcessListView());
             double verticalOffset = 0.0;
             if (listScrollViewer) verticalOffset = listScrollViewer.VerticalOffset();
 
@@ -854,7 +840,7 @@ namespace winrt::StarlightGUI::implementation
         auto root = container.ContentTemplateRoot();
         if (!root) return;
 
-        auto image = FindVisualChild<Image>(root);
+        auto image = slg::FindVisualChild<Image>(root);
         if (image) {
             image.Source(icon);
         }
@@ -870,7 +856,7 @@ namespace winrt::StarlightGUI::implementation
         auto root = container.ContentTemplateRoot();
         if (!root) return;
 
-        auto panel = FindVisualChild<StackPanel>(root);
+        auto panel = slg::FindVisualChild<StackPanel>(root);
         if (!panel || panel.Children().Size() < 2) return;
 
         auto text = panel.Children().GetAt(1).try_as<TextBlock>();
@@ -1045,7 +1031,7 @@ namespace winrt::StarlightGUI::implementation
             int selectedItemId = -1;
             if (selectedItem) selectedItemId = selectedItem.as<winrt::StarlightGUI::ProcessInfo>().Id();
 
-            auto listScrollViewer = FindVisualChild<ScrollViewer>(ProcessListView());
+            auto listScrollViewer = slg::FindVisualChild<ScrollViewer>(ProcessListView());
             double verticalOffset = 0.0;
             if (listScrollViewer) verticalOffset = listScrollViewer.VerticalOffset();
 

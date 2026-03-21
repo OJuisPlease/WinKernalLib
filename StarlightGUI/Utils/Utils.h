@@ -102,6 +102,20 @@ namespace slg {
         return parent.try_as<T>();
     }
 
+    template <typename T>
+    T FindVisualChild(winrt::Microsoft::UI::Xaml::DependencyObject const& parent)
+    {
+        if (!parent) return nullptr;
+
+        int count = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetChildrenCount(parent);
+        for (int i = 0; i < count; ++i) {
+            auto child = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetChild(parent, i);
+            if (auto typed = child.try_as<T>()) return typed;
+            if (auto nested = FindVisualChild<T>(child)) return nested;
+        }
+        return nullptr;
+    }
+
     inline bool SelectItemOnRightTapped(
         winrt::Microsoft::UI::Xaml::Controls::ListView const& listView,
         winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& e,
