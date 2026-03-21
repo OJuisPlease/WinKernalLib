@@ -115,8 +115,10 @@
                         HorizontalAlignment="Stretch"
                         BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                         BorderThickness="1,0,0,0"
+                        Click="ColumnHeader_Click"
                         Content="基址"
-                        CornerRadius="0" />
+                        CornerRadius="0"
+                        Tag="ImageBase" />
                     <Button
                         x:Name="DriverObjectHeaderButton"
                         Grid.Column="2"
@@ -124,8 +126,10 @@
                         HorizontalAlignment="Stretch"
                         BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                         BorderThickness="1,0,0,0"
+                        Click="ColumnHeader_Click"
                         Content="驱动对象"
-                        CornerRadius="0" />
+                        CornerRadius="0"
+                        Tag="DriverObject" />
                     <Button
                         x:Name="SizeHeaderButton"
                         Grid.Column="3"

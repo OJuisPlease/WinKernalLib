@@ -14,6 +14,7 @@
 #include <winrt/Windows.Graphics.Imaging.h>
 #include <winrt/Windows.Foundation.h>
 #include <Psapi.h>
+#include <array>
 #include <sstream>
 #include <iomanip>
 #include <shellapi.h>
@@ -911,22 +912,26 @@ namespace winrt::StarlightGUI::implementation
     {
         Button clickedButton = sender.as<Button>();
         winrt::hstring columnName = clickedButton.Tag().as<winrt::hstring>();
+        
+        struct SortBinding {
+            wchar_t const* tag;
+            char const* column;
+            bool* ascending;
+        };
 
-        if (columnName == L"Name")
-        {
-            ApplySort(m_isNameAscending, "Name");
-        }
-        else if (columnName == L"CpuUsage")
-        {
-            ApplySort(m_isCpuAscending, "CpuUsage");
-        }
-        else if (columnName == L"MemoryUsage")
-        {
-            ApplySort(m_isMemoryAscending, "MemoryUsage");
-        }
-        else if (columnName == L"Id")
-        {
-            ApplySort(m_isIdAscending, "Id");
+        static const std::array<SortBinding, 5> bindings{ {
+            { L"Name", "Name", &TaskPage::m_isNameAscending },
+            { L"EProcess", "EProcess", &TaskPage::m_isEProcessAscending },
+            { L"CpuUsage", "CpuUsage", &TaskPage::m_isCpuAscending },
+            { L"MemoryUsage", "MemoryUsage", &TaskPage::m_isMemoryAscending },
+            { L"Id", "Id", &TaskPage::m_isIdAscending },
+        } };
+
+        for (auto const& binding : bindings) {
+            if (columnName == binding.tag) {
+                ApplySort(*binding.ascending, binding.column);
+                break;
+            }
         }
     }
 
@@ -948,8 +953,30 @@ namespace winrt::StarlightGUI::implementation
     {
         if (column.empty()) return;
 
+        enum class SortColumn {
+            Unknown,
+            Name,
+            EProcess,
+            CpuUsage,
+            MemoryUsage,
+            Id
+        };
+
+        auto resolveSortColumn = [&](const std::string& key) -> SortColumn {
+            if (key == "Name") return SortColumn::Name;
+            if (key == "EProcess") return SortColumn::EProcess;
+            if (key == "CpuUsage") return SortColumn::CpuUsage;
+            if (key == "MemoryUsage") return SortColumn::MemoryUsage;
+            if (key == "Id") return SortColumn::Id;
+            return SortColumn::Unknown;
+            };
+
+        auto activeColumn = resolveSortColumn(column);
+        if (activeColumn == SortColumn::Unknown) return;
+
         if (updateHeader) {
             NameHeaderButton().Content(box_value(L"进程"));
+            EProcessHeaderButton().Content(box_value(L"EPROCESS"));
             CpuHeaderButton().Content(box_value(L"CPU"));
             MemoryHeaderButton().Content(box_value(L"内存"));
             IdHeaderButton().Content(box_value(L"PID"));
@@ -973,72 +1000,44 @@ namespace winrt::StarlightGUI::implementation
             processes.push_back(process);
         }
 
-        if (column == "Name") {
-            if (isAscending) {
-                if (updateHeader) NameHeaderButton().Content(box_value(L"进程 ↓"));
-                std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-                    return aName < bName;
-                    });
-            }
-            else {
-                if (updateHeader) NameHeaderButton().Content(box_value(L"进程 ↑"));
-                std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-                    return aName > bName;
-                    });
-            }
+        if (updateHeader) {
+            if (activeColumn == SortColumn::Name) NameHeaderButton().Content(box_value(isAscending ? L"进程 ↓" : L"进程 ↑"));
+            if (activeColumn == SortColumn::EProcess) EProcessHeaderButton().Content(box_value(isAscending ? L"EPROCESS ↓" : L"EPROCESS ↑"));
+            if (activeColumn == SortColumn::CpuUsage) CpuHeaderButton().Content(box_value(isAscending ? L"CPU ↓" : L"CPU ↑"));
+            if (activeColumn == SortColumn::MemoryUsage) MemoryHeaderButton().Content(box_value(isAscending ? L"内存 ↓" : L"内存 ↑"));
+            if (activeColumn == SortColumn::Id) IdHeaderButton().Content(box_value(isAscending ? L"PID ↓" : L"PID ↑"));
         }
-        else if (column == "CpuUsage") {
-            if (isAscending) {
-                if (updateHeader) CpuHeaderButton().Content(box_value(L"CPU ↓"));
-                std::sort(processes.begin(), processes.end(), [&](auto a, auto b) {
-                    return parseCpu(a.CpuUsage()) < parseCpu(b.CpuUsage());
-                    });
+
+        auto lessByActiveColumn = [&](const winrt::StarlightGUI::ProcessInfo& a, const winrt::StarlightGUI::ProcessInfo& b) -> bool {
+            switch (activeColumn) {
+            case SortColumn::Name:
+            {
+                std::wstring aName = a.Name().c_str();
+                std::wstring bName = b.Name().c_str();
+                std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
+                std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
+                return aName < bName;
             }
-            else {
-                if (updateHeader) CpuHeaderButton().Content(box_value(L"CPU ↑"));
-                std::sort(processes.begin(), processes.end(), [&](auto a, auto b) {
-                    return parseCpu(a.CpuUsage()) > parseCpu(b.CpuUsage());
-                    });
+            case SortColumn::CpuUsage:
+                return parseCpu(a.CpuUsage()) < parseCpu(b.CpuUsage());
+            case SortColumn::EProcess:
+                return a.EProcessULong() < b.EProcessULong();
+            case SortColumn::MemoryUsage:
+                return a.MemoryUsageByte() < b.MemoryUsageByte();
+            case SortColumn::Id:
+                return a.Id() < b.Id();
+            default:
+                return false;
             }
-        }
-        else if (column == "MemoryUsage") {
-            if (isAscending) {
-                if (updateHeader) MemoryHeaderButton().Content(box_value(L"内存 ↓"));
-                std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
-                    return a.MemoryUsageByte() < b.MemoryUsageByte();
-                    });
-            }
-            else {
-                if (updateHeader) MemoryHeaderButton().Content(box_value(L"内存 ↑"));
-                std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
-                    return a.MemoryUsageByte() > b.MemoryUsageByte();
-                    });
-            }
-        }
-        else if (column == "Id") {
-            if (isAscending) {
-                if (updateHeader) IdHeaderButton().Content(box_value(L"PID ↓"));
-                std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
-                    return a.Id() < b.Id();
-                    });
-            }
-            else {
-                if (updateHeader) IdHeaderButton().Content(box_value(L"PID ↑"));
-                std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
-                    return a.Id() > b.Id();
-                    });
-            }
+            };
+
+        if (isAscending) {
+            std::sort(processes.begin(), processes.end(), lessByActiveColumn);
         }
         else {
-            return;
+            std::sort(processes.begin(), processes.end(), [&](const auto& a, const auto& b) {
+                return lessByActiveColumn(b, a);
+                });
         }
 
         if (updateHeader) {
@@ -1238,7 +1237,7 @@ namespace winrt::StarlightGUI::implementation
             if (result == ContentDialogResult::Primary) {
                 int tokenType = dialog.Token();
 
-                // 如果是TrustedInstaller的话要先启动服务，检测一下
+                // 如果是 TrustedInstaller 的话要先启动服务，检测一下
                 if (tokenType == 1) {
                     if (FindProcessId(L"TrustedInstaller.exe") == 0) {
                         slg::CreateInfoBarAndDisplay(L"失败", L"未启动TrustedInstaller服务！请手动启动！", InfoBarSeverity::Error, g_mainWindowInstance);
@@ -1271,7 +1270,7 @@ namespace winrt::StarlightGUI::implementation
                 co_return;
             }
 
-            // 管理员权限时，尝试使用内核结束
+            // 普通无法结束时，尝试使用内核结束
             if (TaskUtils::_TerminateProcess(item.Id())) {
                 slg::CreateInfoBarAndDisplay(L"成功", L"成功结束进程: " + item.Name() + L" (" + to_hstring(item.Id()) + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                 WaitAndReloadAsync(1000);

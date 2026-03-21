@@ -20,12 +20,15 @@ namespace winrt::StarlightGUI::implementation
 
         void ColumnHeader_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ApplySort(bool& isAscending, const std::string& column);
+        void SortThreadList(bool isAscending, const std::string& column, bool updateHeader);
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::StarlightGUI::ThreadInfo> m_threadList{
             winrt::single_threaded_observable_vector<winrt::StarlightGUI::ThreadInfo>()
         };
 
         inline static bool m_isIdAscending = true;
+        inline static bool m_isEThreadAscending = true;
+        inline static bool m_isAddressAscending = true;
         inline static bool m_isPriorityAscending = true;
         inline static bool currentSortingOption;
         inline static std::string currentSortingType;

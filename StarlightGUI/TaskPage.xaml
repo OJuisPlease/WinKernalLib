@@ -114,8 +114,10 @@
                         HorizontalAlignment="Stretch"
                         BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                         BorderThickness="1,0,0,0"
+                        Click="ColumnHeader_Click"
                         Content="EPROCESS"
-                        CornerRadius="0" />
+                        CornerRadius="0"
+                        Tag="EProcess" />
                     <Button
                         x:Name="CpuHeaderButton"
                         Grid.Column="2"

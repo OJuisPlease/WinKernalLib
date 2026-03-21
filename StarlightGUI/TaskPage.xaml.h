@@ -49,6 +49,7 @@ namespace winrt::StarlightGUI::implementation
 
         inline static bool m_isLoading = false;
         inline static bool m_isNameAscending = true;
+        inline static bool m_isEProcessAscending = true;
         inline static bool m_isCpuAscending = true;
         inline static bool m_isMemoryAscending = true;
         inline static bool m_isIdAscending = true;

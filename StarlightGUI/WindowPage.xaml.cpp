@@ -15,6 +15,7 @@
 #include <winrt/Windows.Graphics.Imaging.h>
 #include <winrt/Windows.Foundation.h>
 #include <shellapi.h>
+#include <array>
 #include <sstream>
 #include <iomanip>
 #include <mutex>
@@ -721,99 +722,114 @@ namespace winrt::StarlightGUI::implementation
         Button clickedButton = sender.as<Button>();
         winrt::hstring columnName = clickedButton.Tag().as<winrt::hstring>();
 
-        if (columnName == L"Name")
-        {
-            ApplySort(m_isNameAscending, "Name");
-        }
-        else if (columnName == L"Band")
-        {
-            ApplySort(m_isBandAscending, "Band");
-        }
-        else if (columnName == L"Hwnd")
-        {
-            ApplySort(m_isHwndAscending, "Hwnd");
+        struct SortBinding {
+            wchar_t const* tag;
+            char const* column;
+            bool* ascending;
+        };
+
+        static const std::array<SortBinding, 4> bindings{ {
+            { L"Name", "Name", &WindowPage::m_isNameAscending },
+            { L"Band", "Band", &WindowPage::m_isBandAscending },
+            { L"WindowStyle", "WindowStyle", &WindowPage::m_isWindowStyleAscending },
+            { L"Hwnd", "Hwnd", &WindowPage::m_isHwndAscending },
+        } };
+
+        for (auto const& binding : bindings) {
+            if (columnName == binding.tag) {
+                ApplySort(*binding.ascending, binding.column);
+                break;
+            }
         }
     }
 
     // 排序切换
     slg::coroutine WindowPage::ApplySort(bool& isAscending, const std::string& column)
     {
-        NameHeaderButton().Content(box_value(L"窗口"));
-        BandHeaderButton().Content(box_value(L"ZBID"));
-        HwndHeaderButton().Content(box_value(L"HWND"));
-
-        std::vector<winrt::StarlightGUI::WindowInfo> sortedWindows;
-
-        for (auto const& window : m_windowList) {
-            sortedWindows.push_back(window);
-        }
-
-        if (column == "Name") {
-            if (isAscending) {
-                NameHeaderButton().Content(box_value(L"窗口 ↓"));
-                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
-                    return aName < bName;
-                    });
-
-            }
-            else {
-                NameHeaderButton().Content(box_value(L"窗口 ↑"));
-                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
-                    return aName > bName;
-                    });
-            }
-        }
-        else if (column == "Band") {
-            if (isAscending) {
-                BandHeaderButton().Content(box_value(L"ZBID ↓"));
-                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
-                    return a.Band() < b.Band();
-                    });
-
-            }
-            else {
-                BandHeaderButton().Content(box_value(L"ZBID ↑"));
-                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
-                    return a.Band() > b.Band();
-                    });
-            }
-        }
-        else if (column == "Hwnd") {
-            if (isAscending) {
-                HwndHeaderButton().Content(box_value(L"HWND ↓"));
-                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
-                    return a.Hwnd() < b.Hwnd();
-                    });
-
-            }
-            else {
-                HwndHeaderButton().Content(box_value(L"HWND ↑"));
-                std::sort(sortedWindows.begin(), sortedWindows.end(), [](auto a, auto b) {
-                    return a.Hwnd() > b.Hwnd();
-                    });
-            }
-        }
-
-        m_windowList.Clear();
-        for (auto& window : sortedWindows) {
-            m_windowList.Append(window);
-        }
+        SortWindowList(isAscending, column, true);
 
         isAscending = !isAscending;
         currentSortingOption = !isAscending;
         currentSortingType = column;
 
         co_return;
+    }
+
+    void WindowPage::SortWindowList(bool isAscending, const std::string& column, bool updateHeader)
+    {
+        if (column.empty()) return;
+
+        enum class SortColumn {
+            Unknown,
+            Name,
+            Band,
+            WindowStyle,
+            Hwnd
+        };
+
+        auto resolveSortColumn = [&](const std::string& key) -> SortColumn {
+            if (key == "Name") return SortColumn::Name;
+            if (key == "Band") return SortColumn::Band;
+            if (key == "WindowStyle") return SortColumn::WindowStyle;
+            if (key == "Hwnd") return SortColumn::Hwnd;
+            return SortColumn::Unknown;
+            };
+
+        auto activeColumn = resolveSortColumn(column);
+        if (activeColumn == SortColumn::Unknown) return;
+
+        if (updateHeader) {
+            NameHeaderButton().Content(box_value(L"窗口"));
+            BandHeaderButton().Content(box_value(L"ZBID"));
+            WindowStyleHeaderButton().Content(box_value(L"样式"));
+            HwndHeaderButton().Content(box_value(L"HWND"));
+
+            if (activeColumn == SortColumn::Name) NameHeaderButton().Content(box_value(isAscending ? L"窗口 ↓" : L"窗口 ↑"));
+            if (activeColumn == SortColumn::Band) BandHeaderButton().Content(box_value(isAscending ? L"ZBID ↓" : L"ZBID ↑"));
+            if (activeColumn == SortColumn::WindowStyle) WindowStyleHeaderButton().Content(box_value(isAscending ? L"样式 ↓" : L"样式 ↑"));
+            if (activeColumn == SortColumn::Hwnd) HwndHeaderButton().Content(box_value(isAscending ? L"HWND ↓" : L"HWND ↑"));
+        }
+
+        std::vector<winrt::StarlightGUI::WindowInfo> sortedWindows;
+        sortedWindows.reserve(m_windowList.Size());
+        for (auto const& window : m_windowList) {
+            sortedWindows.push_back(window);
+        }
+
+        auto lessByActiveColumn = [&](const winrt::StarlightGUI::WindowInfo& a, const winrt::StarlightGUI::WindowInfo& b) -> bool {
+            switch (activeColumn) {
+            case SortColumn::Name:
+            {
+                std::wstring aName = a.Name().c_str();
+                std::wstring bName = b.Name().c_str();
+                std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
+                std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
+                return aName < bName;
+            }
+            case SortColumn::Band:
+                return a.Band() < b.Band();
+            case SortColumn::WindowStyle:
+                return (uint32_t)a.WindowStyle() < (uint32_t)b.WindowStyle();
+            case SortColumn::Hwnd:
+                return a.Hwnd() < b.Hwnd();
+            default:
+                return false;
+            }
+            };
+
+        if (isAscending) {
+            std::sort(sortedWindows.begin(), sortedWindows.end(), lessByActiveColumn);
+        }
+        else {
+            std::sort(sortedWindows.begin(), sortedWindows.end(), [&](const auto& a, const auto& b) {
+                return lessByActiveColumn(b, a);
+                });
+        }
+
+        m_windowList.Clear();
+        for (auto& window : sortedWindows) {
+            m_windowList.Append(window);
+        }
     }
 
     void WindowPage::CheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)

@@ -15,6 +15,7 @@
 #include <winrt/Windows.Foundation.h>
 #include <TlHelp32.h>
 #include <Psapi.h>
+#include <array>
 #include <sstream>
 #include <iomanip>
 #include <Utils/Utils.h>
@@ -229,66 +230,122 @@ namespace winrt::StarlightGUI::implementation
         Button clickedButton = sender.as<Button>();
         winrt::hstring columnName = clickedButton.Tag().as<winrt::hstring>();
 
-        IdHeaderButton().Content(box_value(L"TID"));
-        PriorityHeaderButton().Content(box_value(L"优先级"));
+        struct SortBinding {
+            wchar_t const* tag;
+            char const* column;
+            bool* ascending;
+        };
 
-        if (columnName == L"Id")
-        {
-            ApplySort(m_isIdAscending, "Id");
-        } 
-        else if (columnName == L"Priority")
-        {
-            ApplySort(m_isPriorityAscending, "Priority");
+        static const std::array<SortBinding, 4> bindings{ {
+            { L"Id", "Id", &Process_ThreadPage::m_isIdAscending },
+            { L"EThread", "EThread", &Process_ThreadPage::m_isEThreadAscending },
+            { L"Address", "Address", &Process_ThreadPage::m_isAddressAscending },
+            { L"Priority", "Priority", &Process_ThreadPage::m_isPriorityAscending },
+        } };
+
+        for (auto const& binding : bindings) {
+            if (columnName == binding.tag) {
+                ApplySort(*binding.ascending, binding.column);
+                break;
+            }
         }
     }
 
     // 排序切换
     void Process_ThreadPage::ApplySort(bool& isAscending, const std::string& column)
     {
-        std::vector<winrt::StarlightGUI::ThreadInfo> sortedThreads;
+        SortThreadList(isAscending, column, true);
 
+        isAscending = !isAscending;
+        currentSortingOption = !isAscending;
+        currentSortingType = column;
+    }
+
+    void Process_ThreadPage::SortThreadList(bool isAscending, const std::string& column, bool updateHeader)
+    {
+        if (column.empty()) return;
+
+        enum class SortColumn {
+            Unknown,
+            Id,
+            EThread,
+            Address,
+            Priority
+        };
+
+        auto resolveSortColumn = [&](const std::string& key) -> SortColumn {
+            if (key == "Id") return SortColumn::Id;
+            if (key == "EThread") return SortColumn::EThread;
+            if (key == "Address") return SortColumn::Address;
+            if (key == "Priority") return SortColumn::Priority;
+            return SortColumn::Unknown;
+            };
+
+        auto activeColumn = resolveSortColumn(column);
+        if (activeColumn == SortColumn::Unknown) return;
+
+        if (updateHeader) {
+            IdHeaderButton().Content(box_value(L"TID"));
+            EThreadHeaderButton().Content(box_value(L"ETHREAD"));
+            AddressHeaderButton().Content(box_value(L"地址"));
+            PriorityHeaderButton().Content(box_value(L"优先级"));
+
+            if (activeColumn == SortColumn::Id) IdHeaderButton().Content(box_value(isAscending ? L"TID ↓" : L"TID ↑"));
+            if (activeColumn == SortColumn::EThread) EThreadHeaderButton().Content(box_value(isAscending ? L"ETHREAD ↓" : L"ETHREAD ↑"));
+            if (activeColumn == SortColumn::Address) AddressHeaderButton().Content(box_value(isAscending ? L"地址 ↓" : L"地址 ↑"));
+            if (activeColumn == SortColumn::Priority) PriorityHeaderButton().Content(box_value(isAscending ? L"优先级 ↓" : L"优先级 ↑"));
+        }
+
+        std::vector<winrt::StarlightGUI::ThreadInfo> sortedThreads;
+        sortedThreads.reserve(m_threadList.Size());
         for (auto const& process : m_threadList) {
             sortedThreads.push_back(process);
         }
 
-        if (column == "Id") {
-            if (isAscending) {
-                IdHeaderButton().Content(box_value(L"TID ↓"));
-                std::sort(sortedThreads.begin(), sortedThreads.end(), [](auto a, auto b) {
-                    return a.Id() < b.Id();
-                    });
+        auto parseHex = [](winrt::hstring const& text) -> ULONG64 {
+            ULONG64 value = 0;
+            if (HexStringToULong(text.c_str(), value)) return value;
+            return 0;
+            };
 
+        auto lessByActiveColumn = [&](const winrt::StarlightGUI::ThreadInfo& a, const winrt::StarlightGUI::ThreadInfo& b) -> bool {
+            switch (activeColumn) {
+            case SortColumn::Id:
+                return a.Id() < b.Id();
+            case SortColumn::EThread:
+            {
+                auto aValue = parseHex(a.EThread());
+                auto bValue = parseHex(b.EThread());
+                if (aValue != bValue) return aValue < bValue;
+                return a.EThread() < b.EThread();
             }
-            else {
-                IdHeaderButton().Content(box_value(L"TID ↑"));
-                std::sort(sortedThreads.begin(), sortedThreads.end(), [](auto a, auto b) {
-                    return a.Id() > b.Id();
-                    });
+            case SortColumn::Address:
+            {
+                auto aValue = parseHex(a.Address());
+                auto bValue = parseHex(b.Address());
+                if (aValue != bValue) return aValue < bValue;
+                return a.Address() < b.Address();
             }
-        } else if (column == "Priority") {
-            if (isAscending) {
-                PriorityHeaderButton().Content(box_value(L"优先级 ↓"));
-                std::sort(sortedThreads.begin(), sortedThreads.end(), [](auto a, auto b) {
-                    return a.Priority() < b.Priority();
-                    });
+            case SortColumn::Priority:
+                return a.Priority() < b.Priority();
+            default:
+                return false;
+            }
+            };
 
-            }
-            else {
-                PriorityHeaderButton().Content(box_value(L"优先级 ↑"));
-                std::sort(sortedThreads.begin(), sortedThreads.end(), [](auto a, auto b) {
-                    return a.Priority() > b.Priority();
-                    });
-            }
+        if (isAscending) {
+            std::sort(sortedThreads.begin(), sortedThreads.end(), lessByActiveColumn);
+        }
+        else {
+            std::sort(sortedThreads.begin(), sortedThreads.end(), [&](const auto& a, const auto& b) {
+                return lessByActiveColumn(b, a);
+                });
         }
 
         m_threadList.Clear();
         for (auto& thread : sortedThreads) {
             m_threadList.Append(thread);
         }
-
-        isAscending = !isAscending;
-        currentSortingOption = !isAscending;
-        currentSortingType = column;
     }
 }
 

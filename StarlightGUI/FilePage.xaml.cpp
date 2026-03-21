@@ -7,6 +7,7 @@
 #include <chrono>
 #include <shellapi.h>
 #include <CopyFileDialog.xaml.h>
+#include <array>
 #include <unordered_set>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 
@@ -796,17 +797,23 @@ namespace winrt::StarlightGUI::implementation
             return;
         }
 
-        if (columnName == L"Name")
-        {
-            ApplySort(m_isNameAscending, "Name");
-        }
-        else if (columnName == L"ModifyTime")
-        {
-            ApplySort(m_isModifyTimeAscending, "ModifyTime");
-        }
-        else if (columnName == L"Size")
-        {
-            ApplySort(m_isSizeAscending, "Size");
+        struct SortBinding {
+            wchar_t const* tag;
+            char const* column;
+            bool* ascending;
+        };
+
+        static const std::array<SortBinding, 3> bindings{ {
+            { L"Name", "Name", &FilePage::m_isNameAscending },
+            { L"ModifyTime", "ModifyTime", &FilePage::m_isModifyTimeAscending },
+            { L"Size", "Size", &FilePage::m_isSizeAscending },
+        } };
+
+        for (auto const& binding : bindings) {
+            if (columnName == binding.tag) {
+                ApplySort(*binding.ascending, binding.column);
+                break;
+            }
         }
 
         ResetState();
@@ -836,69 +843,73 @@ namespace winrt::StarlightGUI::implementation
     // 排序切换
     slg::coroutine FilePage::ApplySort(bool& isAscending, const std::string& column)
     {
-        NameHeaderButton().Content(box_value(L"文件"));
-        ModifyTimeHeaderButton().Content(box_value(L"修改时间"));
-        SizeHeaderButton().Content(box_value(L"大小"));
-
-        if (column == "Name") {
-            if (isAscending) {
-                NameHeaderButton().Content(box_value(L"文件 ↓"));
-                std::sort(m_allFiles.begin(), m_allFiles.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
-                    return aName < bName;
-                    });
-
-            }
-            else {
-                NameHeaderButton().Content(box_value(L"文件 ↑"));
-                std::sort(m_allFiles.begin(), m_allFiles.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
-                    return aName > bName;
-                    });
-            }
-        } else if (column == "ModifyTime") {
-            if (isAscending) {
-                ModifyTimeHeaderButton().Content(box_value(L"修改时间 ↓"));
-                std::sort(m_allFiles.begin(), m_allFiles.end(), [](auto a, auto b) {
-                    return a.ModifyTimeULong() < b.ModifyTimeULong();
-                    });
-
-            }
-            else {
-                ModifyTimeHeaderButton().Content(box_value(L"修改时间 ↑"));
-                std::sort(m_allFiles.begin(), m_allFiles.end(), [](auto a, auto b) {
-                    return a.ModifyTimeULong() > b.ModifyTimeULong();
-                    });
-            }
-        } else if (column == "Size") {
-            if (isAscending) {
-                SizeHeaderButton().Content(box_value(L"大小 ↓"));
-                std::sort(m_allFiles.begin(), m_allFiles.end(), [](auto a, auto b) {
-                    return a.SizeULong() < b.SizeULong();
-                    });
-
-            }
-            else {
-                SizeHeaderButton().Content(box_value(L"大小 ↑"));
-                std::sort(m_allFiles.begin(), m_allFiles.end(), [](auto a, auto b) {
-                    return a.SizeULong() > b.SizeULong();
-                    });
-            }
-        }
+        SortFileList(isAscending, column, true);
 
         isAscending = !isAscending;
         currentSortingOption = !isAscending;
         currentSortingType = column;
 
         co_return;
+    }
+
+    void FilePage::SortFileList(bool isAscending, const std::string& column, bool updateHeader)
+    {
+        if (column.empty()) return;
+
+        enum class SortColumn {
+            Unknown,
+            Name,
+            ModifyTime,
+            Size
+        };
+
+        auto resolveSortColumn = [&](const std::string& key) -> SortColumn {
+            if (key == "Name") return SortColumn::Name;
+            if (key == "ModifyTime") return SortColumn::ModifyTime;
+            if (key == "Size") return SortColumn::Size;
+            return SortColumn::Unknown;
+            };
+
+        auto activeColumn = resolveSortColumn(column);
+        if (activeColumn == SortColumn::Unknown) return;
+
+        if (updateHeader) {
+            NameHeaderButton().Content(box_value(L"文件"));
+            ModifyTimeHeaderButton().Content(box_value(L"修改时间"));
+            SizeHeaderButton().Content(box_value(L"大小"));
+
+            if (activeColumn == SortColumn::Name) NameHeaderButton().Content(box_value(isAscending ? L"文件 ↓" : L"文件 ↑"));
+            if (activeColumn == SortColumn::ModifyTime) ModifyTimeHeaderButton().Content(box_value(isAscending ? L"修改时间 ↓" : L"修改时间 ↑"));
+            if (activeColumn == SortColumn::Size) SizeHeaderButton().Content(box_value(isAscending ? L"大小 ↓" : L"大小 ↑"));
+        }
+
+        auto lessByActiveColumn = [&](const winrt::StarlightGUI::FileInfo& a, const winrt::StarlightGUI::FileInfo& b) -> bool {
+            switch (activeColumn) {
+            case SortColumn::Name:
+            {
+                std::wstring aName = a.Name().c_str();
+                std::wstring bName = b.Name().c_str();
+                std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
+                std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
+                return aName < bName;
+            }
+            case SortColumn::ModifyTime:
+                return a.ModifyTimeULong() < b.ModifyTimeULong();
+            case SortColumn::Size:
+                return a.SizeULong() < b.SizeULong();
+            default:
+                return false;
+            }
+            };
+
+        if (isAscending) {
+            std::sort(m_allFiles.begin(), m_allFiles.end(), lessByActiveColumn);
+        }
+        else {
+            std::sort(m_allFiles.begin(), m_allFiles.end(), [&](const auto& a, const auto& b) {
+                return lessByActiveColumn(b, a);
+                });
+        }
     }
 
     slg::coroutine FilePage::RefreshButton_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)

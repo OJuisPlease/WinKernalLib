@@ -18,6 +18,7 @@ namespace winrt::StarlightGUI::implementation
 
         void ColumnHeader_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         slg::coroutine ApplySort(bool& isAscending, const std::string& column);
+        void SortWindowList(bool isAscending, const std::string& column, bool updateHeader);
 
         void SearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         bool ApplyFilter(const winrt::StarlightGUI::WindowInfo& window, hstring& query);
@@ -41,6 +42,7 @@ namespace winrt::StarlightGUI::implementation
         inline static bool m_isLoading = false;
         inline static bool m_isNameAscending = true;
         inline static bool m_isBandAscending = true;
+        inline static bool m_isWindowStyleAscending = true;
         inline static bool m_isHwndAscending = true;
         inline static bool currentSortingOption;
         inline static std::string currentSortingType;

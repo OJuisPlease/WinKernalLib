@@ -16,6 +16,7 @@
 #include <winrt/Windows.Foundation.h>
 #include <sstream>
 #include <iomanip>
+#include <array>
 #include <mutex>
 #include <unordered_set>
 #include <InfoWindow.xaml.h>
@@ -206,97 +207,121 @@ namespace winrt::StarlightGUI::implementation
         Button clickedButton = sender.as<Button>();
         winrt::hstring columnName = clickedButton.Tag().as<winrt::hstring>();
 
-        if (columnName == L"Name")
-        {
-            ApplySort(m_isNameAscending, "Name");
-        }
-        else if (columnName == L"Size")
-        {
-            ApplySort(m_isSizeAscending, "Size");
-        }
-        else if (columnName == L"LoadOrder")
-        {
-            ApplySort(m_isLoadOrderAscending, "LoadOrder");
+        struct SortBinding {
+            wchar_t const* tag;
+            char const* column;
+            bool* ascending;
+        };
+
+        static const std::array<SortBinding, 5> bindings{ {
+            { L"Name", "Name", &KernelModulePage::m_isNameAscending },
+            { L"ImageBase", "ImageBase", &KernelModulePage::m_isImageBaseAscending },
+            { L"DriverObject", "DriverObject", &KernelModulePage::m_isDriverObjectAscending },
+            { L"Size", "Size", &KernelModulePage::m_isSizeAscending },
+            { L"LoadOrder", "LoadOrder", &KernelModulePage::m_isLoadOrderAscending },
+        } };
+
+        for (auto const& binding : bindings) {
+            if (columnName == binding.tag) {
+                ApplySort(*binding.ascending, binding.column);
+                break;
+            }
         }
     }
 
     // 排序切换
     slg::coroutine KernelModulePage::ApplySort(bool& isAscending, const std::string& column)
     {
-        NameHeaderButton().Content(box_value(L"模块"));
-        SizeHeaderButton().Content(box_value(L"大小"));
-        LoadOrderHeaderButton().Content(box_value(L"加载顺序"));
-
-        std::vector<winrt::StarlightGUI::KernelModuleInfo> sortedKernelModules;
-
-        for (auto const& kernelModule : m_kernelModuleList) {
-            sortedKernelModules.push_back(kernelModule);
-        }
-
-        if (column == "Name") {
-            if (isAscending) {
-                NameHeaderButton().Content(box_value(L"模块 ↓"));
-                std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
-                    return aName < bName;
-                    });
-
-            }
-            else {
-                NameHeaderButton().Content(box_value(L"模块 ↑"));
-                std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [](auto a, auto b) {
-                    std::wstring aName = a.Name().c_str();
-                    std::wstring bName = b.Name().c_str();
-                    std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
-                    std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
-                    return aName > bName;
-                    });
-            }
-        }
-        else if (column == "Size") {
-            if (isAscending) {
-                SizeHeaderButton().Content(box_value(L"大小 ↓"));
-                std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [](auto a, auto b) {
-                    return a.SizeULong() < b.SizeULong();
-                    });
-            }
-            else {
-                SizeHeaderButton().Content(box_value(L"大小 ↑"));
-                std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [](auto a, auto b) {
-                    return a.SizeULong() > b.SizeULong();
-                    });
-            }
-        }
-        else if (column == "LoadOrder") {
-            if (isAscending) {
-                LoadOrderHeaderButton().Content(box_value(L"加载顺序 ↓"));
-                std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [](auto a, auto b) {
-                    return a.LoadOrderULong() < b.LoadOrderULong();
-                    });
-            }
-            else {
-                LoadOrderHeaderButton().Content(box_value(L"加载顺序 ↑"));
-                std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [](auto a, auto b) {
-                    return a.LoadOrderULong() > b.LoadOrderULong();
-                    });
-            }
-        }
-
-        m_kernelModuleList.Clear();
-        for (auto& kernelModule : sortedKernelModules) {
-            m_kernelModuleList.Append(kernelModule);
-        }
+        SortKernelModuleList(isAscending, column, true);
 
         isAscending = !isAscending;
         currentSortingOption = !isAscending;
         currentSortingType = column;
 
         co_return;
+    }
+
+    void KernelModulePage::SortKernelModuleList(bool isAscending, const std::string& column, bool updateHeader)
+    {
+        if (column.empty()) return;
+
+        enum class SortColumn {
+            Unknown,
+            Name,
+            ImageBase,
+            DriverObject,
+            Size,
+            LoadOrder
+        };
+
+        auto resolveSortColumn = [&](const std::string& key) -> SortColumn {
+            if (key == "Name") return SortColumn::Name;
+            if (key == "ImageBase") return SortColumn::ImageBase;
+            if (key == "DriverObject") return SortColumn::DriverObject;
+            if (key == "Size") return SortColumn::Size;
+            if (key == "LoadOrder") return SortColumn::LoadOrder;
+            return SortColumn::Unknown;
+            };
+
+        auto activeColumn = resolveSortColumn(column);
+        if (activeColumn == SortColumn::Unknown) return;
+
+        if (updateHeader) {
+            NameHeaderButton().Content(box_value(L"模块"));
+            ImageBaseHeaderButton().Content(box_value(L"基址"));
+            DriverObjectHeaderButton().Content(box_value(L"驱动对象"));
+            SizeHeaderButton().Content(box_value(L"大小"));
+            LoadOrderHeaderButton().Content(box_value(L"加载顺序"));
+
+            if (activeColumn == SortColumn::Name) NameHeaderButton().Content(box_value(isAscending ? L"模块 ↓" : L"模块 ↑"));
+            if (activeColumn == SortColumn::ImageBase) ImageBaseHeaderButton().Content(box_value(isAscending ? L"基址 ↓" : L"基址 ↑"));
+            if (activeColumn == SortColumn::DriverObject) DriverObjectHeaderButton().Content(box_value(isAscending ? L"驱动对象 ↓" : L"驱动对象 ↑"));
+            if (activeColumn == SortColumn::Size) SizeHeaderButton().Content(box_value(isAscending ? L"大小 ↓" : L"大小 ↑"));
+            if (activeColumn == SortColumn::LoadOrder) LoadOrderHeaderButton().Content(box_value(isAscending ? L"加载顺序 ↓" : L"加载顺序 ↑"));
+        }
+
+        std::vector<winrt::StarlightGUI::KernelModuleInfo> sortedKernelModules;
+        sortedKernelModules.reserve(m_kernelModuleList.Size());
+        for (auto const& kernelModule : m_kernelModuleList) {
+            sortedKernelModules.push_back(kernelModule);
+        }
+
+        auto lessByActiveColumn = [&](const winrt::StarlightGUI::KernelModuleInfo& a, const winrt::StarlightGUI::KernelModuleInfo& b) -> bool {
+            switch (activeColumn) {
+            case SortColumn::Name:
+            {
+                std::wstring aName = a.Name().c_str();
+                std::wstring bName = b.Name().c_str();
+                std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
+                std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
+                return aName < bName;
+            }
+            case SortColumn::ImageBase:
+                return a.ImageBaseULong() < b.ImageBaseULong();
+            case SortColumn::DriverObject:
+                return a.DriverObjectULong() < b.DriverObjectULong();
+            case SortColumn::Size:
+                return a.SizeULong() < b.SizeULong();
+            case SortColumn::LoadOrder:
+                return a.LoadOrderULong() < b.LoadOrderULong();
+            default:
+                return false;
+            }
+            };
+
+        if (isAscending) {
+            std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), lessByActiveColumn);
+        }
+        else {
+            std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [&](const auto& a, const auto& b) {
+                return lessByActiveColumn(b, a);
+                });
+        }
+
+        m_kernelModuleList.Clear();
+        for (auto& kernelModule : sortedKernelModules) {
+            m_kernelModuleList.Append(kernelModule);
+        }
     }
 
     void KernelModulePage::KernelModuleSearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)

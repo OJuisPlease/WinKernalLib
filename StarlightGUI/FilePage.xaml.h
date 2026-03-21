@@ -22,6 +22,7 @@ namespace winrt::StarlightGUI::implementation
 
         void ColumnHeader_Click(IInspectable const& sender, RoutedEventArgs const& e);
         slg::coroutine ApplySort(bool& isAscending, const std::string& column);
+        void SortFileList(bool isAscending, const std::string& column, bool updateHeader);
 
         void PathBox_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e);
         void SearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);

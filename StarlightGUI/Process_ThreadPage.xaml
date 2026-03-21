@@ -68,21 +68,27 @@
                         CornerRadius="0"
                         Tag="Id" />
                     <Button
+                        x:Name="EThreadHeaderButton"
                         Grid.Column="1"
                         Height="32"
                         HorizontalAlignment="Stretch"
                         BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                         BorderThickness="1,0,0,0"
+                        Click="ColumnHeader_Click"
                         Content="ETHREAD"
-                        CornerRadius="0" />
+                        CornerRadius="0"
+                        Tag="EThread" />
                     <Button
+                        x:Name="AddressHeaderButton"
                         Grid.Column="2"
                         Height="32"
                         HorizontalAlignment="Stretch"
                         BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                         BorderThickness="1,0,0,0"
+                        Click="ColumnHeader_Click"
                         Content="地址"
-                        CornerRadius="0" />
+                        CornerRadius="0"
+                        Tag="Address" />
                     <Button
                         Grid.Column="3"
                         Height="32"

@@ -21,6 +21,7 @@ namespace winrt::StarlightGUI::implementation
 
         void ColumnHeader_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         slg::coroutine ApplySort(bool& isAscending, const std::string& column);
+        void SortKernelModuleList(bool isAscending, const std::string& column, bool updateHeader);
 
         void KernelModuleSearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         bool ApplyFilter(const winrt::StarlightGUI::KernelModuleInfo& kernelModule, hstring& query);
@@ -38,6 +39,8 @@ namespace winrt::StarlightGUI::implementation
 
         inline static bool m_isLoading = false;
         inline static bool m_isNameAscending = true;
+        inline static bool m_isImageBaseAscending = true;
+        inline static bool m_isDriverObjectAscending = true;
         inline static bool m_isSizeAscending = true;
         inline static bool m_isLoadOrderAscending = true;
         inline static bool currentSortingOption;
