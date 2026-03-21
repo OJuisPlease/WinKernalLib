@@ -36,6 +36,7 @@ namespace winrt::StarlightGUI::implementation
 		ElevatedRunButton().IsOn(elevated_run);
         DangerousConfirmButton().IsOn(dangerous_confirm);
         CheckUpdateButton().IsOn(check_update);
+        TaskAutoRefreshButton().IsOn(task_auto_refresh);
 
         ImagePathText().Text(to_hstring(background_image));
         ImageOpacitySlider().Value(image_opacity);
@@ -132,6 +133,13 @@ namespace winrt::StarlightGUI::implementation
 		slg::CreateInfoBarAndDisplay(L"提示", L"该设置需要重启以生效!", InfoBarSeverity::Informational, g_mainWindowInstance);
         check_update = CheckUpdateButton().IsOn();
         SaveConfig("check_update", check_update);
+    }
+
+    void SettingsPage::TaskAutoRefreshButton_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        if (!IsLoaded()) return;
+        task_auto_refresh = TaskAutoRefreshButton().IsOn();
+        SaveConfig("task_auto_refresh", task_auto_refresh);
     }
 
     void SettingsPage::ClearImageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) {

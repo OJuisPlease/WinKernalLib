@@ -66,16 +66,28 @@ namespace winrt::StarlightGUI::implementation
         InitializeComponent();
 
         ProcessListView().ItemsSource(m_processList);
+        autoRefreshTimer.Interval(std::chrono::seconds(2));
+        autoRefreshTimer.Tick([this](auto&&, auto&&) {
+            if (!task_auto_refresh) return;
+            if (!IsLoaded()) return;
+            if (m_isSorting) return;
+            if (m_isLoadingProcesses || m_isPostLoading) return;
+            if (!g_mainWindowInstance->m_openWindows.empty()) return;
+
+            LoadProcessList(false);
+            });
 
         TaskUtils::EnsurePrivileges();
 
         this->Loaded([this](auto&&, auto&&) {
             hdc = GetDC(NULL);
+            autoRefreshTimer.Start();
             LoadProcessList();
 			});
 
         this->Unloaded([this](auto&&, auto&&) {
             reloadTimer.Stop();
+            autoRefreshTimer.Stop();
             ReleaseDC(NULL, hdc);
             });
 
@@ -377,6 +389,9 @@ namespace winrt::StarlightGUI::implementation
         if (args.InRecycleQueue()) return;
 
         if (auto process = args.Item().try_as<winrt::StarlightGUI::ProcessInfo>()) {
+            UpdateRealizedItemDescription(process, process.Description());
+            UpdateRealizedItemMetrics(process);
+
             if (process.Icon()) {
                 UpdateRealizedItemIcon(process, process.Icon());
             }
@@ -386,7 +401,7 @@ namespace winrt::StarlightGUI::implementation
         }
     }
 
-    winrt::Windows::Foundation::IAsyncAction TaskPage::LoadProcessList()
+    winrt::Windows::Foundation::IAsyncAction TaskPage::LoadProcessList(bool fullReload)
     {
         if (m_isLoadingProcesses) {
             co_return;
@@ -397,14 +412,13 @@ namespace winrt::StarlightGUI::implementation
         m_isLoadingProcesses = true;
 
         LOG_INFO(__WFUNCTION__, L"Loading process list...");
-        m_processList.Clear();
-        LoadingRing().IsActive(true);
+        if (fullReload) {
+            LoadingRing().IsActive(true);
+        }
 
         auto start = std::chrono::steady_clock::now();
 
         auto lifetime = get_strong();
-        int selectedItemId = -1;
-        if (ProcessListView().SelectedItem()) selectedItemId = ProcessListView().SelectedItem().as<winrt::StarlightGUI::ProcessInfo>().Id();
 
         winrt::hstring query = ProcessSearchBox().Text();
 
@@ -428,6 +442,18 @@ namespace winrt::StarlightGUI::implementation
         LOG_INFO(__WFUNCTION__, L"Enumerated processes, %d entry(s).", processes.size());
 
         co_await wil::resume_foreground(DispatcherQueue());
+        if (!IsLoaded() || loadToken != m_currentLoadToken) {
+            m_isLoadingProcesses = false;
+            co_return;
+        }
+        
+        auto selectedItem = ProcessListView().SelectedItem();
+        int selectedItemId = -1;
+        if (selectedItem) selectedItemId = selectedItem.as<winrt::StarlightGUI::ProcessInfo>().Id();
+
+        auto listScrollViewer = FindVisualChild<ScrollViewer>(ProcessListView());
+        double verticalOffset = 0.0;
+        if (listScrollViewer) verticalOffset = listScrollViewer.VerticalOffset();
 
         for (auto& process : processes) {
             bool shouldRemove = query.empty() ? false : ApplyFilter(process, query);
@@ -449,15 +475,87 @@ namespace winrt::StarlightGUI::implementation
                 }
             }
 
-            m_processList.Append(process);
             visibleProcesses.push_back(process);
         }
 
-        m_isPostLoading = true;
-        LoadMetaForCurrentList(visibleProcesses, loadToken);
+        std::vector<winrt::StarlightGUI::ProcessInfo> currentProcesses;
 
-        // 恢复排序
-        ApplySort(currentSortingOption, currentSortingType);
+        if (fullReload) {
+            m_processList.Clear();
+            for (auto const& process : visibleProcesses) {
+                m_processList.Append(process);
+            }
+
+            // 恢复排序
+            ApplySort(currentSortingOption, currentSortingType);
+
+            currentProcesses.reserve(m_processList.Size());
+            for (auto const& process : m_processList) currentProcesses.push_back(process);
+        }
+        else {
+            std::unordered_map<int32_t, winrt::StarlightGUI::ProcessInfo> incomingByPid;
+            incomingByPid.reserve(visibleProcesses.size());
+            for (auto const& process : visibleProcesses) {
+                incomingByPid[process.Id()] = process;
+            }
+
+            std::unordered_map<int32_t, winrt::StarlightGUI::ProcessInfo> existingByPid;
+            existingByPid.reserve(m_processList.Size());
+            for (auto const& process : m_processList) {
+                existingByPid[process.Id()] = process;
+            }
+
+            for (int i = static_cast<int>(m_processList.Size()) - 1; i >= 0; --i) {
+                auto process = m_processList.GetAt(i);
+                if (incomingByPid.find(process.Id()) == incomingByPid.end()) {
+                    m_processList.RemoveAt(i);
+                }
+            }
+
+            for (auto const& process : visibleProcesses) {
+                auto existingIt = existingByPid.find(process.Id());
+                if (existingIt == existingByPid.end()) {
+                    m_processList.Append(process);
+                    continue;
+                }
+
+                auto existing = existingIt->second;
+                auto oldPath = std::wstring(existing.ExecutablePath().c_str());
+                auto newPath = std::wstring(process.ExecutablePath().c_str());
+                bool pathChanged = _wcsicmp(oldPath.c_str(), newPath.c_str()) != 0;
+
+                existing.Name(process.Name());
+                existing.ExecutablePath(process.ExecutablePath());
+                existing.Status(process.Status());
+                existing.EProcess(process.EProcess());
+                existing.EProcessULong(process.EProcessULong());
+                existing.MemoryUsageByte(process.MemoryUsageByte());
+
+                if (!process.Description().empty()) {
+                    existing.Description(process.Description());
+                    UpdateRealizedItemDescription(existing, process.Description());
+                }
+                else if (pathChanged) {
+                    existing.Description(L"");
+                }
+
+                if (pathChanged) {
+                    existing.Icon(nullptr);
+                }
+                if (process.Icon()) {
+                    existing.Icon(process.Icon());
+                    UpdateRealizedItemIcon(existing, process.Icon());
+                }
+
+                UpdateRealizedItemMetrics(existing);
+            }
+
+            currentProcesses.reserve(m_processList.Size());
+            for (auto const& process : m_processList) currentProcesses.push_back(process);
+        }
+
+        m_isPostLoading = true;
+        LoadMetaForCurrentList(currentProcesses, loadToken, fullReload);
 
         auto end = std::chrono::steady_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -466,13 +564,48 @@ namespace winrt::StarlightGUI::implementation
         std::wstringstream countText;
         countText << L"共 " << m_processList.Size() << L" 个进程 (" << duration << " ms)";
         ProcessCountText().Text(countText.str());
-        LoadingRing().IsActive(false);
+        if (fullReload) {
+            LoadingRing().IsActive(false);
+        }
+
+        if (fullReload) {
+            bool restoredSelection = false;
+            if (selectedItemId != -1) {
+                for (auto const& process : m_processList) {
+                    if (process.Id() == selectedItemId) {
+                        ProcessListView().SelectedItem(process);
+                        restoredSelection = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!restoredSelection) {
+                ProcessListView().SelectedItem(nullptr);
+            }
+
+            if (listScrollViewer) {
+                listScrollViewer.ChangeView(nullptr, verticalOffset, nullptr, true);
+            }
+        }
+        else if (selectedItemId != -1) {
+            bool foundSelected = false;
+            for (auto const& process : m_processList) {
+                if (process.Id() == selectedItemId) {
+                    foundSelected = true;
+                    break;
+                }
+            }
+            if (!foundSelected) {
+                ProcessListView().SelectedItem(nullptr);
+            }
+        }
 
         LOG_INFO(__WFUNCTION__, L"Loaded process list, %d entry(s) in total.", m_processList.Size());
         m_isLoadingProcesses = false;
     }
 
-    winrt::Windows::Foundation::IAsyncAction TaskPage::LoadMetaForCurrentList(std::vector<winrt::StarlightGUI::ProcessInfo> processes, uint64_t loadToken)
+    winrt::Windows::Foundation::IAsyncAction TaskPage::LoadMetaForCurrentList(std::vector<winrt::StarlightGUI::ProcessInfo> processes, uint64_t loadToken, bool fullReload)
     {
         auto lifetime = get_strong();
 
@@ -565,6 +698,7 @@ namespace winrt::StarlightGUI::implementation
 
             if (process.Status().empty()) process.Status(L"(未知)");
             if (process.EProcess().empty()) process.EProcess(L"(未知)");
+            UpdateRealizedItemMetrics(process);
 
             auto descIt = descriptionTable.find(process.Id());
             if (descIt != descriptionTable.end()) {
@@ -597,11 +731,37 @@ namespace winrt::StarlightGUI::implementation
 
         if (loadToken != m_currentLoadToken) co_return;
 
-        auto oldTransitions = ProcessListView().ItemContainerTransitions();
-        ProcessListView().ItemContainerTransitions().Clear();
-        ProcessListView().ItemsSource(nullptr);
-        ProcessListView().ItemsSource(m_processList);
-        ProcessListView().ItemContainerTransitions(oldTransitions);
+        if (fullReload) {
+            auto selectedItem = ProcessListView().SelectedItem();
+            int selectedItemId = -1;
+            if (selectedItem) selectedItemId = selectedItem.as<winrt::StarlightGUI::ProcessInfo>().Id();
+
+            auto listScrollViewer = FindVisualChild<ScrollViewer>(ProcessListView());
+            double verticalOffset = 0.0;
+            if (listScrollViewer) verticalOffset = listScrollViewer.VerticalOffset();
+
+            auto oldTransitions = ProcessListView().ItemContainerTransitions();
+            ProcessListView().ItemContainerTransitions().Clear();
+            ProcessListView().ItemsSource(nullptr);
+            ProcessListView().ItemsSource(m_processList);
+            ProcessListView().ItemContainerTransitions(oldTransitions);
+
+            if (selectedItemId != -1) {
+                for (auto const& process : m_processList) {
+                    if (process.Id() == selectedItemId) {
+                        ProcessListView().SelectedItem(process);
+                        break;
+                    }
+                }
+            }
+
+            if (listScrollViewer) {
+                listScrollViewer.ChangeView(nullptr, verticalOffset, nullptr, true);
+            }
+        }
+        else if (!currentSortingType.empty()) {
+            SortProcessList(currentSortingOption, currentSortingType, false);
+        }
 
         m_isPostLoading = false;
         co_return;
@@ -718,6 +878,35 @@ namespace winrt::StarlightGUI::implementation
         }
     }
 
+    void TaskPage::UpdateRealizedItemMetrics(winrt::StarlightGUI::ProcessInfo const& process)
+    {
+        if (!process || !IsLoaded()) return;
+
+        auto container = ProcessListView().ContainerFromItem(process).try_as<ListViewItem>();
+        if (!container) return;
+
+        auto root = container.ContentTemplateRoot().try_as<Grid>();
+        if (!root) return;
+
+        for (auto const& child : root.Children()) {
+            if (auto text = child.try_as<TextBlock>()) {
+                int column = Grid::GetColumn(text);
+                if (column == 2) {
+                    text.Text(process.EProcess());
+                }
+                else if (column == 3) {
+                    text.Text(process.CpuUsage());
+                }
+                else if (column == 4) {
+                    text.Text(process.MemoryUsage());
+                }
+                else if (column == 5) {
+                    text.Text(process.Status());
+                }
+            }
+        }
+    }
+
     void TaskPage::ColumnHeader_Click(IInspectable const& sender, RoutedEventArgs const& e)
     {
         Button clickedButton = sender.as<Button>();
@@ -744,10 +933,27 @@ namespace winrt::StarlightGUI::implementation
     // 排序切换
     slg::coroutine TaskPage::ApplySort(bool& isAscending, const std::string& column)
     {
-        NameHeaderButton().Content(box_value(L"进程"));
-        CpuHeaderButton().Content(box_value(L"CPU"));
-        MemoryHeaderButton().Content(box_value(L"内存"));
-        IdHeaderButton().Content(box_value(L"PID"));
+        m_isSorting = true;
+        SortProcessList(isAscending, column, true);
+        m_isSorting = false;
+
+        isAscending = !isAscending;
+        currentSortingOption = !isAscending;
+        currentSortingType = column;
+
+        co_return;
+    }
+
+    void TaskPage::SortProcessList(bool isAscending, const std::string& column, bool updateHeader)
+    {
+        if (column.empty()) return;
+
+        if (updateHeader) {
+            NameHeaderButton().Content(box_value(L"进程"));
+            CpuHeaderButton().Content(box_value(L"CPU"));
+            MemoryHeaderButton().Content(box_value(L"内存"));
+            IdHeaderButton().Content(box_value(L"PID"));
+        }
 
         auto parseCpu = [](winrt::hstring const& value) mutable -> double {
             if (value.empty()) return 0.0;
@@ -759,7 +965,7 @@ namespace winrt::StarlightGUI::implementation
             catch (...) {
                 return 0.0;
             }
-        };
+            };
 
         std::vector<winrt::StarlightGUI::ProcessInfo> processes;
         processes.reserve(m_processList.Size());
@@ -769,38 +975,35 @@ namespace winrt::StarlightGUI::implementation
 
         if (column == "Name") {
             if (isAscending) {
-                NameHeaderButton().Content(box_value(L"进程 ↓"));
+                if (updateHeader) NameHeaderButton().Content(box_value(L"进程 ↓"));
                 std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
                     std::wstring aName = a.Name().c_str();
                     std::wstring bName = b.Name().c_str();
                     std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
                     std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
                     return aName < bName;
                     });
-                
             }
             else {
-                NameHeaderButton().Content(box_value(L"进程 ↑"));
+                if (updateHeader) NameHeaderButton().Content(box_value(L"进程 ↑"));
                 std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
                     std::wstring aName = a.Name().c_str();
                     std::wstring bName = b.Name().c_str();
                     std::transform(aName.begin(), aName.end(), aName.begin(), ::towlower);
                     std::transform(bName.begin(), bName.end(), bName.begin(), ::towlower);
-
                     return aName > bName;
                     });
             }
         }
         else if (column == "CpuUsage") {
             if (isAscending) {
-                CpuHeaderButton().Content(box_value(L"CPU ↓"));
+                if (updateHeader) CpuHeaderButton().Content(box_value(L"CPU ↓"));
                 std::sort(processes.begin(), processes.end(), [&](auto a, auto b) {
                     return parseCpu(a.CpuUsage()) < parseCpu(b.CpuUsage());
                     });
             }
             else {
-                CpuHeaderButton().Content(box_value(L"CPU ↑"));
+                if (updateHeader) CpuHeaderButton().Content(box_value(L"CPU ↑"));
                 std::sort(processes.begin(), processes.end(), [&](auto a, auto b) {
                     return parseCpu(a.CpuUsage()) > parseCpu(b.CpuUsage());
                     });
@@ -808,13 +1011,13 @@ namespace winrt::StarlightGUI::implementation
         }
         else if (column == "MemoryUsage") {
             if (isAscending) {
-                MemoryHeaderButton().Content(box_value(L"内存 ↓"));
+                if (updateHeader) MemoryHeaderButton().Content(box_value(L"内存 ↓"));
                 std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
                     return a.MemoryUsageByte() < b.MemoryUsageByte();
                     });
             }
             else {
-                MemoryHeaderButton().Content(box_value(L"内存 ↑"));
+                if (updateHeader) MemoryHeaderButton().Content(box_value(L"内存 ↑"));
                 std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
                     return a.MemoryUsageByte() > b.MemoryUsageByte();
                     });
@@ -822,29 +1025,72 @@ namespace winrt::StarlightGUI::implementation
         }
         else if (column == "Id") {
             if (isAscending) {
-                IdHeaderButton().Content(box_value(L"PID ↓"));
+                if (updateHeader) IdHeaderButton().Content(box_value(L"PID ↓"));
                 std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
                     return a.Id() < b.Id();
                     });
             }
             else {
-                IdHeaderButton().Content(box_value(L"PID ↑"));
+                if (updateHeader) IdHeaderButton().Content(box_value(L"PID ↑"));
                 std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
                     return a.Id() > b.Id();
                     });
             }
         }
-
-        m_processList.Clear();
-        for (auto& process : processes) {
-            m_processList.Append(process);
+        else {
+            return;
         }
 
-        isAscending = !isAscending;
-        currentSortingOption = !isAscending;
-        currentSortingType = column;
+        if (updateHeader) {
+            auto selectedItem = ProcessListView().SelectedItem();
+            int selectedItemId = -1;
+            if (selectedItem) selectedItemId = selectedItem.as<winrt::StarlightGUI::ProcessInfo>().Id();
 
-        co_return;
+            auto listScrollViewer = FindVisualChild<ScrollViewer>(ProcessListView());
+            double verticalOffset = 0.0;
+            if (listScrollViewer) verticalOffset = listScrollViewer.VerticalOffset();
+
+            m_processList.Clear();
+            for (auto const& process : processes) {
+                m_processList.Append(process);
+            }
+
+            bool restoredSelection = false;
+            if (selectedItemId != -1) {
+                for (auto const& process : m_processList) {
+                    if (process.Id() == selectedItemId) {
+                        ProcessListView().SelectedItem(process);
+                        restoredSelection = true;
+                        break;
+                    }
+                }
+            }
+            if (!restoredSelection) {
+                ProcessListView().SelectedItem(nullptr);
+            }
+
+            if (listScrollViewer) {
+                listScrollViewer.ChangeView(nullptr, verticalOffset, nullptr, true);
+            }
+            return;
+        }
+
+        for (uint32_t targetIndex = 0; targetIndex < processes.size(); ++targetIndex) {
+            auto desired = processes[targetIndex];
+            auto current = m_processList.GetAt(targetIndex);
+            if (current.Id() == desired.Id()) continue;
+
+            uint32_t foundIndex = targetIndex + 1;
+            while (foundIndex < m_processList.Size()) {
+                if (m_processList.GetAt(foundIndex).Id() == desired.Id()) {
+                    auto item = m_processList.GetAt(foundIndex);
+                    m_processList.RemoveAt(foundIndex);
+                    m_processList.InsertAt(targetIndex, item);
+                    break;
+                }
+                ++foundIndex;
+            }
+        }
     }
 
     void TaskPage::ProcessSearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
@@ -1045,7 +1291,7 @@ namespace winrt::StarlightGUI::implementation
         reloadTimer.Stop();
         reloadTimer.Interval(std::chrono::milliseconds(interval));
         reloadTimer.Tick([this](auto&&, auto&&) {
-            if (g_mainWindowInstance->m_openWindows.empty()) LoadProcessList();
+            if (g_mainWindowInstance->m_openWindows.empty()) LoadProcessList(true);
             reloadTimer.Stop();
             });
         reloadTimer.Start();

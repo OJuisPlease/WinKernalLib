@@ -83,6 +83,6 @@ extern winrt::hstring kernelPath, astralPath, wtmPath, iamKeyHackerPath;
 extern std::wstring unused;
 extern int enum_file_mode, background_type, mica_type, acrylic_type, navigation_style, image_stretch;
 extern std::string background_image;
-extern bool enum_strengthen, pdh_first, elevated_run, dangerous_confirm, check_update;
+extern bool enum_strengthen, pdh_first, elevated_run, dangerous_confirm, check_update, task_auto_refresh;
 extern bool hypervisor_mode;
 extern int image_opacity, disasm_count;

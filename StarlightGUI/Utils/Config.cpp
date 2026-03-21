@@ -12,6 +12,7 @@ namespace winrt::StarlightGUI::implementation {
         elevated_run = ReadConfig("elevated_run", false);
         dangerous_confirm = ReadConfig("dangerous_confirm", true);
         check_update = ReadConfig("check_update", true);
+        task_auto_refresh = ReadConfig("task_auto_refresh", true);
         navigation_style = ReadConfig("navigation_style", 0);
         background_image = ReadConfig("background_image", std::string(""));
         image_opacity = ReadConfig("image_opacity", 20);

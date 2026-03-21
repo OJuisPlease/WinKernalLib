@@ -63,6 +63,25 @@
                 <essential:SettingsCard
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
+                    Description="任务管理器会周期性刷新进程列表，并尽量保持当前滚动位置和选中项"
+                    Header="任务自动刷新"
+                    IsActionIconVisible="False"
+                    IsClickEnabled="True">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="16"
+                            Glyph="&#xe823;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        x:Name="TaskAutoRefreshButton"
+                        Margin="0,0,-80,0"
+                        Toggled="TaskAutoRefreshButton_Toggled" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard
+                    Margin="0,0,0,10"
+                    essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="即使 NVML 可用，依旧使用系统 PDH 为 GPU 提供的数据"
                     Header="PDH 数据优先"
                     IsActionIconVisible="False"

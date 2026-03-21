@@ -24,15 +24,17 @@ namespace winrt::StarlightGUI::implementation
         void ColumnHeader_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
         slg::coroutine ApplySort(bool& isAscending, const std::string& column);
+        void SortProcessList(bool isAscending, const std::string& column, bool updateHeader);
         void ProcessSearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         bool ApplyFilter(const winrt::StarlightGUI::ProcessInfo& process, hstring& query);
 
-        winrt::Windows::Foundation::IAsyncAction LoadProcessList();
-        winrt::Windows::Foundation::IAsyncAction LoadMetaForCurrentList(std::vector<winrt::StarlightGUI::ProcessInfo> processes, uint64_t loadToken);
+        winrt::Windows::Foundation::IAsyncAction LoadProcessList(bool fullReload = true);
+        winrt::Windows::Foundation::IAsyncAction LoadMetaForCurrentList(std::vector<winrt::StarlightGUI::ProcessInfo> processes, uint64_t loadToken, bool fullReload);
         winrt::Windows::Foundation::IAsyncAction WaitAndReloadAsync(int interval);
         winrt::Windows::Foundation::IAsyncAction GetProcessIconAsync(winrt::StarlightGUI::ProcessInfo process);
         void UpdateRealizedItemIcon(winrt::StarlightGUI::ProcessInfo const& process, winrt::Microsoft::UI::Xaml::Media::ImageSource const& icon);
         void UpdateRealizedItemDescription(winrt::StarlightGUI::ProcessInfo const& process, winrt::hstring const& description);
+        void UpdateRealizedItemMetrics(winrt::StarlightGUI::ProcessInfo const& process);
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::StarlightGUI::ProcessInfo> m_processList{
             winrt::single_threaded_observable_vector<winrt::StarlightGUI::ProcessInfo>()
@@ -40,8 +42,10 @@ namespace winrt::StarlightGUI::implementation
 
         bool m_isLoadingProcesses = false;
         bool m_isPostLoading = false;
+        bool m_isSorting = false;
         uint64_t m_currentLoadToken = 0;
         winrt::Microsoft::UI::Xaml::DispatcherTimer reloadTimer;
+        winrt::Microsoft::UI::Xaml::DispatcherTimer autoRefreshTimer;
 
         inline static bool m_isLoading = false;
         inline static bool m_isNameAscending = true;
