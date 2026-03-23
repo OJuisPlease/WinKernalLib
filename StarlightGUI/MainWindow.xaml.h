@@ -4,6 +4,7 @@
 #include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.UI.h>
+#include <shellapi.h>
 
 namespace slg { struct coroutine; }
 
@@ -26,14 +27,30 @@ namespace winrt::StarlightGUI::implementation
         // 驱动和模块
         winrt::Windows::Foundation::IAsyncAction LoadModules();
         winrt::Windows::Foundation::IAsyncAction CheckUpdate();
+        void SetTrayBackgroundRun(bool enabled);
+        void NavigateToTaskPage();
 
         // 窗口
         static LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 
         std::vector<winrt::StarlightGUI::InfoWindow> m_openWindows;
+        NOTIFYICONDATAW m_notifyIconData{};
 
         inline static bool loaded = false;
         inline static HWND globalHWND;
+        inline static constexpr UINT WM_TRAYICON = WM_APP + 100;
+        inline static constexpr ULONG_PTR COPYDATA_NAVIGATE_TASK = 0x534C4754;
+        inline static constexpr UINT TRAY_ID = 1;
+        inline static constexpr UINT TRAY_CMD_RESTORE = 1001;
+        inline static constexpr UINT TRAY_CMD_EXIT = 1002;
+        bool m_trayIconAdded = false;
+        bool m_allowClose = false;
+
+        void InitializeTrayIcon();
+        void RemoveTrayIcon();
+        void HideWindowToTray();
+        void RestoreWindowFromTray();
+        void ShowTrayMenu();
     };
 
     extern MainWindow* g_mainWindowInstance;

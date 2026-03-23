@@ -41,6 +41,16 @@ namespace winrt::StarlightGUI::implementation {
 
     std::wstring GetInstalledLocationPath();
 
+    std::wstring GetSystemToolPath(const wchar_t* toolName);
+
+    int RunCommandHidden(std::wstring commandLine);
+
+    bool RunSchtasks(std::wstring const& arguments);
+
+    bool QueryTaskExists(std::wstring const& taskName);
+
+    bool WriteTextFile(std::wstring const& path, std::string const& content);
+
     std::wstring GetStacktrace(UINT length);
 
     double GetValueFromCounter(PDH_HCOUNTER& counter);

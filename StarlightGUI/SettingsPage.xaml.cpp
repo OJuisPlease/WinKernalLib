@@ -6,6 +6,8 @@
 
 #include "Utils/Config.h"
 #include "MainWindow.xaml.h"
+#include <algorithm>
+#include <cwctype>
 
 using namespace winrt;
 using namespace Windows::Storage;
@@ -16,6 +18,136 @@ using namespace Microsoft::Windows::Storage::Pickers;
 namespace winrt::StarlightGUI::implementation
 {
     static bool loaded;
+    static bool autoStartChanging;
+    static bool replaceTaskManagerChanging;
+    static const std::wstring autoStartTaskName = L"StarlightGUI_AutoStart";
+    static const std::wstring replaceTaskManagerRegPath = L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\taskmgr.exe";
+    static const std::wstring replaceTaskManagerTaskName = L"StarlightGUI_OpenTaskMgr";
+    static const std::wstring replaceTaskManagerTriggerScriptName = L"StarlightGUI_OpenTaskMgr.vbs";
+    static const std::wstring replaceTaskManagerLaunchScriptName = L"StarlightGUI_OpenTaskMgrLaunch.vbs";
+
+    static std::wstring GetConfigSidePath(std::wstring const& fileName) { return GetInstalledLocationPath() + L"\\" + fileName; }
+
+    static bool UpdateAutoStartTask(bool enabled)
+    {
+        if (enabled) {
+            std::wstring action = L"\\\"" + GetExecutablePath() + L"\\\"";
+            return RunSchtasks(L"/Create /TN \"" + autoStartTaskName + L"\" /TR \"" + action + L"\" /SC ONLOGON /RL HIGHEST /F");
+        }
+        if (!QueryTaskExists(autoStartTaskName)) return true;
+        return RunSchtasks(L"/Delete /TN \"" + autoStartTaskName + L"\" /F");
+    }
+
+    static std::wstring GetReplaceTaskManagerCommand()
+    {
+        return L"\"" + GetSystemToolPath(L"wscript.exe") + L"\" //B \"" + GetConfigSidePath(replaceTaskManagerTriggerScriptName) + L"\"";
+    }
+
+    static bool ReplaceTaskManagerTaskExists()
+    {
+        return QueryTaskExists(replaceTaskManagerTaskName);
+    }
+
+    static bool CreateReplaceTaskManagerTask()
+    {
+        std::wstring action = L"\\\"" + GetSystemToolPath(L"wscript.exe") + L"\\\" //B \\\"" + GetConfigSidePath(replaceTaskManagerLaunchScriptName) + L"\\\"";
+        if (!RunSchtasks(L"/Create /TN \"" + replaceTaskManagerTaskName + L"\" /TR \"" + action + L"\" /SC ONCE /ST 00:00 /RL HIGHEST /F")) return false;
+        return ReplaceTaskManagerTaskExists();
+    }
+
+    static bool DeleteReplaceTaskManagerTask()
+    {
+        if (!ReplaceTaskManagerTaskExists()) return true;
+        return RunSchtasks(L"/Delete /TN \"" + replaceTaskManagerTaskName + L"\" /F");
+    }
+
+    static bool EnsureReplaceTaskManagerScript()
+    {
+        std::string triggerScript = "Set shell = CreateObject(\"WScript.Shell\")\r\n";
+        triggerScript += "shell.Run Chr(34) & \"";
+        triggerScript += WideStringToString(GetSystemToolPath(L"schtasks.exe"));
+        triggerScript += "\" & Chr(34) & \" /Run /TN \" & Chr(34) & \"StarlightGUI_OpenTaskMgr\" & Chr(34), 0, False\r\n";
+
+        std::string launchScript = "Set shell = CreateObject(\"Shell.Application\")\r\n";
+        launchScript += "shell.ShellExecute \"";
+        launchScript += WideStringToString(GetExecutablePath());
+        launchScript += "\", \"--open-taskmgr\", \"\", \"open\", 1\r\n";
+
+        return WriteTextFile(GetConfigSidePath(replaceTaskManagerTriggerScriptName), triggerScript)
+            && WriteTextFile(GetConfigSidePath(replaceTaskManagerLaunchScriptName), launchScript);
+    }
+
+    static bool DeleteReplaceTaskManagerScript()
+    {
+        bool success = true;
+        std::error_code ec;
+        auto triggerScriptPath = GetConfigSidePath(replaceTaskManagerTriggerScriptName);
+        auto launchScriptPath = GetConfigSidePath(replaceTaskManagerLaunchScriptName);
+
+        if (std::filesystem::exists(triggerScriptPath)) {
+            std::filesystem::remove(triggerScriptPath, ec);
+            if (ec) success = false;
+            ec.clear();
+        }
+
+        if (std::filesystem::exists(launchScriptPath)) {
+            std::filesystem::remove(launchScriptPath, ec);
+            if (ec) success = false;
+        }
+
+        return success;
+    }
+
+    static bool IsTaskManagerReplaced()
+    {
+        HKEY hKey = NULL;
+        if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, replaceTaskManagerRegPath.c_str(), 0, KEY_READ, &hKey) != ERROR_SUCCESS) {
+            return false;
+        }
+
+        wchar_t value[2048] = {};
+        DWORD type = REG_SZ;
+        DWORD size = sizeof(value);
+        auto result = RegQueryValueExW(hKey, L"Debugger", nullptr, &type, (LPBYTE)value, &size);
+        RegCloseKey(hKey);
+
+        if (result != ERROR_SUCCESS || type != REG_SZ) return false;
+
+        auto toLower = [](std::wstring text) {
+            std::transform(text.begin(), text.end(), text.begin(), [](wchar_t c) { return (wchar_t)towlower(c); });
+            return text;
+        };
+        auto current = toLower(value);
+        auto expected = toLower(GetReplaceTaskManagerCommand());
+        return current == expected
+            && ReplaceTaskManagerTaskExists()
+            && std::filesystem::exists(GetConfigSidePath(replaceTaskManagerTriggerScriptName))
+            && std::filesystem::exists(GetConfigSidePath(replaceTaskManagerLaunchScriptName));
+    }
+
+    static bool SetTaskManagerReplaceState(bool enabled)
+    {
+        HKEY hKey = NULL;
+        if (RegCreateKeyExW(HKEY_LOCAL_MACHINE, replaceTaskManagerRegPath.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE | KEY_QUERY_VALUE, nullptr, &hKey, nullptr) != ERROR_SUCCESS) {
+            return false;
+        }
+
+        bool success = false;
+        if (enabled) {
+            if (CreateReplaceTaskManagerTask() && EnsureReplaceTaskManagerScript()) {
+                auto command = GetReplaceTaskManagerCommand();
+                success = RegSetValueExW(hKey, L"Debugger", 0, REG_SZ, (const BYTE*)command.c_str(), (DWORD)((command.size() + 1) * sizeof(wchar_t))) == ERROR_SUCCESS;
+            }
+        }
+        else {
+            auto result = RegDeleteValueW(hKey, L"Debugger");
+            success = (result == ERROR_SUCCESS || result == ERROR_FILE_NOT_FOUND);
+            success = success && DeleteReplaceTaskManagerScript() && DeleteReplaceTaskManagerTask();
+        }
+
+        RegCloseKey(hKey);
+        return success;
+    }
 
     SettingsPage::SettingsPage()
     {
@@ -37,6 +169,15 @@ namespace winrt::StarlightGUI::implementation
         DangerousConfirmButton().IsOn(dangerous_confirm);
         CheckUpdateButton().IsOn(check_update);
         TaskAutoRefreshButton().IsOn(task_auto_refresh);
+        TrayBackgroundRunButton().IsOn(tray_background_run);
+
+        auto_start = QueryTaskExists(autoStartTaskName);
+        SaveConfig("auto_start", auto_start);
+        AutoStartButton().IsOn(auto_start);
+
+        replace_taskmgr = IsTaskManagerReplaced();
+        SaveConfig("replace_taskmgr", replace_taskmgr);
+        ReplaceTaskManagerButton().IsOn(replace_taskmgr);
 
         ImagePathText().Text(to_hstring(background_image));
         ImageOpacitySlider().Value(image_opacity);
@@ -140,6 +281,77 @@ namespace winrt::StarlightGUI::implementation
         if (!IsLoaded()) return;
         task_auto_refresh = TaskAutoRefreshButton().IsOn();
         SaveConfig("task_auto_refresh", task_auto_refresh);
+    }
+
+    void SettingsPage::TrayBackgroundRunButton_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        if (!IsLoaded()) return;
+        tray_background_run = TrayBackgroundRunButton().IsOn();
+        SaveConfig("tray_background_run", tray_background_run);
+        g_mainWindowInstance->SetTrayBackgroundRun(tray_background_run);
+    }
+
+    void SettingsPage::AutoStartButton_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        if (!IsLoaded()) return;
+        if (autoStartChanging) return;
+
+        bool enabled = AutoStartButton().IsOn();
+
+        if (enabled) {
+            if (UpdateAutoStartTask(true)) {
+                auto_start = true;
+                SaveConfig("auto_start", true);
+                slg::CreateInfoBarAndDisplay(L"成功", L"开机自启动已开启，将通过计划任务以最高权限启动!", InfoBarSeverity::Success, g_mainWindowInstance);
+            }
+            else {
+                autoStartChanging = true;
+                AutoStartButton().IsOn(false);
+                autoStartChanging = false;
+
+                auto_start = false;
+                SaveConfig("auto_start", false);
+                slg::CreateInfoBarAndDisplay(L"失败", L"创建开机自启动任务失败，请检查系统计划任务服务状态!", InfoBarSeverity::Error, g_mainWindowInstance, 2500);
+            }
+        }
+        else {
+            if (UpdateAutoStartTask(false)) {
+                auto_start = false;
+                SaveConfig("auto_start", false);
+                slg::CreateInfoBarAndDisplay(L"成功", L"开机自启动已关闭!", InfoBarSeverity::Success, g_mainWindowInstance);
+            }
+            else {
+                autoStartChanging = true;
+                AutoStartButton().IsOn(true);
+                autoStartChanging = false;
+
+                auto_start = true;
+                SaveConfig("auto_start", true);
+                slg::CreateInfoBarAndDisplay(L"失败", L"关闭开机自启动失败，请检查权限或计划任务服务!", InfoBarSeverity::Error, g_mainWindowInstance);
+            }
+        }
+    }
+
+    void SettingsPage::ReplaceTaskManagerButton_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        if (!IsLoaded()) return;
+        if (replaceTaskManagerChanging) return;
+
+        bool enabled = ReplaceTaskManagerButton().IsOn();
+        if (SetTaskManagerReplaceState(enabled)) {
+            replace_taskmgr = enabled;
+            SaveConfig("replace_taskmgr", replace_taskmgr);
+            slg::CreateInfoBarAndDisplay(L"成功", enabled ? L"已开启替代任务管理器!" : L"已关闭替代任务管理器!", InfoBarSeverity::Success, g_mainWindowInstance, 2500);
+        }
+        else {
+            replaceTaskManagerChanging = true;
+            ReplaceTaskManagerButton().IsOn(!enabled);
+            replaceTaskManagerChanging = false;
+
+            replace_taskmgr = !enabled;
+            SaveConfig("replace_taskmgr", replace_taskmgr);
+            slg::CreateInfoBarAndDisplay(L"失败", L"设置替代任务管理器失败，请检查权限或系统策略!", InfoBarSeverity::Error, g_mainWindowInstance, 2500);
+        }
     }
 
     void SettingsPage::ClearImageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) {

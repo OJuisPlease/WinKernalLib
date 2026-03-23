@@ -8,6 +8,7 @@
 #include <random>
 #include <limits>
 #include <cwctype>
+#include <fstream>
 
 #undef max
 #undef min
@@ -44,7 +45,8 @@ namespace winrt::StarlightGUI::implementation {
         auto now = std::chrono::system_clock::now();
 
         std::time_t t = std::chrono::system_clock::to_time_t(now);
-        std::tm tm = *std::localtime(&t);
+        std::tm tm;
+        localtime_s(&tm, &t);
 
         std::ostringstream oss;
         oss << std::setw(4) << std::setfill('0') << (tm.tm_year + 1900)
@@ -313,6 +315,59 @@ namespace winrt::StarlightGUI::implementation {
 
     std::wstring GetInstalledLocationPath() {
         return fs::path(GetExecutablePath()).parent_path().wstring();
+    }
+
+    std::wstring GetSystemToolPath(const wchar_t* toolName)
+    {
+        wchar_t systemDir[MAX_PATH] = {};
+        if (GetSystemDirectoryW(systemDir, MAX_PATH) > 0) {
+            return std::wstring(systemDir) + L"\\" + toolName;
+        }
+        return std::wstring(L"C:\\Windows\\System32\\") + toolName;
+    }
+
+    int RunCommandHidden(std::wstring commandLine)
+    {
+        STARTUPINFOW si{};
+        PROCESS_INFORMATION pi{};
+        si.cb = sizeof(STARTUPINFOW);
+        si.dwFlags = STARTF_USESHOWWINDOW;
+        si.wShowWindow = SW_HIDE;
+
+        if (!CreateProcessW(nullptr, commandLine.data(), nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi)) {
+            return -1;
+        }
+
+        WaitForSingleObject(pi.hProcess, INFINITE);
+
+        DWORD exitCode = 1;
+        GetExitCodeProcess(pi.hProcess, &exitCode);
+
+        CloseHandle(pi.hThread);
+        CloseHandle(pi.hProcess);
+
+        return (int)exitCode;
+    }
+
+    bool RunSchtasks(std::wstring const& arguments)
+    {
+        std::wstring command = L"\"" + GetSystemToolPath(L"schtasks.exe") + L"\" " + arguments;
+        return RunCommandHidden(command) == 0;
+    }
+
+    bool QueryTaskExists(std::wstring const& taskName)
+    {
+        std::wstring command = L"\"" + GetSystemToolPath(L"schtasks.exe") + L"\" /Query /TN \"" + taskName + L"\"";
+        return RunCommandHidden(command) == 0;
+    }
+
+    bool WriteTextFile(std::wstring const& path, std::string const& content)
+    {
+        std::ofstream file(WideStringToString(path), std::ios::binary | std::ios::trunc);
+        if (!file.is_open()) return false;
+        file.write(content.data(), (std::streamsize)content.size());
+        file.close();
+        return true;
     }
 
     std::wstring GetStacktrace(UINT length)

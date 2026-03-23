@@ -200,7 +200,7 @@
                                 <TextBlock
                                     Margin="0,5,0,0"
                                     FontSize="16"
-                                    Text="一个拥有现代化UI界面的全能系统工具" />
+                                    Text="一个 WinUI3 界面的全能内核级系统工具" />
                                 <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
                                     <FontIcon
                                         FontSize="14"

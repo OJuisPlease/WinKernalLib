@@ -101,6 +101,55 @@
                 <essential:SettingsCard
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
+                    Description="在内存反汇编页面每一行展示的数据数量，请根据窗口大小设置，否则可能排版不整齐"
+                    Header="内存每行展示数量"
+                    IsActionIconVisible="False"
+                    IsClickEnabled="True">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="16"
+                            Glyph="&#xe8e3;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <Slider
+                        x:Name="DisasmCountSlider"
+                        Width="300"
+                        Margin="0,0,10,0"
+                        Maximum="100"
+                        Minimum="0"
+                        ValueChanged="DisasmCountSlider_ValueChanged"
+                        Value="16" />
+                </essential:SettingsCard>
+
+                <TextBlock
+                    Padding="10"
+                    HorizontalAlignment="Left"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Text="主程序" />
+
+                <essential:SettingsCard
+                    Margin="0,0,0,10"
+                    essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
+                    Description="关闭窗口时最小化到托盘并在后台运行"
+                    Header="后台运行"
+                    IsActionIconVisible="False"
+                    IsClickEnabled="True">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="16"
+                            Glyph="&#xe7f4;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        x:Name="TrayBackgroundRunButton"
+                        Margin="0,0,-80,0"
+                        Toggled="TrayBackgroundRunButton_Toggled" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard
+                    Margin="0,0,0,10"
+                    essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="以 TrustedInstaller 权限运行 Starlight GUI"
                     Header="以高权限运行"
                     IsActionIconVisible="False"
@@ -120,24 +169,39 @@
                 <essential:SettingsCard
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
-                    Description="在内存反汇编页面每一行展示的数据数量，请根据窗口大小设置，否则可能排版不整齐"
-                    Header="内存每行展示数量"
+                    Description="通过计划任务在登录后自动启动，可避免开机时弹出 UAC"
+                    Header="开机自启动"
                     IsActionIconVisible="False"
                     IsClickEnabled="True">
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon
                             FontFamily="Segoe Fluent Icons"
                             FontSize="16"
-                            Glyph="&#xe8e3;" />
+                            Glyph="&#xe7e8;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <Slider
-                        x:Name="DisasmCountSlider"
-                        Width="300"
-                        Margin="0,0,10,0"
-                        Maximum="100"
-                        Minimum="0"
-                        ValueChanged="DisasmCountSlider_ValueChanged"
-                        Value="16" />
+                    <ToggleSwitch
+                        x:Name="AutoStartButton"
+                        Margin="0,0,-80,0"
+                        Toggled="AutoStartButton_Toggled" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard
+                    Margin="0,0,0,10"
+                    essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
+                    Description="接管系统任务管理器启动，打开任务管理器时自动唤起并跳转到任务管理页"
+                    Header="替代任务管理器"
+                    IsActionIconVisible="False"
+                    IsClickEnabled="True">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="16"
+                            Glyph="&#xf120;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        x:Name="ReplaceTaskManagerButton"
+                        Margin="0,0,-80,0"
+                        Toggled="ReplaceTaskManagerButton_Toggled" />
                 </essential:SettingsCard>
 
                 <TextBlock

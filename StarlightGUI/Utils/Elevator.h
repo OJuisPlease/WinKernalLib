@@ -34,7 +34,7 @@ inline bool EnableAllPrivileges(HANDLE hToken) {
     return GetLastError() == ERROR_SUCCESS;
 }
 
-inline bool CreateProcessElevated(std::wstring processName, bool fullPrivileges) {
+inline bool CreateProcessElevated(std::wstring processName, bool fullPrivileges, std::wstring extraArgs = L"") {
 
     if (!EnablePrivilege(SE_DEBUG_NAME)) {
         LOG_ERROR(L"Elevator", L"Failed to obtain ES_DEBUG_PRIVILEGE.");
@@ -226,6 +226,11 @@ inline bool CreateProcessElevated(std::wstring processName, bool fullPrivileges)
 
     STARTUPINFOW si = { sizeof(si) };
     PROCESS_INFORMATION pi = { 0 };
+    std::wstring commandLine = L"\"" + processName + L"\"";
+    if (!extraArgs.empty()) {
+        commandLine += L" ";
+        commandLine += extraArgs;
+    }
 
     si.dwFlags = STARTF_USESHOWWINDOW;
     si.wShowWindow = SW_SHOW;
@@ -233,7 +238,7 @@ inline bool CreateProcessElevated(std::wstring processName, bool fullPrivileges)
     if (!CreateProcessWithTokenW(hTrustedInstallerToken,
         LOGON_WITH_PROFILE,
         processName.c_str(),
-        nullptr,
+        commandLine.data(),
         0,
         nullptr,
         nullptr,
@@ -243,7 +248,7 @@ inline bool CreateProcessElevated(std::wstring processName, bool fullPrivileges)
 
         if (!CreateProcessAsUserW(hTrustedInstallerToken,
             processName.c_str(),
-            nullptr,
+            commandLine.data(),
             nullptr,
             nullptr,
             FALSE,

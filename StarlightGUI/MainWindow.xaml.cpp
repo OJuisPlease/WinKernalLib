@@ -17,6 +17,7 @@
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 #include <commctrl.h>
 #include <shellapi.h>
+#include "resource.h"
 #include "UpdateDialog.xaml.h"
 #include "FilePage.xaml.h"
 
@@ -57,6 +58,7 @@ namespace winrt::StarlightGUI::implementation
         AppWindow().SetIcon(GetInstalledLocationPath() + L"\\Assets\\Starlight.ico");
         SetWindowSubclass(hWnd, &MainWindowProc, 1, reinterpret_cast<DWORD_PTR>(this));
 
+		// 允许拖放和复制数据到窗口
         CHANGEFILTERSTRUCT cfs{};
         cfs.cbSize = sizeof(cfs);
         ChangeWindowMessageFilterEx(hWnd, WM_DROPFILES, MSGFLT_ALLOW, &cfs);
@@ -64,6 +66,7 @@ namespace winrt::StarlightGUI::implementation
         ChangeWindowMessageFilterEx(hWnd, 0x0049 /* WM_COPYGLOBALDATA */, MSGFLT_ALLOW, &cfs);
         DragAcceptFiles(hWnd, TRUE);
 
+        // 恢复窗口大小
         int32_t width = ReadConfig("window_width", 1200);
         int32_t height = ReadConfig("window_height", 800);
         AppWindow().Resize(SizeInt32{ width, height });
@@ -75,6 +78,11 @@ namespace winrt::StarlightGUI::implementation
 
         g_mainWindowInstance = this;
 
+        // 显示托盘图标
+        if (tray_background_run) {
+            InitializeTrayIcon();
+        }
+
         Activated([this](auto&&, auto&&) -> IAsyncAction {
             if (!loaded) {
                 RootNavigation().IsEnabled(false);
@@ -84,9 +92,15 @@ namespace winrt::StarlightGUI::implementation
                 co_await LoadModules();
 
                 // 进入主页
-                LOG_INFO(L"MainWindow", L"Navigates to StarlightGUI::HomePage because we are initializing MainWindow for the first time.");
-                MainFrame().Navigate(xaml_typename<StarlightGUI::HomePage>());
-                RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
+                if (navigate_task_request) {
+                    NavigateToTaskPage();
+                    navigate_task_request = false;
+                }
+                else {
+                    LOG_INFO(L"MainWindow", L"Navigates to StarlightGUI::HomePage because we are initializing MainWindow for the first time.");
+                    MainFrame().Navigate(xaml_typename<StarlightGUI::HomePage>());
+                    RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
+                }
 
                 RootNavigation().IsEnabled(true);
 
@@ -105,6 +119,7 @@ namespace winrt::StarlightGUI::implementation
             SaveConfig("window_height", height);
 
             LOG_INFO(L"MainWindow", L"Saved window size.");
+            RemoveTrayIcon();
             LOGGER_CLOSE();
             });
 
@@ -113,10 +128,107 @@ namespace winrt::StarlightGUI::implementation
 
     MainWindow::~MainWindow()
     {
+        RemoveTrayIcon();
+
         for (auto& window : m_openWindows) {
             if (window) {
                 window.Close();
             }
+        }
+    }
+
+    void MainWindow::SetTrayBackgroundRun(bool enabled)
+    {
+        tray_background_run = enabled;
+        if (enabled) {
+            InitializeTrayIcon();
+        }
+        else {
+            RemoveTrayIcon();
+            m_allowClose = false;
+        }
+    }
+
+    void MainWindow::NavigateToTaskPage()
+    {
+        MainFrame().Navigate(xaml_typename<StarlightGUI::TaskPage>());
+        RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(1));
+    }
+
+    void MainWindow::InitializeTrayIcon()
+    {
+        if (m_trayIconAdded || !globalHWND) return;
+
+        m_notifyIconData = {};
+        m_notifyIconData.cbSize = sizeof(NOTIFYICONDATAW);
+        m_notifyIconData.hWnd = globalHWND;
+        m_notifyIconData.uID = TRAY_ID;
+        m_notifyIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+        m_notifyIconData.uCallbackMessage = WM_TRAYICON;
+        m_notifyIconData.hIcon = static_cast<HICON>(LoadImageW(GetModuleHandleW(nullptr), MAKEINTRESOURCEW(IDI_ICON1), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR | LR_SHARED));
+
+        if (!m_notifyIconData.hIcon) {
+            m_notifyIconData.hIcon = LoadIconW(nullptr, IDI_APPLICATION);
+        }
+
+        wcscpy_s(m_notifyIconData.szTip, L"Starlight GUI");
+
+        if (Shell_NotifyIconW(NIM_ADD, &m_notifyIconData)) {
+            m_notifyIconData.uVersion = NOTIFYICON_VERSION;
+            Shell_NotifyIconW(NIM_SETVERSION, &m_notifyIconData);
+            m_trayIconAdded = true;
+            LOG_INFO(L"MainWindow", L"Initialized tray icon.");
+        }
+    }
+
+    void MainWindow::RemoveTrayIcon()
+    {
+        if (!m_trayIconAdded) return;
+        Shell_NotifyIconW(NIM_DELETE, &m_notifyIconData);
+        m_trayIconAdded = false;
+    }
+
+    void MainWindow::HideWindowToTray()
+    {
+        if (!m_trayIconAdded) {
+            InitializeTrayIcon();
+        }
+        ShowWindow(globalHWND, SW_HIDE);
+    }
+
+    void MainWindow::RestoreWindowFromTray()
+    {
+        ShowWindow(globalHWND, SW_SHOW);
+        ShowWindow(globalHWND, SW_RESTORE);
+        Activate();
+        SetForegroundWindow(globalHWND);
+    }
+
+    void MainWindow::ShowTrayMenu()
+    {
+        HMENU hMenu = CreatePopupMenu();
+        if (!hMenu) return;
+
+        AppendMenuW(hMenu, MF_STRING, TRAY_CMD_RESTORE, L"打开主窗口");
+        AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+        AppendMenuW(hMenu, MF_STRING, TRAY_CMD_EXIT, L"退出");
+
+        POINT point{};
+        GetCursorPos(&point);
+        SetForegroundWindow(globalHWND);
+
+        auto command = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_BOTTOMALIGN | TPM_RETURNCMD, point.x, point.y, 0, globalHWND, nullptr);
+
+        DestroyMenu(hMenu);
+
+        if (command == TRAY_CMD_RESTORE) {
+            RestoreWindowFromTray();
+            return;
+        }
+
+        if (command == TRAY_CMD_EXIT) {
+            m_allowClose = true;
+            PostMessageW(globalHWND, WM_CLOSE, 0, 0);
         }
     }
 
@@ -450,9 +562,38 @@ namespace winrt::StarlightGUI::implementation
 
     LRESULT CALLBACK MainWindow::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
     {
+        auto instance = reinterpret_cast<MainWindow*>(dwRefData);
 
         switch (uMsg)
         {
+        case WM_CLOSE:
+        {
+            if (instance && tray_background_run && !instance->m_allowClose) {
+                instance->HideWindowToTray();
+                if (instance->m_trayIconAdded) return 0;
+            }
+            break;
+        }
+
+        case WM_TRAYICON:
+        {
+            if (!instance) return 0;
+
+            auto trayMsg = LOWORD(lParam);
+
+            if (trayMsg == WM_LBUTTONUP || trayMsg == WM_LBUTTONDBLCLK || trayMsg == NIN_SELECT || trayMsg == NIN_KEYSELECT) {
+                instance->RestoreWindowFromTray();
+                return 0;
+            }
+
+            if (trayMsg == WM_RBUTTONUP || trayMsg == WM_CONTEXTMENU) {
+                instance->ShowTrayMenu();
+                return 0;
+            }
+
+            break;
+        }
+
         case WM_DROPFILES:
         {
             auto hDrop = reinterpret_cast<HDROP>(wParam);
@@ -480,6 +621,24 @@ namespace winrt::StarlightGUI::implementation
             return 0;
         }
 
+        case WM_COPYDATA:
+        {
+            if (!instance) return 0;
+
+            auto copyData = reinterpret_cast<PCOPYDATASTRUCT>(lParam);
+            if (!copyData || !copyData->lpData) return 0;
+
+            auto command = std::wstring(reinterpret_cast<const wchar_t*>(copyData->lpData));
+            if (copyData->dwData == COPYDATA_NAVIGATE_TASK && command == L"navigate_task") {
+                navigate_task_request = true;
+                instance->RestoreWindowFromTray();
+                instance->NavigateToTaskPage();
+                return 1;
+            }
+
+            return 0;
+        }
+
         case WM_GETMINMAXINFO:
         {
             MINMAXINFO* pMinMaxInfo = reinterpret_cast<MINMAXINFO*>(lParam);
@@ -490,6 +649,9 @@ namespace winrt::StarlightGUI::implementation
 
         case WM_NCDESTROY:
         {
+            if (instance) {
+                instance->RemoveTrayIcon();
+            }
             RemoveWindowSubclass(hWnd, &MainWindowProc, uIdSubclass);
             break;
         }

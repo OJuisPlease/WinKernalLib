@@ -2,6 +2,8 @@
 #include "Utils/Config.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
+#include <shellapi.h>
+#include <vector>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -9,6 +11,49 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::StarlightGUI::implementation
 {
+    static std::vector<std::wstring> GetCommandLineArgs()
+    {
+        int argc = 0;
+        auto argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+        if (!argv) return {};
+
+        std::vector<std::wstring> result;
+        result.reserve(argc);
+        for (int i = 0; i < argc; ++i) result.emplace_back(argv[i]);
+        LocalFree(argv);
+        return result;
+    }
+
+    static bool HasSwitch(const wchar_t* key)
+    {
+        auto args = GetCommandLineArgs();
+        auto prefix = std::wstring(key) + L"=";
+        for (size_t i = 1; i < args.size(); ++i) {
+            if (_wcsicmp(args[i].c_str(), key) == 0) return true;
+            if (args[i].size() > prefix.size() && _wcsnicmp(args[i].c_str(), prefix.c_str(), prefix.size()) == 0) return true;
+        }
+        return false;
+    }
+
+    static HWND FindMainWindowHandle()
+    {
+        return FindWindowW(nullptr, L"Starlight GUI");
+    }
+
+    static bool NotifyNavigateTask(HWND hWnd)
+    {
+        if (!hWnd) return false;
+
+        const wchar_t* command = L"navigate_task";
+        COPYDATASTRUCT copyData{};
+        copyData.dwData = MainWindow::COPYDATA_NAVIGATE_TASK;
+        copyData.cbData = (DWORD)((wcslen(command) + 1) * sizeof(wchar_t));
+        copyData.lpData = (PVOID)command;
+
+        DWORD_PTR result = 0;
+        return SendMessageTimeoutW(hWnd, WM_COPYDATA, 0, (LPARAM)&copyData, SMTO_ABORTIFHUNG, 1000, &result) != 0;
+    }
+
     App::App()
     {
 
@@ -26,16 +71,33 @@ namespace winrt::StarlightGUI::implementation
 
     void App::OnLaunched(LaunchActivatedEventArgs const&)
     {
+        bool launchedByTaskManagerReplacement = HasSwitch(L"--open-taskmgr");
+        bool trustedInstallerRelaunch = HasSwitch(L"--trustedinstaller-relaunch");
+        bool suppressElevateForTaskManagerReplace = false;
+
+        if (launchedByTaskManagerReplacement) {
+            auto currentWindow = FindMainWindowHandle();
+            if (currentWindow && NotifyNavigateTask(currentWindow)) {
+                Exit();
+                return;
+            }
+            navigate_task_request = true;
+            suppressElevateForTaskManagerReplace = true;
+        }
+
         InitializeConfig();
         InitializeLogger();
-        if (elevated_run) {
-            if (ReadConfig("elevated_run_tried", true)) {
-                SaveConfig("elevated_run_tried", false);
+
+        if (elevated_run && !suppressElevateForTaskManagerReplace) {
+            if (trustedInstallerRelaunch) {
                 LOG_INFO(L"", L"Running as TrustedInstaller!");
             }
             else {
-                SaveConfig("elevated_run_tried", true);
-                if (CreateProcessElevated(GetExecutablePath(), true)) {
+                std::wstring relaunchArgs = L"--trustedinstaller-relaunch";
+                if (launchedByTaskManagerReplacement) {
+                    relaunchArgs += L" --open-taskmgr";
+                }
+                if (CreateProcessElevated(GetExecutablePath(), true, relaunchArgs)) {
                     Exit();
                     return;
                 }

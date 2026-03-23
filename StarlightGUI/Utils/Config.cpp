@@ -13,6 +13,9 @@ namespace winrt::StarlightGUI::implementation {
         dangerous_confirm = ReadConfig("dangerous_confirm", true);
         check_update = ReadConfig("check_update", true);
         task_auto_refresh = ReadConfig("task_auto_refresh", true);
+        tray_background_run = ReadConfig("tray_background_run", false);
+        auto_start = ReadConfig("auto_start", false);
+        replace_taskmgr = ReadConfig("replace_taskmgr", false);
         navigation_style = ReadConfig("navigation_style", 0);
         background_image = ReadConfig("background_image", std::string(""));
         image_opacity = ReadConfig("image_opacity", 20);
