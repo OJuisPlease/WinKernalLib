@@ -811,15 +811,15 @@ namespace winrt::StarlightGUI::implementation
         }
 
         ApplySort(currentSortingOption, currentSortingType);
-        std::stable_partition(m_allFiles.begin(), m_allFiles.end(), [](auto const& file) { return file.Directory(); });
+        std::partition(m_allFiles.begin(), m_allFiles.end(), [](auto const& file) { return file.Directory(); });
 
-        auto newFileList = winrt::multi_threaded_observable_vector<winrt::StarlightGUI::FileInfo>();
+        auto newFileList = std::vector<winrt::StarlightGUI::FileInfo>();
 
         if (currentDirectory != hstring(kFileHomePage)) {
             auto previousPage = winrt::make<winrt::StarlightGUI::implementation::FileInfo>();
             previousPage.Name(currentDirectory.size() <= 3 ? L"返回此电脑" : L"上个文件夹");
             previousPage.Flag(999);
-            newFileList.Append(previousPage);
+            newFileList.push_back(previousPage);
         }
 
         winrt::hstring query = hstring(tabSearchText);
@@ -827,10 +827,9 @@ namespace winrt::StarlightGUI::implementation
             bool shouldRemove = query.empty() ? false : ApplyFilter(m_allFiles[i], query);
             if (shouldRemove) continue;
 
-            newFileList.Append(m_allFiles[i]);
+            newFileList.push_back(m_allFiles[i]);
         }
-        m_fileList = newFileList;
-        FileListView().ItemsSource(m_fileList);
+        m_fileList.ReplaceAll(newFileList);
 
         if (path == kFileHomePage) {
             m_isPostLoading = false;
@@ -1198,7 +1197,7 @@ namespace winrt::StarlightGUI::implementation
             if (activeColumn == SortColumn::Size) SizeHeaderButton().Content(box_value(isAscending ? L"大小 ↓" : L"大小 ↑"));
         }
 
-        auto lessByActiveColumn = [&](const winrt::StarlightGUI::FileInfo& a, const winrt::StarlightGUI::FileInfo& b) -> bool {
+        auto sortActiveColumn = [&](const winrt::StarlightGUI::FileInfo& a, const winrt::StarlightGUI::FileInfo& b) -> bool {
             switch (activeColumn) {
             case SortColumn::Name:
             {
@@ -1218,12 +1217,14 @@ namespace winrt::StarlightGUI::implementation
             };
 
         if (isAscending) {
-            std::sort(m_allFiles.begin(), m_allFiles.end(), lessByActiveColumn);
+            std::sort(m_allFiles.begin(), m_allFiles.end(), sortActiveColumn);
+            std::partition(m_allFiles.begin(), m_allFiles.end(), [](auto const& file) { return file.Directory(); });
         }
         else {
             std::sort(m_allFiles.begin(), m_allFiles.end(), [&](const auto& a, const auto& b) {
-                return lessByActiveColumn(b, a);
+                return sortActiveColumn(b, a);
                 });
+            std::partition(m_allFiles.begin(), m_allFiles.end(), [](auto const& file) { return !file.Directory(); });
         }
     }
 

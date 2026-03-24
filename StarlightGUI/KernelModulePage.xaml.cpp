@@ -324,7 +324,7 @@ namespace winrt::StarlightGUI::implementation
             sortedKernelModules.push_back(kernelModule);
         }
 
-        auto lessByActiveColumn = [&](const winrt::StarlightGUI::KernelModuleInfo& a, const winrt::StarlightGUI::KernelModuleInfo& b) -> bool {
+        auto sortActiveColumn = [&](const winrt::StarlightGUI::KernelModuleInfo& a, const winrt::StarlightGUI::KernelModuleInfo& b) -> bool {
             switch (activeColumn) {
             case SortColumn::Name:
             {
@@ -348,11 +348,11 @@ namespace winrt::StarlightGUI::implementation
             };
 
         if (isAscending) {
-            std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), lessByActiveColumn);
+            std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), sortActiveColumn);
         }
         else {
             std::sort(sortedKernelModules.begin(), sortedKernelModules.end(), [&](const auto& a, const auto& b) {
-                return lessByActiveColumn(b, a);
+                return sortActiveColumn(b, a);
                 });
         }
 

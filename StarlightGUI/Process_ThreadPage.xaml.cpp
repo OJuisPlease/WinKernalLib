@@ -308,7 +308,7 @@ namespace winrt::StarlightGUI::implementation
             return 0;
             };
 
-        auto lessByActiveColumn = [&](const winrt::StarlightGUI::ThreadInfo& a, const winrt::StarlightGUI::ThreadInfo& b) -> bool {
+        auto sortActiveColumn = [&](const winrt::StarlightGUI::ThreadInfo& a, const winrt::StarlightGUI::ThreadInfo& b) -> bool {
             switch (activeColumn) {
             case SortColumn::Id:
                 return a.Id() < b.Id();
@@ -334,11 +334,11 @@ namespace winrt::StarlightGUI::implementation
             };
 
         if (isAscending) {
-            std::sort(sortedThreads.begin(), sortedThreads.end(), lessByActiveColumn);
+            std::sort(sortedThreads.begin(), sortedThreads.end(), sortActiveColumn);
         }
         else {
             std::sort(sortedThreads.begin(), sortedThreads.end(), [&](const auto& a, const auto& b) {
-                return lessByActiveColumn(b, a);
+                return sortActiveColumn(b, a);
                 });
         }
 

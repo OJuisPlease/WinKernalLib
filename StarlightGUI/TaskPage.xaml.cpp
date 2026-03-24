@@ -984,7 +984,7 @@ namespace winrt::StarlightGUI::implementation
             if (activeColumn == SortColumn::Id) IdHeaderButton().Content(box_value(isAscending ? L"PID ↓" : L"PID ↑"));
         }
 
-        auto lessByActiveColumn = [&](const winrt::StarlightGUI::ProcessInfo& a, const winrt::StarlightGUI::ProcessInfo& b) -> bool {
+        auto sortActiveColumn = [&](const winrt::StarlightGUI::ProcessInfo& a, const winrt::StarlightGUI::ProcessInfo& b) -> bool {
             switch (activeColumn) {
             case SortColumn::Name:
             {
@@ -1008,11 +1008,11 @@ namespace winrt::StarlightGUI::implementation
             };
 
         if (isAscending) {
-            std::sort(processes.begin(), processes.end(), lessByActiveColumn);
+            std::sort(processes.begin(), processes.end(), sortActiveColumn);
         }
         else {
             std::sort(processes.begin(), processes.end(), [&](const auto& a, const auto& b) {
-                return lessByActiveColumn(b, a);
+                return sortActiveColumn(b, a);
                 });
         }
 

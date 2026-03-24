@@ -820,7 +820,7 @@ namespace winrt::StarlightGUI::implementation
             sortedWindows.push_back(window);
         }
 
-        auto lessByActiveColumn = [&](const winrt::StarlightGUI::WindowInfo& a, const winrt::StarlightGUI::WindowInfo& b) -> bool {
+        auto sortActiveColumn = [&](const winrt::StarlightGUI::WindowInfo& a, const winrt::StarlightGUI::WindowInfo& b) -> bool {
             switch (activeColumn) {
             case SortColumn::Name:
             {
@@ -842,11 +842,11 @@ namespace winrt::StarlightGUI::implementation
             };
 
         if (isAscending) {
-            std::sort(sortedWindows.begin(), sortedWindows.end(), lessByActiveColumn);
+            std::sort(sortedWindows.begin(), sortedWindows.end(), sortActiveColumn);
         }
         else {
             std::sort(sortedWindows.begin(), sortedWindows.end(), [&](const auto& a, const auto& b) {
-                return lessByActiveColumn(b, a);
+                return sortActiveColumn(b, a);
                 });
         }
 
