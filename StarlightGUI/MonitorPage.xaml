@@ -43,7 +43,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xf0b2;" />
-                            <TextBlock Text="对象" />
+                            <TextBlock x:Name="MonitorSegObjectUid" Text="对象" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem>
@@ -52,7 +52,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xebe8;" />
-                            <TextBlock Text="调试信息" />
+                            <TextBlock x:Name="MonitorSegDebugUid" Text="调试信息" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="CallbackSegmentedItem">
@@ -61,7 +61,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xe77e;" />
-                            <TextBlock Text="回调/消息" />
+                            <TextBlock x:Name="MonitorSegCallbackUid" Text="回调/消息" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="MiniFilterSegmentedItem">
@@ -70,7 +70,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xe7e3;" />
-                            <TextBlock Text="微过滤驱动" />
+                            <TextBlock x:Name="MonitorSegMiniFilterUid" Text="微过滤驱动" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="StdFilterSegmentedItem">
@@ -79,7 +79,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xe7ec;" />
-                            <TextBlock Text="标准过滤驱动" />
+                            <TextBlock x:Name="MonitorSegStdFilterUid" Text="标准过滤驱动" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="SSDTSegmentedItem">
@@ -106,7 +106,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xe916;" />
-                            <TextBlock Text="I/O 定时器" />
+                            <TextBlock x:Name="MonitorSegIOTimerUid" Text="I/O 定时器" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="ExCallbackSegmentedItem">
@@ -124,7 +124,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xe950;" />
-                            <TextBlock Text="中断描述符表" />
+                            <TextBlock x:Name="MonitorSegIDTUid" Text="中断描述符表" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="GDTSegmentedItem">
@@ -133,7 +133,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xe964;" />
-                            <TextBlock Text="全局描述符表" />
+                            <TextBlock x:Name="MonitorSegGDTUid" Text="全局描述符表" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="PiDDBSegmentedItem">
@@ -142,7 +142,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xf0e3;" />
-                            <TextBlock Text="PiDDB 缓存表" />
+                            <TextBlock x:Name="MonitorSegPiDDBUid" Text="PiDDB 缓存表" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="HALDPTSegmentedItem">
@@ -151,7 +151,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xf590;" />
-                            <TextBlock Text="HAL 分发表" />
+                            <TextBlock x:Name="MonitorSegHALDPTUid" Text="HAL 分发表" />
                         </StackPanel>
                     </essential:SegmentedItem>
                     <essential:SegmentedItem x:Name="HALPDPTSegmentedItem">
@@ -160,7 +160,7 @@
                                 FontFamily="Segoe Fluent Icons"
                                 FontSize="14"
                                 Glyph="&#xf58f;" />
-                            <TextBlock Text="HAL 私有分发表" />
+                            <TextBlock x:Name="MonitorSegHALPDPTUid" Text="HAL 私有分发表" />
                         </StackPanel>
                     </essential:SegmentedItem>
                 </essential:Segmented>

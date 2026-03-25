@@ -78,7 +78,7 @@
                                     HorizontalAlignment="Center"
                                     FontSize="16"
                                     FontWeight="SemiBold"
-                                    Text="当前时间" />
+                                    x:Name="HomeCurrentTimeUid" Text="当前时间" />
 
                                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                     <!--  小时  -->
@@ -200,7 +200,7 @@
                                 <TextBlock
                                     Margin="0,5,0,0"
                                     FontSize="16"
-                                    Text="一个 WinUI3 界面的全能内核级系统工具" />
+                                    x:Name="HomeAppIntroUid" Text="一个 WinUI3 界面的全能内核级系统工具" />
                                 <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
                                     <FontIcon
                                         FontSize="14"
@@ -209,7 +209,7 @@
                                     <TextBlock
                                         FontSize="14"
                                         Foreground="LightGray"
-                                        Text="  版本：" />
+                                        x:Name="HomeVersionLabelUid" Text="  版本：" />
                                     <TextBlock
                                         FontSize="14"
                                         Foreground="LightGray"
@@ -223,7 +223,7 @@
                                     <TextBlock
                                         FontSize="14"
                                         Foreground="LightGray"
-                                        Text="  更新日期：" />
+                                        x:Name="HomeReleaseDateLabelUid" Text="  更新日期：" />
                                     <TextBlock
                                         FontSize="14"
                                         Foreground="LightGray"
@@ -237,7 +237,7 @@
                                     <TextBlock
                                         FontSize="14"
                                         Foreground="LightGray"
-                                        Text="  开发者：" />
+                                        x:Name="HomeDeveloperLabelUid" Text="  开发者：" />
                                     <TextBlock
                                         FontSize="14"
                                         Foreground="LightGray"
@@ -251,7 +251,7 @@
                                     <TextBlock
                                         FontSize="14"
                                         Foreground="LightGray"
-                                        Text="  开源仓库：https://github.com/OpenStarlight/StarlightGUI" />
+                                        x:Name="HomeOpenSourceUid" Text="  开源仓库：https://github.com/OpenStarlight/StarlightGUI" />
                                 </StackPanel>
                                 <TextBlock
                                     Padding="0,10,0,0"
@@ -268,14 +268,14 @@
                         HorizontalAlignment="Left"
                         FontSize="14"
                         FontWeight="Bold"
-                        Text="系统概览" />
+                        x:Name="HomeOverviewUid" Text="系统概览" />
                     <Expander
                         Margin="0,0,0,10"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         BorderBrush="Transparent"
-                        Header="统计图">
+                        x:Name="HomeChartUid" Header="统计图">
                         <local:LineGraphControl
                             x:Name="TotalLineGraph"
                             Title="占用率统计"
@@ -321,45 +321,45 @@
                                 <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                     <StackPanel Width="200">
                                         <TextBlock>
-                                            <Run Text="速度: " />
+                                            <Run x:Name="HomeCpuSpeedUid" Text="速度: " />
                                             <Run x:Name="CpuFrequency" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="进程: " />
+                                            <Run x:Name="HomeCpuProcessUid" Text="进程: " />
                                             <Run x:Name="CpuProcess" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="线程: " />
+                                            <Run x:Name="HomeCpuThreadUid" Text="线程: " />
                                             <Run x:Name="CpuThread" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="系统调用: " />
+                                            <Run x:Name="HomeCpuSyscallUid" Text="系统调用: " />
                                             <Run x:Name="CpuSyscall" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="正常运行时间: " />
+                                            <Run x:Name="HomeCpuUptimeUid" Text="正常运行时间: " />
                                             <Run x:Name="CpuRunTime" Foreground="LightGray" />
                                         </TextBlock>
                                     </StackPanel>
                                     <StackPanel Width="200">
                                         <TextBlock>
-                                            <Run Text="核心: " />
+                                            <Run x:Name="HomeCpuCoresUid" Text="核心: " />
                                             <Run x:Name="CpuCore" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="虚拟化: " />
+                                            <Run x:Name="HomeCpuVirtualizationUid" Text="虚拟化: " />
                                             <Run x:Name="CpuVirtualization" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="L1 缓存: " />
+                                            <Run x:Name="HomeCpuCacheL1Uid" Text="L1 缓存: " />
                                             <Run x:Name="CpuCacheL1" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="L2 缓存: " />
+                                            <Run x:Name="HomeCpuCacheL2Uid" Text="L2 缓存: " />
                                             <Run x:Name="CpuCacheL2" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="L3 缓存: " />
+                                            <Run x:Name="HomeCpuCacheL3Uid" Text="L3 缓存: " />
                                             <Run x:Name="CpuCacheL3" Foreground="LightGray" />
                                         </TextBlock>
                                     </StackPanel>
@@ -401,7 +401,7 @@
                                 <TextBlock
                                     FontSize="20"
                                     FontWeight="Bold"
-                                    Text="内存" />
+                                    x:Name="HomeMemTitleUid" Text="内存" />
                                 <TextBlock
                                     x:Name="MemSize"
                                     FontSize="16"
@@ -409,37 +409,37 @@
                                 <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                     <StackPanel Width="200">
                                         <TextBlock>
-                                            <Run Text="使用中: " />
+                                            <Run x:Name="HomeMemInUseUid" Text="使用中: " />
                                             <Run x:Name="MemUsing" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="可用: " />
+                                            <Run x:Name="HomeMemAvailableUid" Text="可用: " />
                                             <Run x:Name="MemUsable" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="已提交: " />
+                                            <Run x:Name="HomeMemCommittedUid" Text="已提交: " />
                                             <Run x:Name="MemCommitted" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="已缓存: " />
+                                            <Run x:Name="HomeMemCachedUid" Text="已缓存: " />
                                             <Run x:Name="MemCached" Foreground="LightGray" />
                                         </TextBlock>
                                     </StackPanel>
                                     <StackPanel Width="200">
                                         <TextBlock>
-                                            <Run Text="页读取: " />
+                                            <Run x:Name="HomeMemPageReadUid" Text="页读取: " />
                                             <Run x:Name="MemPageRead" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="页写入: " />
+                                            <Run x:Name="HomeMemPageWriteUid" Text="页写入: " />
                                             <Run x:Name="MemPageWrite" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="页传出: " />
+                                            <Run x:Name="HomeMemPageOutUid" Text="页传出: " />
                                             <Run x:Name="MemPageInput" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="页传入: " />
+                                            <Run x:Name="HomeMemPageInUid" Text="页传入: " />
                                             <Run x:Name="MemPageOutput" Foreground="LightGray" />
                                         </TextBlock>
                                     </StackPanel>
@@ -491,19 +491,19 @@
                                 <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                     <StackPanel Width="200">
                                         <TextBlock>
-                                            <Run Text="内存: " />
+                                            <Run x:Name="HomeGpuMemUid" Text="内存: " />
                                             <Run x:Name="GpuMem" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="温度: " />
+                                            <Run x:Name="HomeGpuTempUid" Text="温度: " />
                                             <Run x:Name="GpuTemp" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="图形速度: " />
+                                            <Run x:Name="HomeGpuClockGraphicsUid" Text="图形速度: " />
                                             <Run x:Name="GpuClockGraphics" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="内存速度: " />
+                                            <Run x:Name="HomeGpuClockMemUid" Text="内存速度: " />
                                             <Run x:Name="GpuClockMem" Foreground="LightGray" />
                                         </TextBlock>
                                     </StackPanel>
@@ -545,7 +545,7 @@
                                 <TextBlock
                                     FontSize="20"
                                     FontWeight="Bold"
-                                    Text="网络" />
+                                    x:Name="HomeNetTitleUid" Text="网络" />
                                 <TextBlock
                                     x:Name="NetManufacture"
                                     MaxWidth="500"
@@ -554,26 +554,26 @@
                                 <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
                                     <StackPanel Width="200">
                                         <TextBlock>
-                                            <Run Text="下载: " />
+                                            <Run x:Name="HomeNetDownloadUid" Text="下载: " />
                                             <Run x:Name="NetReceive" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="上传: " />
+                                            <Run x:Name="HomeNetUploadUid" Text="上传: " />
                                             <Run x:Name="NetSend" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="数据包发送: " />
+                                            <Run x:Name="HomeNetPacketSendUid" Text="数据包发送: " />
                                             <Run x:Name="NetPacketSend" Foreground="LightGray" />
                                         </TextBlock>
                                         <TextBlock>
-                                            <Run Text="数据包接收: " />
+                                            <Run x:Name="HomeNetPacketRecvUid" Text="数据包接收: " />
                                             <Run x:Name="NetPacketReceive" Foreground="LightGray" />
                                         </TextBlock>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Grid.Column="3" VerticalAlignment="Bottom">
-                                <Button Click="ChangeMode_Click" Content="图表切换发送/接收" />
+                                <Button Click="ChangeMode_Click" x:Name="HomeChangeModeUid" Content="图表切换发送/接收" />
                             </StackPanel>
                         </Grid>
                     </Button>

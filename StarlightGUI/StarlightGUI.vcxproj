@@ -370,6 +370,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <!-- JSON-based i18n — resw files removed, using Strings/<lang>/Resources.json instead -->
   <ItemGroup>
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="CopyFileDialog.xaml.cpp">
@@ -733,5 +734,9 @@
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.targets'))" />
     <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets'))" />
+  </Target>
+  <Target Name="CopyI18nJson" AfterTargets="Build">
+    <Copy SourceFiles="Strings\en-US\Resources.json" DestinationFolder="$(OutDir)Strings\en-US\" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="Strings\zh-CN\Resources.json" DestinationFolder="$(OutDir)Strings\zh-CN\" SkipUnchangedFiles="true" />
   </Target>
 </Project>

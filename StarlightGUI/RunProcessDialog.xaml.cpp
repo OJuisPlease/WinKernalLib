@@ -14,6 +14,10 @@ namespace winrt::StarlightGUI::implementation
     RunProcessDialog::RunProcessDialog()
     {
         InitializeComponent();
+
+        this->Title(winrt::box_value(slg::GetLocalizedString(L"RunProcess_Dialog.Title")));
+        ProcessPathTextBox().PlaceholderText(slg::GetLocalizedString(L"RunProcess_Path.PlaceholderText"));
+        FullPrivilegesCheckBox().Content(winrt::box_value(slg::GetLocalizedString(L"RunProcess_FullPrivileges.Content")));
     }
 
     void RunProcessDialog::OnPrimaryButtonClick(ContentDialog const& sender,

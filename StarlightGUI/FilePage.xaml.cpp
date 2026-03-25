@@ -46,7 +46,7 @@ namespace winrt::StarlightGUI::implementation
 
     static std::wstring BuildTabTitle(std::wstring const& path)
     {
-        if (path.empty() || path == kFileHomePage) return L"此电脑";
+        if (path.empty() || path == kFileHomePage) return std::wstring(slg::GetLocalizedString(L"File_ThisPC"));
         fs::path p(path);
         auto name = p.filename().wstring();
         if (!name.empty()) return name;
@@ -58,6 +58,12 @@ namespace winrt::StarlightGUI::implementation
 
     FilePage::FilePage() {
         InitializeComponent();
+
+        SearchBox().PlaceholderText(slg::GetLocalizedString(L"File_SearchBox.PlaceholderText"));
+        NameHeaderButton().Content(winrt::box_value(slg::GetLocalizedString(L"File_ColFile.Content")));
+        ModifyTimeHeaderButton().Content(winrt::box_value(slg::GetLocalizedString(L"File_ColModifyTime.Content")));
+        SizeHeaderButton().Content(winrt::box_value(slg::GetLocalizedString(L"File_ColSize.Content")));
+
         g_filePageInstance = this;
 
         FileListView().ItemsSource(m_fileList);
@@ -251,10 +257,10 @@ namespace winrt::StarlightGUI::implementation
         if (path.empty()) return;
 
         if (path == kFileHomePage) {
-            m_breadcrumbItems.Append(box_value(hstring(L"此电脑")));
+            m_breadcrumbItems.Append(box_value(slg::GetLocalizedString(L"File_ThisPC")));
         }
         else if (path.size() >= 2 && path[1] == L':') {
-            m_breadcrumbItems.Append(box_value(hstring(L"此电脑")));
+            m_breadcrumbItems.Append(box_value(slg::GetLocalizedString(L"File_ThisPC")));
             std::wstring drive = path.substr(0, 2);
             m_breadcrumbItems.Append(box_value(hstring(drive)));
 
@@ -308,7 +314,7 @@ namespace winrt::StarlightGUI::implementation
         for (uint32_t i = 0; i <= index; ++i) {
             std::wstring part = unbox_value<hstring>(m_breadcrumbItems.GetAt(i)).c_str();
             if (i == 0) {
-                if (part == L"此电脑") {
+                if (part == slg::GetLocalizedString(L"File_ThisPC")) {
                     newPath = kFileHomePage;
                     continue;
                 }
@@ -340,7 +346,7 @@ namespace winrt::StarlightGUI::implementation
         for (uint32_t i = 0; i <= index; ++i) {
             std::wstring part = unbox_value<hstring>(m_breadcrumbItems.GetAt(i)).c_str();
             if (i == 0) {
-                if (part == L"此电脑") {
+                if (part == slg::GetLocalizedString(L"File_ThisPC")) {
                     newPath = kFileHomePage;
                     continue;
                 }
@@ -425,7 +431,7 @@ namespace winrt::StarlightGUI::implementation
             if ((item.Name() == L"Windows" || item.Name() == L"Boot" || item.Name() == L"System32" || item.Name() == L"SysWOW64" || item.Name() == L"Microsoft") &&
                 (safeAcceptedName != L"Windows" && safeAcceptedName != L"Boot" && safeAcceptedName != L"System32" && safeAcceptedName != L"SysWOW64" && safeAcceptedName != L"Microsoft")) {
                 safeAcceptedName = item.Name();
-                slg::CreateInfoBarAndDisplay(L"警告", L"该文件可能为重要文件，如果确认继续请再次点击！", InfoBarSeverity::Warning, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Warning").c_str(), slg::GetLocalizedString(L"File_ImportantFileWarning").c_str(), InfoBarSeverity::Warning, g_mainWindowInstance);
                 return;
             }
             selectedFiles.push_back(item);
@@ -441,7 +447,7 @@ namespace winrt::StarlightGUI::implementation
         * 注意，由于这里是磁盘 IO，我们不要使用异步，否则刷新时可能会出问题
         */
         // 选项1.1
-        auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue8e5", L"打开", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue8e5", slg::GetLocalizedString(L"FileMenu_Open").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (item.Directory()) {
                     if (currentDirectory == hstring(kFileHomePage)) NavigateTo(item.Path().c_str(), true);
@@ -454,99 +460,99 @@ namespace winrt::StarlightGUI::implementation
         MenuFlyoutSeparator separator1;
 
         // 选项2.1
-        auto item2_1 = slg::CreateMenuItem(flyoutStyles, L"\ue74d", L"删除", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_1 = slg::CreateMenuItem(flyoutStyles, L"\ue74d", slg::GetLocalizedString(L"FileMenu_Delete").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::DeleteFileAuto(item.Path().c_str())) {
-                    slg::CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_DeleteSuccess").c_str() + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else slg::CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"File_DeleteFailed").c_str() + item.Name() + L" (" + item.Path() + L")" + slg::GetLocalizedString(L"Msg_ErrorCode").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.2
-        auto item2_2 = slg::CreateMenuItem(flyoutStyles, L"\ue733", L"删除 (内核)", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_2 = slg::CreateMenuItem(flyoutStyles, L"\ue733", slg::GetLocalizedString(L"FileMenu_DeleteKernel").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::_DeleteFileAuto(item.Path().c_str())) {
-                    slg::CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_DeleteSuccess").c_str() + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else slg::CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"File_DeleteFailed").c_str() + item.Name() + L" (" + item.Path() + L")" + slg::GetLocalizedString(L"Msg_ErrorCode").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.3
-        auto item2_3 = slg::CreateMenuItem(flyoutStyles, L"\uf5ab", L"删除 (内存抹杀)", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_3 = slg::CreateMenuItem(flyoutStyles, L"\uf5ab", slg::GetLocalizedString(L"FileMenu_DeleteMurder").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::MurderFileAuto(item.Path().c_str())) {
-                    slg::CreateInfoBarAndDisplay(L"成功", L"成功删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_DeleteSuccess").c_str() + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else slg::CreateInfoBarAndDisplay(L"失败", L"无法删除文件/文件夹: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"File_DeleteFailed").c_str() + item.Name() + L" (" + item.Path() + L")" + slg::GetLocalizedString(L"Msg_ErrorCode").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.4
-        auto item2_4 = slg::CreateMenuItem(flyoutStyles, L"\ue72e", L"锁定", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_4 = slg::CreateMenuItem(flyoutStyles, L"\ue72e", slg::GetLocalizedString(L"FileMenu_Lock").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             for (const auto& item : selectedFiles) {
                 if (KernelInstance::LockFile(item.Path().c_str())) {
-                    slg::CreateInfoBarAndDisplay(L"成功", L"成功锁定文件: " + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+                    slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_LockSuccess").c_str() + item.Name() + L" (" + item.Path() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
                     WaitAndReloadAsync(1000);
                 }
-                else slg::CreateInfoBarAndDisplay(L"失败", L"无法锁定文件: " + item.Name() + L" (" + item.Path() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"File_LockFailed").c_str() + item.Name() + L" (" + item.Path() + L")" + slg::GetLocalizedString(L"Msg_ErrorCode").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
             });
 
         // 选项2.5
-        auto item2_5 = slg::CreateMenuItem(flyoutStyles, L"\ue8c8", L"复制", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
+        auto item2_5 = slg::CreateMenuItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"FileMenu_Copy").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) {
             CopyFiles();
             });
 
         MenuFlyoutSeparator separator2;
 
         // 选项3.1
-        auto item3_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
-        auto item3_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue8ac", L"名称", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"FileMenu_CopyInfo").c_str());
+        auto item3_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue8ac", slg::GetLocalizedString(L"FileMenu_Name").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(selectedFiles[0].Name().c_str())) {
-                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"Msg_CopyFailed").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub1);
-        auto item3_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"路径", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"FileMenu_Path").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(selectedFiles[0].Path().c_str())) {
-                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"Msg_CopyFailed").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub2);
-        auto item3_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\uec92", L"修改日期", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\uec92", slg::GetLocalizedString(L"FileMenu_ModDate").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::CopyToClipboard(selectedFiles[0].ModifyTime().c_str())) {
-                slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"Msg_CopyFailed").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
         item3_1.Items().Append(item3_1_sub3);
 
         // 选项3.2
-        auto item3_2 = slg::CreateMenuItem(flyoutStyles, L"\uec50", L"在文件管理器内打开", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_2 = slg::CreateMenuItem(flyoutStyles, L"\uec50", slg::GetLocalizedString(L"FileMenu_OpenInExplorer").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::OpenFolderAndSelectFile(selectedFiles[0].Path().c_str())) {
-                slg::CreateInfoBarAndDisplay(L"成功", L"已打开文件夹", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_OpenedFolder").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else slg::CreateInfoBarAndDisplay(L"失败", L"无法打开文件夹, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"File_OpenFolderFailed").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
 
 
         // 选项3.3
-        auto item3_3 = slg::CreateMenuItem(flyoutStyles, L"\ue8ec", L"属性", [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+        auto item3_3 = slg::CreateMenuItem(flyoutStyles, L"\ue8ec", slg::GetLocalizedString(L"FileMenu_Properties").c_str(), [this, selectedFiles](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
             if (TaskUtils::OpenFileProperties(selectedFiles[0].Path().c_str())) {
-                slg::CreateInfoBarAndDisplay(L"成功", L"已打开文件属性", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_OpenedProperties").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             }
-            else slg::CreateInfoBarAndDisplay(L"失败", L"无法打开文件属性, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+            else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"File_OpenPropertiesFailed").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             co_return;
             });
 
@@ -606,7 +612,7 @@ namespace winrt::StarlightGUI::implementation
             e.AcceptedOperation(DataPackageOperation::Copy);
             auto dragUI = e.DragUIOverride();
             dragUI.IsCaptionVisible(true);
-            dragUI.Caption(L"复制到当前目录");
+            dragUI.Caption(slg::GetLocalizedString(L"FileMenu_CopyToCurrentDir"));
         }
         else {
             e.AcceptedOperation(DataPackageOperation::None);
@@ -626,7 +632,7 @@ namespace winrt::StarlightGUI::implementation
 
         [this, lifetime, deferral, dataView]() -> winrt::Windows::Foundation::IAsyncAction {
             if (m_isLoadingFiles || m_isPostLoading) {
-                slg::CreateInfoBarAndDisplay(L"提示", L"当前正在加载，请稍后再试", InfoBarSeverity::Warning, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Info").c_str(), slg::GetLocalizedString(L"File_StillLoading").c_str(), InfoBarSeverity::Warning, g_mainWindowInstance);
                 deferral.Complete();
                 co_return;
             }
@@ -656,7 +662,7 @@ namespace winrt::StarlightGUI::implementation
                 co_await CopyDroppedPathsAsync(std::move(droppedPaths));
             }
             catch (...) {
-                slg::CreateInfoBarAndDisplay(L"失败", L"拖拽复制时出现异常", InfoBarSeverity::Error, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"File_DragCopyException").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
             }
 
             deferral.Complete();
@@ -668,11 +674,11 @@ namespace winrt::StarlightGUI::implementation
     {
         if (paths.empty()) co_return;
         if (currentDirectory == hstring(kFileHomePage)) {
-            slg::CreateInfoBarAndDisplay(L"提示", L"请先进入某个驱动器后再进行复制", InfoBarSeverity::Warning, g_mainWindowInstance);
+            slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Info").c_str(), slg::GetLocalizedString(L"File_EnterDriveFirst").c_str(), InfoBarSeverity::Warning, g_mainWindowInstance);
             co_return;
         }
         if (m_isLoadingFiles || m_isPostLoading) {
-            slg::CreateInfoBarAndDisplay(L"警告", L"当前正在加载，请稍后再试!", InfoBarSeverity::Warning, g_mainWindowInstance);
+            slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Warning").c_str(), slg::GetLocalizedString(L"File_StillLoadingExcl").c_str(), InfoBarSeverity::Warning, g_mainWindowInstance);
             co_return;
         }
 
@@ -721,11 +727,11 @@ namespace winrt::StarlightGUI::implementation
         }
 
         if (successCount > 0) {
-            slg::CreateInfoBarAndDisplay(L"成功", L"成功复制" + to_hstring(successCount) + L"个项目!", InfoBarSeverity::Success, g_mainWindowInstance);
+            slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_CopySuccess").c_str() + to_hstring(successCount) + slg::GetLocalizedString(L"File_ItemsSuffix").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             co_await LoadFileList();
         }
         if (failedCount > 0) {
-            slg::CreateInfoBarAndDisplay(L"失败", L"有" + to_hstring(failedCount) + L"个项目复制失败! 请尝试以高权限运行!", InfoBarSeverity::Error, g_mainWindowInstance);
+            slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), hstring(L"") + to_hstring(failedCount) + slg::GetLocalizedString(L"File_CopyPartialFail").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
         }
 
         co_return;
@@ -818,7 +824,7 @@ namespace winrt::StarlightGUI::implementation
 
         if (currentDirectory != hstring(kFileHomePage)) {
             auto previousPage = winrt::make<winrt::StarlightGUI::implementation::FileInfo>();
-            previousPage.Name(currentDirectory.size() <= 3 ? L"返回此电脑" : L"上个文件夹");
+            previousPage.Name(currentDirectory.size() <= 3 ? slg::GetLocalizedString(L"File_BackToPC").c_str() : slg::GetLocalizedString(L"File_PreviousFolder").c_str());
             previousPage.Flag(999);
             newFileList.push_back(previousPage);
         }
@@ -846,7 +852,7 @@ namespace winrt::StarlightGUI::implementation
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
         std::wstringstream countText;
-        countText << L"共 " << m_allFiles.size() << L" 个文件 (" << duration << " ms)";
+        countText << m_allFiles.size() << L" " << slg::GetLocalizedString(L"File_FileCount") << L" (" << duration << " ms)";
         LoadingRing().IsActive(false);
 
         LOG_INFO(__WFUNCTION__, L"Loaded file list, %d entry(s) in total.", m_allFiles.size());
@@ -888,7 +894,7 @@ namespace winrt::StarlightGUI::implementation
                 file.SizeULong(0);
                 file.Size(L"");
             }
-            if (file.ModifyTime().empty()) file.ModifyTime(L"(未知)");
+            if (file.ModifyTime().empty()) file.ModifyTime(slg::GetLocalizedString(L"File_Unknown"));
             };
 
         std::wstring searchPath = directoryPath + L"\\*";
@@ -952,7 +958,7 @@ namespace winrt::StarlightGUI::implementation
             }
             else
             {
-                file.ModifyTime(L"(未知)");
+                file.ModifyTime(slg::GetLocalizedString(L"File_Unknown"));
             }
         }
     }
@@ -1124,7 +1130,7 @@ namespace winrt::StarlightGUI::implementation
 
         if (currentDirectory != hstring(kFileHomePage)) {
             auto previousPage = winrt::make<winrt::StarlightGUI::implementation::FileInfo>();
-            previousPage.Name(currentDirectory.size() <= 3 ? L"返回此电脑" : L"上个文件夹");
+            previousPage.Name(currentDirectory.size() <= 3 ? slg::GetLocalizedString(L"File_BackToPC").c_str() : slg::GetLocalizedString(L"File_PreviousFolder").c_str());
             previousPage.Flag(999);
             newFileList.Append(previousPage);
         }
@@ -1185,13 +1191,13 @@ namespace winrt::StarlightGUI::implementation
         if (activeColumn == SortColumn::Unknown) return;
 
         if (updateHeader) {
-            NameHeaderButton().Content(box_value(L"文件"));
-            ModifyTimeHeaderButton().Content(box_value(L"修改时间"));
-            SizeHeaderButton().Content(box_value(L"大小"));
+            NameHeaderButton().Content(box_value(slg::GetLocalizedString(L"File_ColFile_Text")));
+            ModifyTimeHeaderButton().Content(box_value(slg::GetLocalizedString(L"File_ColModifyTime_Text")));
+            SizeHeaderButton().Content(box_value(slg::GetLocalizedString(L"File_ColSize_Text")));
 
-            if (activeColumn == SortColumn::Name) NameHeaderButton().Content(box_value(isAscending ? L"文件 ↓" : L"文件 ↑"));
-            if (activeColumn == SortColumn::ModifyTime) ModifyTimeHeaderButton().Content(box_value(isAscending ? L"修改时间 ↓" : L"修改时间 ↑"));
-            if (activeColumn == SortColumn::Size) SizeHeaderButton().Content(box_value(isAscending ? L"大小 ↓" : L"大小 ↑"));
+            if (activeColumn == SortColumn::Name) NameHeaderButton().Content(box_value(isAscending ? slg::GetLocalizedString(L"File_ColFile_Down") : slg::GetLocalizedString(L"File_ColFile_Up")));
+            if (activeColumn == SortColumn::ModifyTime) ModifyTimeHeaderButton().Content(box_value(isAscending ? slg::GetLocalizedString(L"File_ColModifyTime_Down") : slg::GetLocalizedString(L"File_ColModifyTime_Up")));
+            if (activeColumn == SortColumn::Size) SizeHeaderButton().Content(box_value(isAscending ? slg::GetLocalizedString(L"File_ColSize_Down") : slg::GetLocalizedString(L"File_ColSize_Up")));
         }
 
         auto sortActiveColumn = [&](const winrt::StarlightGUI::FileInfo& a, const winrt::StarlightGUI::FileInfo& b) -> bool {
@@ -1334,11 +1340,11 @@ namespace winrt::StarlightGUI::implementation
 				else failedCount++;
             }
             if (successCount > 0) {
-                slg::CreateInfoBarAndDisplay(L"成功", L"成功复制" + to_hstring(successCount) + L"个文件!", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"File_CopySuccess").c_str() + to_hstring(successCount) + slg::GetLocalizedString(L"File_FilesSuffix").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
                 co_await LoadFileList();
             }
             if (failedCount > 0) {
-                slg::CreateInfoBarAndDisplay(L"失败", L"有" + to_hstring(failedCount) + L"个文件复制失败! 请尝试以高权限运行!", InfoBarSeverity::Error, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), hstring(L"") + to_hstring(failedCount) + slg::GetLocalizedString(L"File_FileCopyPartialFail").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
             }
         }
     }

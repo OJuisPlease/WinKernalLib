@@ -16,6 +16,20 @@ namespace winrt::StarlightGUI::implementation
 	MonitorPage::MonitorPage() {
 		InitializeComponent();
 
+		MonitorSegObjectUid().Text(slg::GetLocalizedString(L"Monitor_Seg_Object.Text"));
+		MonitorSegDebugUid().Text(slg::GetLocalizedString(L"Monitor_Seg_Debug.Text"));
+		MonitorSegCallbackUid().Text(slg::GetLocalizedString(L"Monitor_Seg_Callback.Text"));
+		MonitorSegMiniFilterUid().Text(slg::GetLocalizedString(L"Monitor_Seg_MiniFilter.Text"));
+		MonitorSegStdFilterUid().Text(slg::GetLocalizedString(L"Monitor_Seg_StdFilter.Text"));
+		MonitorSegIOTimerUid().Text(slg::GetLocalizedString(L"Monitor_Seg_IOTimer.Text"));
+		MonitorSegIDTUid().Text(slg::GetLocalizedString(L"Monitor_Seg_IDT.Text"));
+		MonitorSegGDTUid().Text(slg::GetLocalizedString(L"Monitor_Seg_GDT.Text"));
+		MonitorSegPiDDBUid().Text(slg::GetLocalizedString(L"Monitor_Seg_PiDDB.Text"));
+		MonitorSegHALDPTUid().Text(slg::GetLocalizedString(L"Monitor_Seg_HALDPT.Text"));
+		MonitorSegHALPDPTUid().Text(slg::GetLocalizedString(L"Monitor_Seg_HALPDPT.Text"));
+		SearchBox().PlaceholderText(slg::GetLocalizedString(L"Monitor_SearchBox.PlaceholderText"));
+		DefaultText().Text(slg::GetLocalizedString(L"Monitor_DefaultText.Text"));
+
 		// 初始化所有列表
 		{
 			ObjectTreeView().ItemsSource(m_itemList);
@@ -149,9 +163,9 @@ namespace winrt::StarlightGUI::implementation
 			bool shouldRemove = lowerQuery.empty() ? false : !ContainsIgnoreCaseLowerQuery(object.Name().c_str(), lowerQuery);
 			if (shouldRemove) continue;
 
-			if (object.Name().empty()) object.Name(L"(未知)");
-			if (object.Type().empty()) object.Type(L"(未知)");
-			if (object.CreationTime().empty()) object.CreationTime(L"(未知)");
+			if (object.Name().empty()) object.Name(slg::GetLocalizedString(L"Msg_Unknown"));
+			if (object.Type().empty()) object.Type(slg::GetLocalizedString(L"Msg_Unknown"));
+			if (object.CreationTime().empty()) object.CreationTime(slg::GetLocalizedString(L"Msg_Unknown"));
 			if (!object.Link().empty()) object.Path(object.Link());
 
 			m_objectList.Append(object);
@@ -329,12 +343,12 @@ namespace winrt::StarlightGUI::implementation
 			}
 			if (shouldRemove) continue;
 
-			if (entry.String1().empty()) entry.String1(L"(未知)");
-			if (entry.String2().empty()) entry.String2(L"(未知)");
-			if (entry.String3().empty()) entry.String3(L"(未知)");
-			if (entry.String4().empty()) entry.String4(L"(未知)");
-			if (entry.String5().empty()) entry.String5(L"(未知)");
-			if (entry.String6().empty()) entry.String6(L"(未知)");
+			if (entry.String1().empty()) entry.String1(slg::GetLocalizedString(L"Msg_Unknown"));
+			if (entry.String2().empty()) entry.String2(slg::GetLocalizedString(L"Msg_Unknown"));
+			if (entry.String3().empty()) entry.String3(slg::GetLocalizedString(L"Msg_Unknown"));
+			if (entry.String4().empty()) entry.String4(slg::GetLocalizedString(L"Msg_Unknown"));
+			if (entry.String5().empty()) entry.String5(slg::GetLocalizedString(L"Msg_Unknown"));
+			if (entry.String6().empty()) entry.String6(slg::GetLocalizedString(L"Msg_Unknown"));
 
 			m_generalList.Append(entry);
 		}
@@ -376,16 +390,16 @@ namespace winrt::StarlightGUI::implementation
 		// 基本信息
 		GroupBox basicInfoBox;
 		StackPanel basicInfoPanel;
-		basicInfoBox.Header(L"基本信息");
+		basicInfoBox.Header(slg::GetLocalizedString(L"Monitor_BasicInfo"));
 		basicInfoBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
 		TextBlock name;
-		name.Text(L"名称: " + item.Name());
+		name.Text(slg::GetLocalizedString(L"Monitor_LabelName") + item.Name());
 		TextBlock type;
-		type.Text(L"类型: " + item.Type());
+		type.Text(slg::GetLocalizedString(L"Monitor_LabelType") + item.Type());
 		TextBlock path;
-		path.Text(L"完整路径: " + item.Path());
+		path.Text(slg::GetLocalizedString(L"Monitor_LabelFullPath") + item.Path());
 		CheckBox permanent;
-		permanent.Content(box_value(L"永久"));
+		permanent.Content(box_value(slg::GetLocalizedString(L"Monitor_Permanent")));
 		permanent.IsChecked(item.Permanent());
 		permanent.IsEnabled(false);
 		basicInfoPanel.Children().Append(name);
@@ -397,12 +411,12 @@ namespace winrt::StarlightGUI::implementation
 		// 引用信息
 		GroupBox referencesBox;
 		StackPanel referencesPanel;
-		referencesBox.Header(L"引用信息");
+		referencesBox.Header(slg::GetLocalizedString(L"Monitor_ReferenceInfo"));
 		referencesBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
 		TextBlock references;
-		references.Text(L"引用: " + std::to_wstring(item.References()));
+		references.Text(slg::GetLocalizedString(L"Monitor_LabelReferences") + std::to_wstring(item.References()));
 		TextBlock handles;
-		handles.Text(L"句柄: " + std::to_wstring(item.Handles()));
+		handles.Text(slg::GetLocalizedString(L"Monitor_LabelHandles") + std::to_wstring(item.Handles()));
 		referencesPanel.Children().Append(references);
 		referencesPanel.Children().Append(handles);
 		referencesBox.Content(referencesPanel);
@@ -410,12 +424,12 @@ namespace winrt::StarlightGUI::implementation
 		// 配额信息
 		GroupBox quotaBox;
 		StackPanel quotaPanel;
-		quotaBox.Header(L"配额信息");
+		quotaBox.Header(slg::GetLocalizedString(L"Monitor_QuotaInfo"));
 		quotaBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
 		TextBlock paged;
-		paged.Text(L"分页池: " + FormatMemorySize(item.PagedPool()));
+		paged.Text(slg::GetLocalizedString(L"Monitor_LabelPagedPool") + FormatMemorySize(item.PagedPool()));
 		TextBlock nonPaged;
-		nonPaged.Text(L"非分页池: " + FormatMemorySize(item.NonPagedPool()));
+		nonPaged.Text(slg::GetLocalizedString(L"Monitor_LabelNonPagedPool") + FormatMemorySize(item.NonPagedPool()));
 		quotaPanel.Children().Append(paged);
 		quotaPanel.Children().Append(nonPaged);
 		quotaBox.Content(quotaPanel);
@@ -426,71 +440,71 @@ namespace winrt::StarlightGUI::implementation
 		StackPanel detailPanel;
 		detailBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
 		if (item.Type() == L"SymbolicLink") {
-			detailBox.Header(L"符号链接");
+			detailBox.Header(slg::GetLocalizedString(L"Monitor_SymbolicLink"));
 			TextBlock creationTime;
-			creationTime.Text(L"创建时间: " + item.CreationTime());
+			creationTime.Text(slg::GetLocalizedString(L"Monitor_LabelCreationTime") + item.CreationTime());
 			TextBlock linkTarget;
-			linkTarget.Text(L"链接: " + item.Link());
+			linkTarget.Text(slg::GetLocalizedString(L"Monitor_LabelLink") + item.Link());
 			detailPanel.Children().Append(creationTime);
 			detailPanel.Children().Append(linkTarget);
 		}
 		else if (item.Type() == L"Event") {
-			detailBox.Header(L"事件");
+			detailBox.Header(slg::GetLocalizedString(L"Monitor_Event"));
 			TextBlock eventType;
-			eventType.Text(L"事件类型: " + item.EventType());
+			eventType.Text(slg::GetLocalizedString(L"Monitor_LabelEventType") + item.EventType());
 			TextBlock eventSignaled;
 			hstring state = item.EventSignaled() ? L"TRUE" : L"FALSE";
-			eventSignaled.Text(L"触发: " + state);
+			eventSignaled.Text(slg::GetLocalizedString(L"Monitor_LabelSignaled") + state);
 			detailPanel.Children().Append(eventType);
 			detailPanel.Children().Append(eventSignaled);
 		}
 		else if (item.Type() == L"Mutant") {
-			detailBox.Header(L"互斥体");
+			detailBox.Header(slg::GetLocalizedString(L"Monitor_Mutant"));
 			TextBlock mutantHoldCount;
-			mutantHoldCount.Text(L"持有数: " + to_hstring(item.MutantHoldCount()));
+			mutantHoldCount.Text(slg::GetLocalizedString(L"Monitor_LabelHoldCount") + to_hstring(item.MutantHoldCount()));
 			TextBlock mutantAbandoned;
 			hstring state = item.MutantAbandoned() ? L"TRUE" : L"FALSE";
-			mutantAbandoned.Text(L"遗弃: " + state);
+			mutantAbandoned.Text(slg::GetLocalizedString(L"Monitor_LabelAbandoned") + state);
 			detailPanel.Children().Append(mutantHoldCount);
 			detailPanel.Children().Append(mutantAbandoned);
 		}
 		else if (item.Type() == L"Semaphore") {
-			detailBox.Header(L"信号量");
+			detailBox.Header(slg::GetLocalizedString(L"Monitor_Semaphore"));
 			TextBlock semaphoreCount;
-			semaphoreCount.Text(L"当前量: " + to_hstring(item.SemaphoreCount()));
+			semaphoreCount.Text(slg::GetLocalizedString(L"Monitor_LabelCurrentCount") + to_hstring(item.SemaphoreCount()));
 			TextBlock semaphoreLimit;
-			semaphoreLimit.Text(L"最大量: " + to_hstring(item.SemaphoreLimit()));
+			semaphoreLimit.Text(slg::GetLocalizedString(L"Monitor_LabelMaxCount") + to_hstring(item.SemaphoreLimit()));
 			detailPanel.Children().Append(semaphoreCount);
 			detailPanel.Children().Append(semaphoreLimit);
 		}
 		else if (item.Type() == L"Section") {
-			detailBox.Header(L"区域");
+			detailBox.Header(slg::GetLocalizedString(L"Monitor_Section"));
 			TextBlock sectionBaseAddress;
-			sectionBaseAddress.Text(L"基址: " + ULongToHexString(item.SectionBaseAddress()));
+			sectionBaseAddress.Text(slg::GetLocalizedString(L"Monitor_LabelBase") + ULongToHexString(item.SectionBaseAddress()));
 			TextBlock sectionMaximumSize;
-			sectionMaximumSize.Text(L"大小: " + FormatMemorySize(item.SectionMaximumSize()));
+			sectionMaximumSize.Text(slg::GetLocalizedString(L"Monitor_LabelSize") + FormatMemorySize(item.SectionMaximumSize()));
 			TextBlock sectionAttributes;
 			hstring attr = item.SectionAttributes() == 0x200000 ? L"SEC_BASED" : item.SectionAttributes() == 0x800000 ? L"SEC_FILE" : item.SectionAttributes() == 0x4000000
 				? L"SEC_RESERVE" : item.SectionAttributes() == 0x8000000 ? L"SEC_COMMIT" : item.SectionAttributes() == 0x1000000 ? L"SEC_IMAGE" : L"NULL";
-			sectionAttributes.Text(L"属性: " + attr);
+			sectionAttributes.Text(slg::GetLocalizedString(L"Monitor_LabelAttributes") + attr);
 			detailPanel.Children().Append(sectionBaseAddress);
 			detailPanel.Children().Append(sectionMaximumSize);
 			detailPanel.Children().Append(sectionAttributes);
 		}
 		else if (item.Type() == L"Timer") {
-			detailBox.Header(L"计时器");
+			detailBox.Header(slg::GetLocalizedString(L"Monitor_Timer"));
 			TextBlock timerRemainingTime;
-			timerRemainingTime.Text(L"剩余时间: " + to_hstring(item.TimerRemainingTime() * 100) + L"ns");
+			timerRemainingTime.Text(slg::GetLocalizedString(L"Monitor_LabelRemainingTime") + to_hstring(item.TimerRemainingTime() * 100) + L"ns");
 			TextBlock timerState;
 			hstring state = item.TimerState() ? L"TRUE" : L"FALSE";
-			timerState.Text(L"触发: " + state);
+			timerState.Text(slg::GetLocalizedString(L"Monitor_LabelSignaled") + state);
 			detailPanel.Children().Append(timerRemainingTime);
 			detailPanel.Children().Append(timerState);
 		}
 		else if (item.Type() == L"IoCompletion") {
-			detailBox.Header(L"I/O 完成端口");
+			detailBox.Header(slg::GetLocalizedString(L"Monitor_IoCompletion"));
 			TextBlock ioCompletionDepth;
-			ioCompletionDepth.Text(L"深度: " + to_hstring(item.IoCompletionDepth()));
+			ioCompletionDepth.Text(slg::GetLocalizedString(L"Monitor_LabelDepth") + to_hstring(item.IoCompletionDepth()));
 			detailPanel.Children().Append(ioCompletionDepth);
 		}
 		else {
@@ -500,7 +514,7 @@ namespace winrt::StarlightGUI::implementation
 		detailBox.Visibility(flag ? Visibility::Collapsed : Visibility::Visible);
 		if (!status && !flag) {
 			TextBlock errorText;
-			errorText.Text(L"获取信息时出错，部分内容可能不完整！");
+			errorText.Text(slg::GetLocalizedString(L"Monitor_GetInfoError"));
 			errorText.Foreground(Microsoft::UI::Xaml::Media::SolidColorBrush(Microsoft::UI::Colors::OrangeRed()));
 			flyoutPanel.Children().Append(errorText);
 		}
@@ -574,12 +588,12 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyout menuFlyout;
 
 		// 选项1.1
-		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", L"移除", [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", slg::GetLocalizedString(L"Monitor_Remove").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
 			if (KernelInstance::RemoveNotify(item)) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"成功移除回调/消息: " + item.String2() + L"(" + item.String1() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), (slg::GetLocalizedString(L"Monitor_RemoveCallbackSuccess") + item.String2() + L"(" + item.String1() + L")").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 				WaitAndReloadAsync(1000);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法移除回调/消息: " + item.String2() + L"(" + item.String1() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Monitor_RemoveCallbackFailed") + item.String2() + L"(" + item.String1() + L")" + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 
@@ -587,36 +601,36 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyoutSeparator separator1;
 
 		// 选项2.1
-		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
-		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"类型", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"Monitor_CopyInfo").c_str());
+		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", slg::GetLocalizedString(L"Monitor_Type").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
-		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"模块", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"Monitor_Module").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
-		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", L"入口", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", slg::GetLocalizedString(L"Monitor_Entry").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
-		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"句柄", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", slg::GetLocalizedString(L"Monitor_Handle").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
@@ -643,12 +657,12 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyout menuFlyout;
 
 		// 选项1.1
-		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", L"卸载", [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", slg::GetLocalizedString(L"Monitor_Unload").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
 			if (KernelInstance::RemoveMiniFilter(item)) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"成功卸载微过滤驱动: " + item.String1(), InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), (slg::GetLocalizedString(L"Monitor_UnloadMiniFilterSuccess") + item.String1()).c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 				WaitAndReloadAsync(1000);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法卸载微过滤驱动: " + item.String1() + L", 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Monitor_UnloadMiniFilterFailed") + item.String1() + L"" + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 
@@ -656,44 +670,44 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyoutSeparator separator1;
 
 		// 选项2.1
-		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
+		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"Monitor_CopyInfo").c_str());
 		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"IRP", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
-		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"模块", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"Monitor_Module").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
-		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", L"基址", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", slg::GetLocalizedString(L"Monitor_Base").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
 		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"PreFilter", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
 		auto item2_1_sub5 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"PostFilter", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -720,12 +734,12 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyout menuFlyout;
 
 		// 选项1.1
-		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", L"卸载", [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", slg::GetLocalizedString(L"Monitor_Unload").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
 			if (KernelInstance::RemoveStandardFilter(item)) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"成功卸载标准过滤驱动: " + item.String3(), InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), (slg::GetLocalizedString(L"Monitor_UnloadStdFilterSuccess") + item.String3()).c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 				WaitAndReloadAsync(1000);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法卸载标准过滤驱动: " + item.String3() + L", 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Monitor_UnloadStdFilterFailed") + item.String3() + L"" + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 
@@ -733,44 +747,44 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyoutSeparator separator1;
 
 		// 选项2.1
-		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
-		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"驱动", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"Monitor_CopyInfo").c_str());
+		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", slg::GetLocalizedString(L"Monitor_Driver").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
-		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"模块", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"Monitor_Module").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
-		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ue97c", L"类型", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ue97c", slg::GetLocalizedString(L"Monitor_Type").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
-		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", L"设备对象", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", slg::GetLocalizedString(L"Monitor_DeviceObj").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
-		auto item2_1_sub5 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"目标驱动对象", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub5 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", slg::GetLocalizedString(L"Monitor_TargetDriverObj").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -798,18 +812,18 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyout menuFlyout;
 
 		// 选项1.1
-		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue75c", L"解除挂钩", [this, item, isSSDT](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue75c", slg::GetLocalizedString(L"Monitor_Unhook").c_str(), [this, item, isSSDT](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
 			if ((isSSDT && KernelInstance::UnhookSSDT(item)) || (!isSSDT && KernelInstance::UnhookSSSDT(item))) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"成功解除挂钩: " + item.String2(), InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), (slg::GetLocalizedString(L"Monitor_UnhookSuccess") + item.String2()).c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 				WaitAndReloadAsync(1000);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法解除挂钩: " + item.String2() + L", 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Monitor_UnhookFailed") + item.String2() + L"" + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		if (!item.ULongLong2() || (!item.Bool1() && item.ULongLong1() == item.ULongLong2())) item1_1.IsEnabled(false);
 
 		// 选项1.2
-		auto item1_2 = slg::CreateMenuItem(flyoutStyles, L"\ue72c", L"扫描 EPT/NPT 钩子", [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_2 = slg::CreateMenuItem(flyoutStyles, L"\ue72c", slg::GetLocalizedString(L"Monitor_ScanEPTHook").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
 			KernelInstance::EnableEPTScan();
 			WaitAndReloadAsync(100);
 			KernelInstance::DisableEPTScan();
@@ -820,44 +834,44 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyoutSeparator separator1;
 
 		// 选项2.1
-		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
-		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"名称", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"Monitor_CopyInfo").c_str());
+		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", slg::GetLocalizedString(L"Monitor_Name").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
-		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"模块", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"Monitor_Module").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
-		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ue97c", L"钩子", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ue97c", slg::GetLocalizedString(L"Monitor_Hook").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
-		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", L"地址", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", slg::GetLocalizedString(L"Monitor_Address").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
-		auto item2_1_sub5 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"源地址", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub5 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", slg::GetLocalizedString(L"Monitor_SrcAddress").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -885,12 +899,12 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyout menuFlyout;
 
 		// 选项1.1
-		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", L"移除", [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", slg::GetLocalizedString(L"Monitor_Remove").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
 			if (KernelInstance::RemoveExCallback(item)) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"成功移除 ExCallback: " + item.String1() + L"(" + item.String2() + L")", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), (slg::GetLocalizedString(L"Monitor_RemoveExCallbackSuccess") + item.String1() + L"(" + item.String2() + L")").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 				WaitAndReloadAsync(1000);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法移除 ExCallback: " + item.String1() + L"(" + item.String2() + L"), 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Monitor_RemoveExCallbackFailed") + item.String1() + L"(" + item.String2() + L")" + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 
@@ -898,44 +912,44 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyoutSeparator separator1;
 
 		// 选项2.1
-		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
-		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"名称", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"Monitor_CopyInfo").c_str());
+		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", slg::GetLocalizedString(L"Monitor_Name").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
-		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"模块", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"Monitor_Module").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
-		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", L"入口", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", slg::GetLocalizedString(L"Monitor_Entry").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
-		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"对象", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub4 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", slg::GetLocalizedString(L"Monitor_Object").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
-		auto item2_1_sub5 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", L"句柄", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub5 = slg::CreateMenuItem(flyoutStyles, L"\ueb1d", slg::GetLocalizedString(L"Monitor_Handle").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -962,12 +976,12 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyout menuFlyout;
 
 		// 选项1.1
-		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", L"移除", [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1 = slg::CreateMenuItem(flyoutStyles, L"\ue711", slg::GetLocalizedString(L"Monitor_Remove").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) mutable -> winrt::Windows::Foundation::IAsyncAction {
 			if (KernelInstance::RemovePiDDBCache(item)) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"成功移除 PiDDB 缓存条目: " + item.String1(), InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), (slg::GetLocalizedString(L"Monitor_RemovePiDDBSuccess") + item.String1()).c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 				WaitAndReloadAsync(1000);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法移除  PiDDB 缓存条目: " + item.String1() + L", 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Monitor_RemovePiDDBFailed") + item.String1() + L"" + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 
@@ -975,28 +989,28 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyoutSeparator separator1;
 
 		// 选项2.1
-		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
-		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"模块", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"Monitor_CopyInfo").c_str());
+		auto item2_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"Monitor_Module").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
-		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uece9", L"状态", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uece9", slg::GetLocalizedString(L"Monitor_Status").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(std::to_wstring(item.ULong1()))) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
-		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\uec92", L"时间戳", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item2_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\uec92", slg::GetLocalizedString(L"Monitor_Timestamp").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(std::to_wstring(item.ULong2()))) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
@@ -1023,28 +1037,28 @@ namespace winrt::StarlightGUI::implementation
 		MenuFlyout menuFlyout;
 
 		// 选项1.1
-		auto item1_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", L"复制信息");
-		auto item1_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", L"名称", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1 = slg::CreateMenuSubItem(flyoutStyles, L"\ue8c8", slg::GetLocalizedString(L"Monitor_CopyInfo").c_str());
+		auto item1_1_sub1 = slg::CreateMenuItem(flyoutStyles, L"\ue943", slg::GetLocalizedString(L"Monitor_Name").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item1_1.Items().Append(item1_1_sub1);
-		auto item1_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", L"模块", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1_sub2 = slg::CreateMenuItem(flyoutStyles, L"\uec6c", slg::GetLocalizedString(L"Monitor_Module").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item1_1.Items().Append(item1_1_sub2);
-		auto item1_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", L"地址", [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
+		auto item1_1_sub3 = slg::CreateMenuItem(flyoutStyles, L"\ueb19", slg::GetLocalizedString(L"Monitor_Address").c_str(), [this, item](IInspectable const& sender, RoutedEventArgs const& e) -> winrt::Windows::Foundation::IAsyncAction {
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
-				slg::CreateInfoBarAndDisplay(L"成功", L"已复制内容至剪贴板", InfoBarSeverity::Success, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Msg_CopiedToClipboard").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(L"失败", L"无法复制内容至剪贴板, 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), (slg::GetLocalizedString(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item1_1.Items().Append(item1_1_sub3);
@@ -1100,7 +1114,7 @@ namespace winrt::StarlightGUI::implementation
 	slg::coroutine MonitorPage::DbgViewButton_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		isDbgViewEnabled = !isDbgViewEnabled;
-		DbgViewButton().Content(isDbgViewEnabled ? box_value(L"关闭") : box_value(L"开启"));
+		DbgViewButton().Content(isDbgViewEnabled ? box_value(slg::GetLocalizedString(L"Monitor_Close")) : box_value(slg::GetLocalizedString(L"Monitor_Open")));
 		InitializeDbgView();
 		co_return;
 	}
@@ -1203,7 +1217,7 @@ namespace winrt::StarlightGUI::implementation
 		if (!IsLoaded()) return;
 		if (!MainSegmented().SelectedItem()) return;
 		if (m_isLoading) {
-			if (segmentedIndex != MainSegmented().SelectedIndex()) slg::CreateInfoBarAndDisplay(L"警告", L"请等待列表加载完毕后再进行切换！", InfoBarSeverity::Warning, g_mainWindowInstance);
+			if (segmentedIndex != MainSegmented().SelectedIndex()) slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Warning").c_str(), slg::GetLocalizedString(L"Monitor_WaitForLoading").c_str(), InfoBarSeverity::Warning, g_mainWindowInstance);
 			MainSegmented().SelectedIndex(segmentedIndex);
 			return;
 		}
@@ -1263,7 +1277,7 @@ namespace winrt::StarlightGUI::implementation
 		}
 		case 1: {
 			DbgViewGrid().Visibility(Visibility::Visible);
-			DbgViewButton().Content(isDbgViewEnabled ? box_value(L"关闭") : box_value(L"开启"));
+			DbgViewButton().Content(isDbgViewEnabled ? box_value(slg::GetLocalizedString(L"Monitor_Close")) : box_value(slg::GetLocalizedString(L"Monitor_Open")));
 			DbgViewGlobalCheckBox().IsChecked(isDbgViewGlobalEnabled);
 			{
 				std::lock_guard<std::mutex> guard(dbgViewMutex);

@@ -213,7 +213,7 @@ namespace winrt::StarlightGUI::implementation {
 				pi.EProcessULong((ULONG64)data.Eprocess);
 				pi.ExecutablePath(to_hstring(data.ImagePath));
 				pi.MemoryUsageByte(data.WorkingSetPrivateSize);
-				pi.Status(L"运行中");
+				pi.Status(slg::GetLocalizedString(L"Kernel_StatusRunning"));
 				targetList.push_back(pi);
 			}
 		}
@@ -253,7 +253,7 @@ namespace winrt::StarlightGUI::implementation {
 				pi.EProcess(ULongToHexString((ULONG64)data.pvoidaddressdata1));
 				pi.EProcessULong((ULONG64)data.pvoidaddressdata1);
 				pi.ExecutablePath(to_hstring(data.Module1));
-				pi.Status(L"运行中");
+				pi.Status(slg::GetLocalizedString(L"Kernel_StatusRunning"));
 				targetList.push_back(pi);
 			}
 		}
@@ -299,27 +299,27 @@ namespace winrt::StarlightGUI::implementation {
 				switch (data.ulongdata1)
 				{
 				case ThreadState_Initialized:
-					threadInfo.Status(L"初始化");
+					threadInfo.Status(slg::GetLocalizedString(L"Kernel_ThreadInitialized"));
 					break;
 
 				case ThreadState_Ready:
-					threadInfo.Status(L"就绪");
+					threadInfo.Status(slg::GetLocalizedString(L"Kernel_ThreadReady"));
 					break;
 
 				case ThreadState_Running:
-					threadInfo.Status(L"运行中");
+					threadInfo.Status(slg::GetLocalizedString(L"Kernel_StatusRunning"));
 					break;
 
 				case ThreadState_Standby:
-					threadInfo.Status(L"待命");
+					threadInfo.Status(slg::GetLocalizedString(L"Kernel_ThreadStandby"));
 					break;
 
 				case ThreadState_Terminated:
-					threadInfo.Status(L"已退出");
+					threadInfo.Status(slg::GetLocalizedString(L"Kernel_ThreadTerminated"));
 					break;
 
 				case ThreadState_Waiting:
-					threadInfo.Status(L"等待中");
+					threadInfo.Status(slg::GetLocalizedString(L"Kernel_ThreadWaiting"));
 					break;
 
 				case ThreadState_Transition:
@@ -335,7 +335,7 @@ namespace winrt::StarlightGUI::implementation {
 					break;
 
 				default:
-					threadInfo.Status(L"未知");
+					threadInfo.Status(slg::GetLocalizedString(L"Kernel_ThreadUnknown"));
 					break;
 				}
 				threads.push_back(threadInfo);
@@ -1219,7 +1219,7 @@ namespace winrt::StarlightGUI::implementation {
 			}
 			else
 			{
-				entry.CreationTime(L"(未知)");
+				entry.CreationTime(slg::GetLocalizedString(L"Msg_Unknown"));
 			}
 
 			ULONG bufferLength = 0;

@@ -36,7 +36,7 @@
                     VerticalAlignment="Center"
                     FontSize="18"
                     FontWeight="Bold"
-                    Text="任务管理器" />
+                    x:Name="TaskTitleUid" Text="任务管理器" />
 
                 <TextBlock
                     x:Name="ProcessCountText"
@@ -58,7 +58,7 @@
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe72c;" />
                         </AppBarButton.Icon>
                     </AppBarButton>
-                    <AppBarButton Click="CreateProcessButton_Click" Label="运行进程">
+                    <AppBarButton Click="CreateProcessButton_Click" x:Name="TaskRunUid" Label="运行进程">
                         <AppBarButton.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xefda;" />
                         </AppBarButton.Icon>

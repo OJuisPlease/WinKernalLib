@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "UtilityPage.xaml.h"
 #if __has_include("UtilityPage.g.cpp")
 #include "UtilityPage.g.cpp"
@@ -15,10 +15,91 @@ namespace winrt::StarlightGUI::implementation{
 	UtilityPage::UtilityPage() {
 		InitializeComponent();
 
+		// SettingsCard Header+Description must be set in code (x:Uid on IInspectable DPs crashes).
+		auto bv = [](winrt::hstring s) { return winrt::box_value(s); };
+		HVMCard().Header(bv(slg::t("Utility_HVM_Card.Header")));
+		HVMCard().Description(bv(slg::t("Utility_HVM_Card.Description")));
+		CreateProcessCard().Header(bv(slg::t("Utility_CreateProcess_Card.Header")));
+		CreateProcessCard().Description(bv(slg::t("Utility_CreateProcess_Card.Description")));
+		CreateFileCard().Header(bv(slg::t("Utility_CreateFile_Card.Header")));
+		CreateFileCard().Description(bv(slg::t("Utility_CreateFile_Card.Description")));
+		LoadDrvCard().Header(bv(slg::t("Utility_LoadDrv_Card.Header")));
+		LoadDrvCard().Description(bv(slg::t("Utility_LoadDrv_Card.Description")));
+		UnloadDrvCard().Header(bv(slg::t("Utility_UnloadDrv_Card.Header")));
+		UnloadDrvCard().Description(bv(slg::t("Utility_UnloadDrv_Card.Description")));
+		ModifyRegCard().Header(bv(slg::t("Utility_ModifyReg_Card.Header")));
+		ModifyRegCard().Description(bv(slg::t("Utility_ModifyReg_Card.Description")));
+		ModifyBootsecCard().Header(bv(slg::t("Utility_ModifyBootsec_Card.Header")));
+		ModifyBootsecCard().Description(bv(slg::t("Utility_ModifyBootsec_Card.Description")));
+		ObjRegCbCard().Header(bv(slg::t("Utility_ObjRegCb_Card.Header")));
+		ObjRegCbCard().Description(bv(slg::t("Utility_ObjRegCb_Card.Description")));
+		CmRegCbCard().Header(bv(slg::t("Utility_CmRegCb_Card.Header")));
+		CmRegCbCard().Description(bv(slg::t("Utility_CmRegCb_Card.Description")));
+		DSECard().Header(bv(slg::t("Utility_DSE_Card.Header")));
+		DSECard().Description(bv(slg::t("Utility_DSE_Card.Description")));
+		LKDCard().Header(bv(slg::t("Utility_LKD_Card.Header")));
+		LKDCard().Description(bv(slg::t("Utility_LKD_Card.Description")));
+		PowerCard().Header(bv(slg::t("Utility_Power_Card.Header")));
+		PowerCard().Description(bv(slg::t("Utility_Power_Card.Description")));
+		BSODCard().Header(bv(slg::t("Utility_BSOD_Card.Header")));
+		BSODCard().Description(bv(slg::t("Utility_BSOD_Card.Description")));
+		PGCard().Header(bv(slg::t("Utility_PG_Card.Header")));
+		PGCard().Description(bv(slg::t("Utility_PG_Card.Description")));
+
 		if (hypervisor_mode) {
-			ObCallbackCard().Header(box_value(L"注册对象操作回调 (Hypervisor mode)"));
-			DSECard().Header(box_value(L"驱动签名强制 (Hypervisor mode)"));
+			ObjRegCbCard().Header(bv(slg::GetLocalizedString(L"Utility_ObjRegCb_HVM")));
+			DSECard().Header(bv(slg::GetLocalizedString(L"Utility_DSE_HVM")));
 		}
+
+		// Localize section headers and buttons
+		UtilityHypervisorUid().Text(slg::GetLocalizedString(L"Utility_Hypervisor.Text"));
+		UtilityHVMEnableUid().Content(bv(slg::GetLocalizedString(L"Utility_HVM_Enable.Content")));
+		UtilitySysBehaviorUid().Text(slg::GetLocalizedString(L"Utility_SysBehavior.Text"));
+		UtilitySysOpUid().Text(slg::GetLocalizedString(L"Utility_SysOp.Text"));
+		UtilitySysOpWarningUid().Text(slg::GetLocalizedString(L"Utility_SysOpWarning.Text"));
+		UtilityPowerShutdownUid().Content(bv(slg::GetLocalizedString(L"Utility_PowerShutdown.Content")));
+		UtilityPowerRebootUid().Content(bv(slg::GetLocalizedString(L"Utility_PowerReboot.Content")));
+		UtilityPowerForceRebootUid().Content(bv(slg::GetLocalizedString(L"Utility_PowerForceReboot.Content")));
+		UtilityBSODDefaultUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Default.Content")));
+		UtilityBSODRedUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Red.Content")));
+		UtilityBSODGreenUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Green.Content")));
+		UtilityBSODBlueUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Blue.Content")));
+		UtilityBSODYellowUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Yellow.Content")));
+		UtilityBSODCyanUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Cyan.Content")));
+		UtilityBSODMagentaUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Magenta.Content")));
+		UtilityBSODBlackUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Black.Content")));
+		UtilityBSODWhiteUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_White.Content")));
+		UtilityBSODOrangeUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Orange.Content")));
+		UtilityBSODPurpleUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Purple.Content")));
+		UtilityBSODPinkUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Pink.Content")));
+		UtilityBSODGrayUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Gray.Content")));
+		UtilityBSODBrownUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Brown.Content")));
+		UtilityBSODGoldUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Gold.Content")));
+		UtilityBSODSilverUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Silver.Content")));
+		UtilityBSODCrashUid().Content(bv(slg::GetLocalizedString(L"Utility_BSOD_Crash.Content")));
+		UtilityPGAutoUid().Content(bv(slg::GetLocalizedString(L"Utility_PG_Auto.Content")));
+		UtilityPGDisableUid().Content(bv(slg::GetLocalizedString(L"Utility_PG_Disable.Content")));
+
+		// Localize all Enable/Disable buttons (they share Tag-based handlers, no x:Name)
+		auto enableText = bv(slg::GetLocalizedString(L"Utility_Enable.Content"));
+		auto disableText = bv(slg::GetLocalizedString(L"Utility_Disable.Content"));
+		auto localizeButtons = [&](auto card) {
+			auto panel = card.Content().as<winrt::Microsoft::UI::Xaml::Controls::StackPanel>();
+			if (panel && panel.Children().Size() >= 2) {
+				panel.Children().GetAt(0).as<Button>().Content(enableText);
+				panel.Children().GetAt(1).as<Button>().Content(disableText);
+			}
+		};
+		localizeButtons(CreateProcessCard());
+		localizeButtons(CreateFileCard());
+		localizeButtons(LoadDrvCard());
+		localizeButtons(UnloadDrvCard());
+		localizeButtons(ModifyRegCard());
+		localizeButtons(ModifyBootsecCard());
+		localizeButtons(ObjRegCbCard());
+		localizeButtons(CmRegCbCard());
+		localizeButtons(DSECard());
+		localizeButtons(LKDCard());
 
 		LOG_INFO(L"UtilityPage", L"UtilityPage initialized.");
 	}
@@ -30,8 +111,8 @@ namespace winrt::StarlightGUI::implementation{
 
 		if (safeAcceptedTag != tag) {
 			safeAcceptedTag = tag;
-			slg::CreateInfoBarAndDisplay(L"警告", L"该操作可能导致系统不稳定或崩溃！如果你知道自己在做什么，请再次点击！", InfoBarSeverity::Warning, g_mainWindowInstance);
-			slg::CreateInfoBarAndDisplay(L"警告", L"如果多次进行了同一个禁用操作，也需要多次进行启用才可恢复！", InfoBarSeverity::Warning, g_mainWindowInstance);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Warning").c_str(), slg::GetLocalizedString(L"Utility_ConfirmAction").c_str(), InfoBarSeverity::Warning, g_mainWindowInstance);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Warning").c_str(), slg::GetLocalizedString(L"Utility_ConfirmAction2").c_str(), InfoBarSeverity::Warning, g_mainWindowInstance);
 			co_return;
 		}
 
@@ -116,27 +197,27 @@ namespace winrt::StarlightGUI::implementation{
 		}
 		else {
 			co_await wil::resume_foreground(DispatcherQueue());
-			slg::CreateInfoBarAndDisplay(L"错误", L"未知操作！", InfoBarSeverity::Error, g_mainWindowInstance);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Error").c_str(), slg::GetLocalizedString(L"Utility_UnknownAction").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 		}
 
 		co_await wil::resume_foreground(DispatcherQueue());
 
 		if (result) {
-			slg::CreateInfoBarAndDisplay(L"成功", L"成功完成操作！", InfoBarSeverity::Success, g_mainWindowInstance);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Utility_ActionSuccess").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 		}
 		else {
 			if (GetLastError() == 0) {
-				slg::CreateInfoBarAndDisplay(L"失败", L"无法完成操作，该功能可能已经是预期的状态了！", InfoBarSeverity::Error, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"Utility_ActionFailedAlready").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			}
 			else {
-				slg::CreateInfoBarAndDisplay(L"失败", L"无法完成操作，错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+				slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"Utility_ActionFailed").c_str() + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
 			}
 		}
 
 		if (hypervisor_mode) {
-			ObCallbackCard().Header(box_value(L"注册对象操作回调 (Hypervisor mode)"));
-			DSECard().Header(box_value(L"驱动签名强制 (Hypervisor mode)"));
+			ObjRegCbCard().Header(box_value(slg::GetLocalizedString(L"Utility_ObjRegCb_HVM")));
+			DSECard().Header(box_value(slg::GetLocalizedString(L"Utility_DSE_HVM")));
 		}
 
 		co_return;
@@ -163,17 +244,17 @@ namespace winrt::StarlightGUI::implementation{
 			result = KernelInstance::RebootForce();
 		}
 		else {
-			slg::CreateInfoBarAndDisplay(L"错误", L"未知操作！", InfoBarSeverity::Error, g_mainWindowInstance);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Error").c_str(), slg::GetLocalizedString(L"Utility_UnknownAction").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 		}
 
 		co_await wil::resume_foreground(DispatcherQueue());
 
 		if (result) {
-			slg::CreateInfoBarAndDisplay(L"成功", L"成功完成操作！", InfoBarSeverity::Success, g_mainWindowInstance);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Utility_ActionSuccess").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
 		}
 		else {
-			slg::CreateInfoBarAndDisplay(L"失败", L"无法完成操作，错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), slg::GetLocalizedString(L"Utility_ActionFailed").c_str() + slg::GetLocalizedString(L"Msg_ErrorCode") + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
 		}
 
 		co_return;

@@ -7,7 +7,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:StarlightGUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="注入DLL"
+    x:Name="InjectDLLDialogUid" Title="注入DLL"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     PrimaryButtonText="注入"

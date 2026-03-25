@@ -17,6 +17,9 @@ namespace winrt::StarlightGUI::implementation
     InjectDLLDialog::InjectDLLDialog()
     {
         InitializeComponent();
+
+        this->Title(winrt::box_value(slg::GetLocalizedString(L"InjectDLL_Dialog.Title")));
+        DLLPathTextBox().PlaceholderText(slg::GetLocalizedString(L"InjectDLL_Path.PlaceholderText"));
     }
 
     void InjectDLLDialog::OnPrimaryButtonClick(ContentDialog const& sender,
@@ -58,11 +61,11 @@ namespace winrt::StarlightGUI::implementation
                 DLLPathTextBox().Text(file.Path());
             }
             else {
-                ErrorText().Text(L"文件不是DLL类型！");
+                ErrorText().Text(slg::GetLocalizedString(L"InjectDLL_NotDLL"));
             }
         }
         else {
-            ErrorText().Text(L"文件不存在！");
+            ErrorText().Text(slg::GetLocalizedString(L"InjectDLL_FileNotExist"));
         }
     }
 }

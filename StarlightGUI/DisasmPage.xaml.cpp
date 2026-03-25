@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DisasmPage.xaml.h"
 #if __has_include("DisasmPage.g.cpp")
 #include "DisasmPage.g.cpp"
@@ -19,6 +19,16 @@ namespace winrt::StarlightGUI::implementation
     DisasmPage::DisasmPage()
     {
         InitializeComponent();
+
+        DisasmTitleUid().Text(slg::GetLocalizedString(L"Disasm_Title.Text"));
+        DisasmModeReadUid().Content(winrt::box_value(slg::GetLocalizedString(L"Disasm_ModeRead.Content")));
+        DisasmModeReadDisasmUid().Content(winrt::box_value(slg::GetLocalizedString(L"Disasm_ModeReadDisasm.Content")));
+        DisasmModeWriteUid().Content(winrt::box_value(slg::GetLocalizedString(L"Disasm_ModeWrite.Content")));
+        DisasmExecuteUid().Text(slg::GetLocalizedString(L"Disasm_Execute.Text"));
+        AddressBox().Header(winrt::box_value(slg::GetLocalizedString(L"Disasm_AddressBox.Header")));
+        SizeBox().Header(winrt::box_value(slg::GetLocalizedString(L"Disasm_SizeBox.Header")));
+        ValueBox().Header(winrt::box_value(slg::GetLocalizedString(L"Disasm_ValueBox.Header")));
+        HexText().Text(slg::GetLocalizedString(L"Disasm_None.Text"));
     }
 
     slg::coroutine DisasmPage::Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
@@ -28,7 +38,7 @@ namespace winrt::StarlightGUI::implementation
         if (mode == 0 || mode == 1) {
             ULONG64 address = 0, size = 0;
             if (!HexStringToULong(AddressBox().Text().c_str(), address) || !StringToNumber(SizeBox().Text().c_str(), size)) {
-                slg::CreateInfoBarAndDisplay(L"错误", L"输入的一个或多个值不合法!", InfoBarSeverity::Error, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Error").c_str(), slg::GetLocalizedString(L"Disasm_InvalidInput").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
                 co_return;
             }
 
@@ -66,8 +76,8 @@ namespace winrt::StarlightGUI::implementation
                     cs_err a = cs_open(CS_ARCH_X86, CS_MODE_64, &handle);
                     if (a != CS_ERR_OK) {
                         slg::CreateInfoBarAndDisplay(
-                            L"错误",
-                            L"无法初始化 Capstone! 请检查系统配置! 错误码: " + to_hstring((int)a),
+                            slg::GetLocalizedString(L"Msg_Error").c_str(),
+                            slg::GetLocalizedString(L"Disasm_CapstoneInitFailed").c_str() + to_hstring((int)a),
                             InfoBarSeverity::Error,
                             g_mainWindowInstance
                         );
@@ -112,8 +122,8 @@ namespace winrt::StarlightGUI::implementation
                     }
                     else {
                         slg::CreateInfoBarAndDisplay(
-                            L"警告",
-                            L"未能反汇编出任何指令，可能发生了错误!",
+                            slg::GetLocalizedString(L"Msg_Warning").c_str(),
+                            slg::GetLocalizedString(L"Disasm_NoInstructions").c_str(),
                             InfoBarSeverity::Warning,
                             g_mainWindowInstance
                         );
@@ -121,20 +131,20 @@ namespace winrt::StarlightGUI::implementation
 
                     cs_close(&handle);
                 }
-                slg::CreateInfoBarAndDisplay(L"成功", L"查询成功!", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Disasm_QuerySuccess").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             }
             else
             {
-                HexText().Text(L"无");
-                CharText().Text(L"无");
-                slg::CreateInfoBarAndDisplay(L"错误", L"查询失败! 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                HexText().Text(slg::GetLocalizedString(L"Disasm_NA"));
+                CharText().Text(slg::GetLocalizedString(L"Disasm_NA"));
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Error").c_str(), slg::GetLocalizedString(L"Disasm_QueryFailed").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
         }
         else {
             if (!confirmed) {
                 slg::CreateInfoBarAndDisplay(
-                    L"警告",
-                    L"写入内存可能会导致系统不稳定甚至崩溃! 请确保你知道自己在做什么!!! 再次点击以继续!!!",
+                    slg::GetLocalizedString(L"Msg_Warning").c_str(),
+                    slg::GetLocalizedString(L"Disasm_WriteWarning").c_str(),
                     InfoBarSeverity::Warning,
                     g_mainWindowInstance
                 );
@@ -143,7 +153,7 @@ namespace winrt::StarlightGUI::implementation
 			}
             ULONG64 address = 0, size = 0, data = 0;
             if (!HexStringToULong(AddressBox().Text().c_str(), address) || !StringToNumber(SizeBox().Text().c_str(), size) || !StringToNumber(ValueBox().Text().c_str(), data)) {
-                slg::CreateInfoBarAndDisplay(L"错误", L"输入的一个或多个值不合法!", InfoBarSeverity::Error, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Error").c_str(), slg::GetLocalizedString(L"Disasm_InvalidInput").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
                 co_return;
             }
 
@@ -155,13 +165,12 @@ namespace winrt::StarlightGUI::implementation
 
             if (result)
             {
-                slg::CreateInfoBarAndDisplay(L"成功", L"写入成功!", InfoBarSeverity::Success, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), slg::GetLocalizedString(L"Disasm_WriteSuccess").c_str(), InfoBarSeverity::Success, g_mainWindowInstance);
             }
             else
             {
-                slg::CreateInfoBarAndDisplay(L"错误", L"写入失败! 错误码: " + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
+                slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Error").c_str(), slg::GetLocalizedString(L"Disasm_WriteFailed").c_str() + to_hstring((int)GetLastError()), InfoBarSeverity::Error, g_mainWindowInstance);
             }
         }
     }
 }
-

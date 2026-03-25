@@ -15,13 +15,14 @@
             <essential:RevealFocusPanel x:Name="RevealFocusPanel">
                 <StackPanel>
                     <TextBlock
-                        Padding="10"
+                        x:Name="UtilityHypervisorUid" Padding="10"
                         HorizontalAlignment="Left"
                         FontSize="14"
                         FontWeight="Bold"
                         Text="Hypervisor" />
                     <!--  开启 Hypervisor 模式  -->
                     <essential:SettingsCard
+                        x:Name="HVMCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="开启虚拟化模式，将强化部分功能（仅限支持 Intel VT 的硬件)"
@@ -36,7 +37,7 @@
                         </essential:SettingsCard.HeaderIcon>
                         <StackPanel Orientation="Horizontal">
                             <Button
-                                Click="Button_Click"
+                                x:Name="UtilityHVMEnableUid" Click="Button_Click"
                                 Content="启用"
                                 Style="{ThemeResource AccentButtonStyle}"
                                 Tag="ENABLE_HVM" />
@@ -44,7 +45,7 @@
                     </essential:SettingsCard>
 
                     <TextBlock
-                        Padding="10"
+                        x:Name="UtilitySysBehaviorUid" Padding="10"
                         HorizontalAlignment="Left"
                         FontSize="14"
                         FontWeight="Bold"
@@ -52,6 +53,7 @@
 
                     <!--  创建进程  -->
                     <essential:SettingsCard
+                        x:Name="CreateProcessCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许全局创建进程"
@@ -79,6 +81,7 @@
 
                     <!--  创建文件  -->
                     <essential:SettingsCard
+                        x:Name="CreateFileCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许全局创建文件"
@@ -106,6 +109,7 @@
 
                     <!--  加载驱动  -->
                     <essential:SettingsCard
+                        x:Name="LoadDrvCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许系统加载驱动"
@@ -133,6 +137,7 @@
 
                     <!--  卸载驱动  -->
                     <essential:SettingsCard
+                        x:Name="UnloadDrvCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许系统卸载驱动"
@@ -160,6 +165,7 @@
 
                     <!--  修改注册表  -->
                     <essential:SettingsCard
+                        x:Name="ModifyRegCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许修改注册表"
@@ -187,6 +193,7 @@
 
                     <!--  修改引导扇区  -->
                     <essential:SettingsCard
+                        x:Name="ModifyBootsecCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许修改磁盘引导扇区"
@@ -214,7 +221,7 @@
 
                     <!--  注册对象操作回调  -->
                     <essential:SettingsCard
-                        x:Name="ObCallbackCard"
+                        x:Name="ObjRegCbCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许注册对象操作回调 (ObRegisterCallbacks)"
@@ -242,6 +249,7 @@
 
                     <!--  注册注册表回调  -->
                     <essential:SettingsCard
+                        x:Name="CmRegCbCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁止或允许注册注册表回调 (CmRegisterCallbackEx)"
@@ -297,6 +305,7 @@
 
                     <!--  本地内核调试  -->
                     <essential:SettingsCard
+                        x:Name="LKDCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="开启或关闭本地内核调试"
@@ -323,13 +332,13 @@
                     </essential:SettingsCard>
 
                     <TextBlock
-                        Padding="10,0,0,0"
+                        x:Name="UtilitySysOpUid" Padding="10,0,0,0"
                         HorizontalAlignment="Left"
                         FontSize="14"
                         FontWeight="Bold"
                         Text="系统操作" />
                     <TextBlock
-                        Padding="10,0,0,10"
+                        x:Name="UtilitySysOpWarningUid" Padding="10,0,0,10"
                         HorizontalAlignment="Left"
                         FontSize="12"
                         Foreground="LightGray"
@@ -337,6 +346,7 @@
 
                     <!--  电源状态  -->
                     <essential:SettingsCard
+                        x:Name="PowerCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="更改系统的电源状态"
@@ -353,17 +363,17 @@
                         </essential:SettingsCard.HeaderIcon>
                         <StackPanel Orientation="Horizontal">
                             <Button
-                                Margin="0,0,16,0"
+                                x:Name="UtilityPowerShutdownUid" Margin="0,0,16,0"
                                 Click="Button_Click2"
                                 Content="关机"
                                 Tag="POWER_SHUTDOWN" />
                             <Button
-                                Margin="0,0,16,0"
+                                x:Name="UtilityPowerRebootUid" Margin="0,0,16,0"
                                 Click="Button_Click2"
                                 Content="重启"
                                 Tag="POWER_REBOOT" />
                             <Button
-                                Click="Button_Click2"
+                                x:Name="UtilityPowerForceRebootUid" Click="Button_Click2"
                                 Content="强制重启"
                                 Tag="POWER_REBOOT_FORCE" />
                         </StackPanel>
@@ -371,6 +381,7 @@
 
                     <!--  蓝屏  -->
                     <essential:SettingsCard
+                        x:Name="BSODCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="使系统发生崩溃 (Blue Screen Of Death)"
@@ -392,25 +403,25 @@
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
                                 ItemContainerStyle="{StaticResource ComboBoxItemStyle}"
                                 SelectedIndex="0">
-                                <ComboBoxItem Content="默认" />
-                                <ComboBoxItem Content="红色" />
-                                <ComboBoxItem Content="绿色" />
-                                <ComboBoxItem Content="蓝色" />
-                                <ComboBoxItem Content="黄色" />
-                                <ComboBoxItem Content="青色" />
-                                <ComboBoxItem Content="品红色" />
-                                <ComboBoxItem Content="黑色" />
-                                <ComboBoxItem Content="白色" />
-                                <ComboBoxItem Content="橙色" />
-                                <ComboBoxItem Content="紫色" />
-                                <ComboBoxItem Content="粉色" />
-                                <ComboBoxItem Content="灰色" />
-                                <ComboBoxItem Content="棕色" />
-                                <ComboBoxItem Content="金色" />
-                                <ComboBoxItem Content="银色" />
+                                <ComboBoxItem x:Name="UtilityBSODDefaultUid" Content="默认" />
+                                <ComboBoxItem x:Name="UtilityBSODRedUid" Content="红色" />
+                                <ComboBoxItem x:Name="UtilityBSODGreenUid" Content="绿色" />
+                                <ComboBoxItem x:Name="UtilityBSODBlueUid" Content="蓝色" />
+                                <ComboBoxItem x:Name="UtilityBSODYellowUid" Content="黄色" />
+                                <ComboBoxItem x:Name="UtilityBSODCyanUid" Content="青色" />
+                                <ComboBoxItem x:Name="UtilityBSODMagentaUid" Content="品红色" />
+                                <ComboBoxItem x:Name="UtilityBSODBlackUid" Content="黑色" />
+                                <ComboBoxItem x:Name="UtilityBSODWhiteUid" Content="白色" />
+                                <ComboBoxItem x:Name="UtilityBSODOrangeUid" Content="橙色" />
+                                <ComboBoxItem x:Name="UtilityBSODPurpleUid" Content="紫色" />
+                                <ComboBoxItem x:Name="UtilityBSODPinkUid" Content="粉色" />
+                                <ComboBoxItem x:Name="UtilityBSODGrayUid" Content="灰色" />
+                                <ComboBoxItem x:Name="UtilityBSODBrownUid" Content="棕色" />
+                                <ComboBoxItem x:Name="UtilityBSODGoldUid" Content="金色" />
+                                <ComboBoxItem x:Name="UtilityBSODSilverUid" Content="银色" />
                             </ComboBox>
                             <Button
-                                Click="Button_Click"
+                                x:Name="UtilityBSODCrashUid" Click="Button_Click"
                                 Content="崩溃"
                                 Tag="BSOD" />
                         </StackPanel>
@@ -418,6 +429,7 @@
 
                     <!--  PatchGuard  -->
                     <essential:SettingsCard
+                        x:Name="PGCard"
                         Margin="0,0,0,10"
                         essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                         Description="禁用内核PatchGuard保护"
@@ -441,10 +453,10 @@
                                 SelectedIndex="2">
                                 <ComboBoxItem Content="EFI" />
                                 <ComboBoxItem Content="BIOS" />
-                                <ComboBoxItem Content="自动 (可能蓝屏)" />
+                                <ComboBoxItem x:Name="UtilityPGAutoUid" Content="自动 (可能蓝屏)" />
                             </ComboBox>
                             <Button
-                                Click="Button_Click"
+                                x:Name="UtilityPGDisableUid" Click="Button_Click"
                                 Content="禁用"
                                 Tag="PatchGuard" />
                         </StackPanel>

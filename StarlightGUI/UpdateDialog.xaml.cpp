@@ -11,23 +11,24 @@ namespace winrt::StarlightGUI::implementation
 {
     UpdateDialog::UpdateDialog() {
         InitializeComponent();
+        DontShowAgainCheckBox().Content(winrt::box_value(slg::GetLocalizedString(L"Update_DontShow")));
 
         this->Loaded([this](auto&&, auto&&) {
             if (IsUpdate()) {
-                Title(winrt::box_value(L"发现更新"));
+                Title(winrt::box_value(slg::GetLocalizedString(L"Update_Found")));
                 LatestVersionText().Text(LatestVersion());
-                PrimaryButtonText(L"下载");
-                SecondaryButtonText(L"取消");
+                PrimaryButtonText(slg::GetLocalizedString(L"Update_Download"));
+                SecondaryButtonText(slg::GetLocalizedString(L"Update_Cancel"));
 				UpdateStackPanel().Visibility(Visibility::Visible);
 				AnnouncementStackPanel().Visibility(Visibility::Collapsed);
             }
             else {
-                Title(winrt::box_value(L"公告"));
+                Title(winrt::box_value(slg::GetLocalizedString(L"Update_Announcement")));
                 UpdateTimeText().Text(LatestVersion());
                 AnnouncementLine1().Text(GetAnLine(1));
                 AnnouncementLine2().Text(GetAnLine(2));
                 AnnouncementLine3().Text(GetAnLine(3));
-                PrimaryButtonText(L"确认");
+                PrimaryButtonText(slg::GetLocalizedString(L"Update_Confirm"));
                 UpdateStackPanel().Visibility(Visibility::Collapsed);
                 AnnouncementStackPanel().Visibility(Visibility::Visible);
             }

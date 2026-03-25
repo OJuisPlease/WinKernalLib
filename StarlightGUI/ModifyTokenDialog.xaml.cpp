@@ -15,6 +15,8 @@ namespace winrt::StarlightGUI::implementation
     ModifyTokenDialog::ModifyTokenDialog()
     {
         InitializeComponent();
+
+        this->Title(winrt::box_value(slg::GetLocalizedString(L"ModifyToken_Dialog.Title")));
     }
 
     void ModifyTokenDialog::OnPrimaryButtonClick(ContentDialog const& sender,

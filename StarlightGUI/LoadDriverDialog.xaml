@@ -7,7 +7,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:StarlightGUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="加载驱动"
+    x:Name="LoadDriverDialogUid" Title="加载驱动"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     PrimaryButtonText="加载"

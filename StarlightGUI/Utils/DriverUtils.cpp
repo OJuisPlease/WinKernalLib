@@ -8,7 +8,7 @@ namespace winrt::StarlightGUI::implementation {
 
 		hSCM = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 		if (!hSCM) {
-			dbgMsg = L"无法打开SCManager";
+			dbgMsg = slg::GetLocalizedString(L"Driver_CannotOpenSCManager");
 			return false;
 		}
 
@@ -19,7 +19,7 @@ namespace winrt::StarlightGUI::implementation {
 			if (!QueryServiceStatus(hService, &serviceStatus)) {
 				CloseServiceHandle(hService);
 				CloseServiceHandle(hSCM);
-				dbgMsg = L"无法查询服务信息";
+				dbgMsg = slg::GetLocalizedString(L"Driver_CannotQueryService");
 				return false;
 			}
 
@@ -28,12 +28,12 @@ namespace winrt::StarlightGUI::implementation {
 				if (!StartServiceW(hService, 0, nullptr)) {
 					CloseServiceHandle(hService);
 					CloseServiceHandle(hSCM);
-					dbgMsg = L"无法启动服务";
+					dbgMsg = slg::GetLocalizedString(L"Driver_CannotStartService");
 					return false;
 				}
 			}
 
-			dbgMsg = L"成功";
+			dbgMsg = slg::GetLocalizedString(L"Msg_Success");
 			CloseServiceHandle(hService);
 			CloseServiceHandle(hSCM);
 			return true;
@@ -47,7 +47,7 @@ namespace winrt::StarlightGUI::implementation {
 
 			if (!hService) {
 				CloseServiceHandle(hSCM);
-				dbgMsg = L"无法创建服务";
+				dbgMsg = slg::GetLocalizedString(L"Driver_CannotCreateService");
 				return false;
 			}
 
@@ -56,11 +56,11 @@ namespace winrt::StarlightGUI::implementation {
 			if (!StartServiceW(hService, 0, nullptr)) {
 				CloseServiceHandle(hService);
 				CloseServiceHandle(hSCM);
-				dbgMsg = L"无法启动服务";
+				dbgMsg = slg::GetLocalizedString(L"Driver_CannotStartService");
 				return false;
 			}
 
-			dbgMsg = L"成功";
+			dbgMsg = slg::GetLocalizedString(L"Msg_Success");
 			CloseServiceHandle(hService);
 			CloseServiceHandle(hSCM);
 			return true;
@@ -73,7 +73,7 @@ namespace winrt::StarlightGUI::implementation {
 
 		hSCM = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 		if (!hSCM) {
-			dbgMsg = L"无法打开SCManager";
+			dbgMsg = slg::GetLocalizedString(L"Driver_CannotOpenSCManager");
 			return false;
 		}
 
@@ -84,7 +84,7 @@ namespace winrt::StarlightGUI::implementation {
 			if (!QueryServiceStatus(hService, &serviceStatus)) {
 				CloseServiceHandle(hService);
 				CloseServiceHandle(hSCM);
-				dbgMsg = L"无法查询服务信息";
+				dbgMsg = slg::GetLocalizedString(L"Driver_CannotQueryService");
 				return false;
 			}
 
@@ -93,12 +93,12 @@ namespace winrt::StarlightGUI::implementation {
 				if (!StartServiceW(hService, 0, nullptr)) {
 					CloseServiceHandle(hService);
 					CloseServiceHandle(hSCM);
-					dbgMsg = L"无法启动服务";
+					dbgMsg = slg::GetLocalizedString(L"Driver_CannotStartService");
 					return false;
 				}
 			}
 
-			dbgMsg = L"成功";
+			dbgMsg = slg::GetLocalizedString(L"Msg_Success");
 			CloseServiceHandle(hService);
 			CloseServiceHandle(hSCM);
 			return true;
@@ -112,7 +112,7 @@ namespace winrt::StarlightGUI::implementation {
 
 			if (!hService) {
 				CloseServiceHandle(hSCM);
-				dbgMsg = L"无法创建服务";
+				dbgMsg = slg::GetLocalizedString(L"Driver_CannotCreateService");
 				return false;
 			}
 
@@ -121,11 +121,11 @@ namespace winrt::StarlightGUI::implementation {
 			if (!StartServiceW(hService, 0, nullptr)) {
 				CloseServiceHandle(hService);
 				CloseServiceHandle(hSCM);
-				dbgMsg = L"无法启动服务";
+				dbgMsg = slg::GetLocalizedString(L"Driver_CannotStartService");
 				return false;
 			}
 
-			dbgMsg = L"成功";
+			dbgMsg = slg::GetLocalizedString(L"Msg_Success");
 			CloseServiceHandle(hService);
 			CloseServiceHandle(hSCM);
 			return true;
@@ -148,13 +148,13 @@ namespace winrt::StarlightGUI::implementation {
 			DWORD processId = GetProcessId(sei.hProcess);
 			CloseHandle(sei.hProcess);
 			CloseHandle(sei.hIcon);
-			std::wstring content = L"启动脚本成功，PID: " + std::to_wstring(processId);
-			slg::CreateInfoBarAndDisplay(L"成功", content.c_str(),
+			std::wstring content = std::wstring(slg::GetLocalizedString(L"Driver_ScriptSuccess").c_str()) + L" PID: " + std::to_wstring(processId);
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Success").c_str(), content.c_str(),
 				InfoBarSeverity::Success, g_mainWindowInstance);
 		}
 		else {
-			std::wstring content = L"启动脚本失败，错误码: " + std::to_wstring(GetLastError());
-			slg::CreateInfoBarAndDisplay(L"失败", content.c_str(),
+			std::wstring content = std::wstring(slg::GetLocalizedString(L"Driver_ScriptFailed").c_str()) + std::wstring(slg::GetLocalizedString(L"Msg_ErrorCode").c_str()) + std::to_wstring(GetLastError());
+			slg::CreateInfoBarAndDisplay(slg::GetLocalizedString(L"Msg_Failure").c_str(), content.c_str(),
 				InfoBarSeverity::Error, g_mainWindowInstance);
 		}
 	}

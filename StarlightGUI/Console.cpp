@@ -60,8 +60,8 @@ bool Console::InitializeLogFile() {
     }
 
     m_logFile << L"========= Starlight GUI Log =========\n";
-    m_logFile << L"创建时间: " << FormatTimestamp(std::chrono::system_clock::now()) << L"\n";
-    m_logFile << L"版本: " << winrt::unbox_value<hstring>(Application::Current().Resources().TryLookup(box_value(L"Version"))) << L"\n";
+    m_logFile << slg::GetLocalizedString(L"Console_CreatedAt").c_str() << FormatTimestamp(std::chrono::system_clock::now()) << L"\n";
+    m_logFile << slg::GetLocalizedString(L"Console_Version").c_str() << winrt::unbox_value<hstring>(Application::Current().Resources().TryLookup(box_value(L"Version"))) << L"\n";
     m_logFile << L"=====================================\n\n";
     m_logFile.flush();
 

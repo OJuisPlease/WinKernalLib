@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="StarlightGUI.DisasmPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -31,7 +31,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock
-                    Grid.Column="0"
+                    x:Name="DisasmTitleUid" Grid.Column="0"
                     VerticalAlignment="Center"
                     FontSize="18"
                     FontWeight="Bold"
@@ -43,9 +43,9 @@
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
                     ItemContainerStyle="{StaticResource ComboBoxItemStyle}"
                     SelectedIndex="0">
-                    <ComboBoxItem Content="读取" />
-                    <ComboBoxItem Content="读取 + 反汇编" />
-                    <ComboBoxItem Content="写入" />
+                    <ComboBoxItem x:Name="DisasmModeReadUid" Content="读取" />
+                    <ComboBoxItem x:Name="DisasmModeReadDisasmUid" Content="读取 + 反汇编" />
+                    <ComboBoxItem x:Name="DisasmModeWriteUid" Content="写入" />
                 </ComboBox>
 
                 <Button
@@ -58,7 +58,7 @@
                             FontFamily="Segoe Fluent Icons"
                             FontSize="14"
                             Glyph="&#xe945;" />
-                        <TextBlock Margin="5,0,0,0" Text="执行" />
+                        <TextBlock x:Name="DisasmExecuteUid" Margin="5,0,0,0" Text="执行" />
                     </StackPanel>
                 </Button>
             </Grid>

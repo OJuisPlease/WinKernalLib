@@ -15,6 +15,8 @@ namespace winrt::StarlightGUI::implementation
 {
     CopyFileDialog::CopyFileDialog() {
         InitializeComponent();
+
+        this->Title(winrt::box_value(slg::GetLocalizedString(L"CopyFile_Dialog.Title")));
     }
 
     void CopyFileDialog::OnPrimaryButtonClick(ContentDialog const& sender,

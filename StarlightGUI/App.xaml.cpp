@@ -86,6 +86,16 @@ namespace winrt::StarlightGUI::implementation
         }
 
         InitializeConfig();
+
+        // Set UI language before any XAML page is created.
+        // "system" means follow OS language — don't override MUI.
+        if (language != "system") {
+            std::wstring lang(language.begin(), language.end());
+            lang += L'\0'; // double-null terminated multi-string
+            ULONG numLangs = 0;
+            SetProcessPreferredUILanguages(MUI_LANGUAGE_NAME, lang.c_str(), &numLangs);
+        }
+
         InitializeLogger();
 
         if (elevated_run && !suppressElevateForTaskManagerReplace) {

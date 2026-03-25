@@ -12,12 +12,13 @@
         <essential:RevealFocusPanel x:Name="RevealFocusPanel">
             <StackPanel>
                 <TextBlock
-                    Padding="10"
+                    x:Name="SettingsFeatureUid" Padding="10"
                     HorizontalAlignment="Left"
                     FontSize="14"
                     FontWeight="Bold"
                     Text="功能" />
                 <essential:SettingsCard
+                    x:Name="EnumFileModeCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="文件管理器中进行遍历文件使用的 API，NTFSPARSER 可能不会工作"
@@ -42,6 +43,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="EnumStrengthenCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="强制使用 SKT64 作为任务管理器枚举进程的驱动，可能会导致效率变低"
@@ -61,6 +63,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="TaskAutoRefreshCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="任务管理器会周期性刷新进程列表，使信息始终保持最新"
@@ -80,6 +83,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="PDHFirstCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="即使 NVML 可用，依旧使用系统 PDH 为 GPU 提供的数据"
@@ -99,6 +103,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="DisasmCountCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="在内存反汇编页面每一行展示的数据数量，请根据窗口大小设置，否则可能排版不整齐"
@@ -122,13 +127,14 @@
                 </essential:SettingsCard>
 
                 <TextBlock
-                    Padding="10"
+                    x:Name="SettingsMainUid" Padding="10"
                     HorizontalAlignment="Left"
                     FontSize="14"
                     FontWeight="Bold"
                     Text="主程序" />
 
                 <essential:SettingsCard
+                    x:Name="TrayBgRunCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="关闭窗口时最小化到托盘并在后台运行"
@@ -148,6 +154,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="ElevatedRunCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="以 TrustedInstaller 权限运行 Starlight GUI"
@@ -167,6 +174,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="AutoStartCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="通过计划任务在登录后自动启动，可避免开机时弹出 UAC"
@@ -186,6 +194,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="ReplaceTaskMgrCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="接管系统任务管理器启动，打开任务管理器时自动唤起并跳转到任务管理页"
@@ -205,7 +214,7 @@
                 </essential:SettingsCard>
 
                 <TextBlock
-                    Padding="10"
+                    x:Name="SettingsAppearanceUid" Padding="10"
                     HorizontalAlignment="Left"
                     FontSize="14"
                     FontWeight="Bold"
@@ -213,6 +222,7 @@
 
                 <!--  背景  -->
                 <essential:SettingsExpander
+                    x:Name="BackgroundExpander"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="应用的背景颜色类型"
@@ -234,6 +244,7 @@
                     </ComboBox>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard
+                            x:Name="AcrylicTypeCard"
                             Description="背景的亚克力效果模式"
                             Header="亚克力类型"
                             IsActionIconVisible="False"
@@ -251,6 +262,7 @@
                         </essential:SettingsCard>
                         <!--  Mica类型  -->
                         <essential:SettingsCard
+                            x:Name="MicaTypeCard"
                             Description="背景的 Mica 效果模式"
                             Header="Mica 类型"
                             IsActionIconVisible="False"
@@ -269,6 +281,7 @@
 
                 <!--  图片背景  -->
                 <essential:SettingsExpander
+                    x:Name="ImageBackgroundExpander"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="在背景层添加自定义图片"
@@ -282,20 +295,23 @@
                     <TextBlock x:Name="ImagePathText" Foreground="LightGray" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard
+                            x:Name="ImportImageCard"
                             Description="从电脑中导入一张图片作为背景"
                             Header="导入背景"
                             IsActionIconVisible="False"
                             IsClickEnabled="True">
-                            <Button Click="SetImageButton_Click" Content="导入" />
+                            <Button x:Name="SettingsImportImageUid" Click="SetImageButton_Click" Content="导入" />
                         </essential:SettingsCard>
                         <essential:SettingsCard
+                            x:Name="ClearImageCard"
                             Description="清除已经设置的图片背景"
                             Header="清除背景"
                             IsActionIconVisible="False"
                             IsClickEnabled="True">
-                            <Button Click="ClearImageButton_Click" Content="清除" />
+                            <Button x:Name="SettingsClearImageUid" Click="ClearImageButton_Click" Content="清除" />
                         </essential:SettingsCard>
                         <essential:SettingsCard
+                            x:Name="ImageStretchCard"
                             Description="背景中图片大小的设置方式"
                             Header="图片拉伸模式"
                             IsActionIconVisible="False"
@@ -312,6 +328,7 @@
                             </ComboBox>
                         </essential:SettingsCard>
                         <essential:SettingsCard
+                            x:Name="ImageOpacityCard"
                             essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                             Description="图片在背景中的透明度，会覆盖窗口色"
                             Header="透明度"
@@ -326,7 +343,7 @@
                                     Minimum="0"
                                     ValueChanged="ImageOpacitySlider_ValueChanged"
                                     Value="20" />
-                                <Button Click="RefreshOpacityButton_Click" Content="刷新" />
+                                <Button x:Name="SettingsImageRefreshUid" Click="RefreshOpacityButton_Click" Content="刷新" />
                             </StackPanel>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
@@ -334,6 +351,7 @@
 
                 <!--  导航栏  -->
                 <essential:SettingsCard
+                    x:Name="NavigationCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="导航栏的位置和显示样式"
@@ -357,14 +375,24 @@
                     </ComboBox>
                 </essential:SettingsCard>
 
+                <TextBlock x:Name="SettingsLanguageUid" Padding="0,20,0,10" Text="语言" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                <essential:SettingsCard x:Name="LanguageCard" Header="语言" Description="应用程序显示语言（需要重启）">
+                    <ComboBox x:Name="LanguageComboBox" essential:ComboBoxHelper.AcrylicWorkaround="True" ItemContainerStyle="{StaticResource ComboBoxItemStyle}" SelectionChanged="LanguageComboBox_SelectionChanged">
+                        <ComboBoxItem Content="System" IsSelected="True" />
+                        <ComboBoxItem Content="中文" />
+                        <ComboBoxItem Content="English" />
+                    </ComboBox>
+                </essential:SettingsCard>
+
                 <TextBlock
-                    Padding="10"
+                    x:Name="SettingsOtherUid" Padding="10"
                     HorizontalAlignment="Left"
                     FontSize="14"
                     FontWeight="Bold"
                     Text="其他" />
 
                 <essential:SettingsCard
+                    x:Name="DangerousConfirmCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="在运行危险操作前先进行确认"
@@ -384,6 +412,7 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="CheckUpdateCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="每次启动时检查更新，保持从网盘获取更新可以为作者创造一些收益"
@@ -404,6 +433,7 @@
 
 
                 <essential:SettingsCard
+                    x:Name="LogCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="打开或关闭日志窗口"
@@ -416,10 +446,11 @@
                             FontSize="16"
                             Glyph="&#xe70b;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <Button Click="LogButton_Click" Content="切换" />
+                    <Button x:Name="SettingsLogUid" Click="LogButton_Click" Content="切换" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Name="FixCard"
                     Margin="0,0,0,10"
                     essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
                     Description="如果无法正确加载完整功能，请尝试运行这个修复"
@@ -432,7 +463,7 @@
                             FontSize="16"
                             Glyph="&#xe90f;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <Button Click="FixButton_Click" Content="修复" />
+                    <Button x:Name="SettingsFixUid" Click="FixButton_Click" Content="修复" />
                 </essential:SettingsCard>
             </StackPanel>
         </essential:RevealFocusPanel>
