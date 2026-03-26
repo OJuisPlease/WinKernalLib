@@ -214,6 +214,10 @@
       <DependentUpon>KernelModulePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="LogConsolePage.xaml.h">
+      <DependentUpon>LogConsolePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="LineGraphControl.xaml.h">
       <DependentUpon>LineGraphControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -276,6 +280,7 @@
     </ClInclude>
     <ClInclude Include="Utils\AstralIO.h" />
     <ClInclude Include="Utils\GeneralEntry.h" />
+    <ClInclude Include="Utils\LogEntryInfo.h" />
     <ClInclude Include="Utils\Config.h" />
     <ClInclude Include="Utils\CppUtils.h" />
     <ClInclude Include="Utils\Elevator.h" />
@@ -325,6 +330,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="KernelModulePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LogConsolePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="LineGraphControl.xaml">
@@ -409,6 +417,10 @@
       <DependentUpon>KernelModulePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="LogConsolePage.xaml.cpp">
+      <DependentUpon>LogConsolePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="LineGraphControl.xaml.cpp">
       <DependentUpon>LineGraphControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -477,6 +489,7 @@
     <ClCompile Include="Utils\DriverUtils.cpp" />
     <ClCompile Include="Utils\FileInfo.cpp" />
     <ClCompile Include="Utils\GeneralEntry.cpp" />
+    <ClCompile Include="Utils\LogEntryInfo.cpp" />
     <ClCompile Include="Utils\HandleInfo.cpp" />
     <ClCompile Include="Utils\I18n.cpp" />
     <ClCompile Include="Utils\KCTInfo.cpp" />
@@ -530,6 +543,10 @@
     </Midl>
     <Midl Include="KernelModulePage.idl">
       <DependentUpon>KernelModulePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="LogConsolePage.idl">
+      <DependentUpon>LogConsolePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="LineGraphControl.idl">
@@ -589,6 +606,7 @@
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Utils\GeneralEntry.idl" />
+    <Midl Include="Utils\LogEntryInfo.idl" />
     <Midl Include="Utils\FileInfo.idl" />
     <Midl Include="Utils\HandleInfo.idl" />
     <Midl Include="Utils\KCTInfo.idl" />

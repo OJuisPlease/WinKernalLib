@@ -73,6 +73,7 @@
 
 #include <Utils/ObjectEntry.h>
 #include <Utils/GeneralEntry.h>
+#include <Utils/LogEntryInfo.h>
 
 #include <Utils/TaskUtils.h>
 #include <Utils/CppUtils.h>
