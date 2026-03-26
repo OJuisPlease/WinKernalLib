@@ -10,6 +10,7 @@ namespace winrt::StarlightGUI::implementation
     struct KernelModulePage : KernelModulePageT<KernelModulePage>
     {
         KernelModulePage();
+		void SetupLocalization();
 
         slg::coroutine RefreshKernelModuleListButton_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         slg::coroutine UnloadModuleButton_Click(IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);

@@ -656,7 +656,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
@@ -664,7 +664,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
@@ -672,7 +672,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
@@ -680,7 +680,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
@@ -725,7 +725,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
@@ -733,7 +733,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
@@ -741,7 +741,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
@@ -749,7 +749,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
@@ -757,7 +757,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -802,7 +802,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
@@ -810,7 +810,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
@@ -818,7 +818,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
@@ -826,7 +826,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
@@ -834,7 +834,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -889,7 +889,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
@@ -897,7 +897,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
@@ -905,7 +905,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
@@ -913,7 +913,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
@@ -921,7 +921,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -967,7 +967,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
@@ -975,7 +975,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
@@ -983,7 +983,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
@@ -991,7 +991,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String4().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub4);
@@ -999,7 +999,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String5().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub5);
@@ -1044,7 +1044,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub1);
@@ -1052,7 +1052,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(std::to_wstring(item.ULong1()))) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub2);
@@ -1060,7 +1060,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(std::to_wstring(item.ULong2()))) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item2_1.Items().Append(item2_1_sub3);
@@ -1092,7 +1092,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String1().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item1_1.Items().Append(item1_1_sub1);
@@ -1100,7 +1100,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String2().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item1_1.Items().Append(item1_1_sub2);
@@ -1108,7 +1108,7 @@ namespace winrt::StarlightGUI::implementation
 			if (TaskUtils::CopyToClipboard(item.String3().c_str())) {
 				slg::CreateInfoBarAndDisplay(t(L"Common.Success"), t(L"Msg.CopyToClipboard.Success"), InfoBarSeverity::Success, g_mainWindowInstance);
 			}
-			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), (t(L"Msg_CopyFailed") + to_hstring((int)GetLastError())).c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
+			else slg::CreateInfoBarAndDisplay(t(L"Common.Failed"), t(L"Msg.CopyToClipboard.Failed").c_str(), InfoBarSeverity::Error, g_mainWindowInstance);
 			co_return;
 			});
 		item1_1.Items().Append(item1_1_sub3);

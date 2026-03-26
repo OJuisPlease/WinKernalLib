@@ -577,7 +577,7 @@ namespace winrt::StarlightGUI::implementation
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
         // 更新进程数量文本
-        ProcessCountText().Text(t(L"Task.ProcessCount", m_processList.Size(), duration));
+        ProcessCountText().Text(t(L"Task.Detail", m_processList.Size(), duration));
         if (fullReload) {
             LoadingRing().IsActive(false);
         }
@@ -1294,7 +1294,7 @@ namespace winrt::StarlightGUI::implementation
         TaskTitleUid().Text(t(L"Task.Title"));
         ProcessCountText().Text(t(L"Task.Loading"));
         ProcessSearchBox().PlaceholderText(t(L"Task.PlaceholderText"));
-        RefreshProcessListButton().Label(t(L"Task.Button.Refresh"));
+        RefreshProcessListButton().Label(t(L"Common.Refresh"));
         TaskRunUid().Label(t(L"Task.Button.Run"));
         TerminateProcessButton().Label(t(L"Task.Button.Terminate"));
         NameHeaderButton().Content(tbox(L"Common.Process"));
