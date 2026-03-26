@@ -7,6 +7,7 @@ namespace winrt::StarlightGUI::implementation
     struct DisasmPage : DisasmPageT<DisasmPage>
     {
         DisasmPage();
+        void SetupLocalization();
 
         slg::coroutine Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
