@@ -484,10 +484,10 @@ namespace winrt::StarlightGUI::implementation
             }
             else {
                 gpu_time = GetValueFromCounterArray(counter_gpu_time);
-                GpuMem().TexL"NaN";
-                GpuTemp().TexL"NaN";
-                GpuClockGraphics().TexL"NaN";
-                GpuClockMem().TexL"NaN";
+                GpuMem().Text(L"NaN");
+                GpuTemp().Text(L"NaN");
+                GpuClockGraphics().Text(L"NaN");
+                GpuClockMem().Text(L"NaN");
             }
             GpuGauge().Value(gpu_time);
             ss = std::wstringstream{};
