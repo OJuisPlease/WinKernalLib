@@ -146,6 +146,7 @@ namespace winrt::StarlightGUI::implementation
     SettingsPage::SettingsPage()
     {
         InitializeComponent();
+        SetupLocalization();
         InitializeOptions();
     }
 

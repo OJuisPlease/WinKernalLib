@@ -139,8 +139,8 @@ namespace winrt::StarlightGUI::implementation {
             std::wstring lang = ResolveLanguageTag(dir);
             auto map = ParseJsonFile(dir + L"Strings\\" + lang + L"\\Resources.json");
             if (map.empty()) {
+                LOG_INFO(L"", L"It is fucking empty: %s", lang.c_str());
                 map = ParseJsonFile(dir + L"Strings\\zh-CN\\Resources.json");
-                if (map.empty()) map = ParseJsonFile(dir + L"Strings\\en-US\\Resources.json");
             }
             return map;
         }();
