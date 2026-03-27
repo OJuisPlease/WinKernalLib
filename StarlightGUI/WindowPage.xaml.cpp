@@ -904,8 +904,8 @@ namespace winrt::StarlightGUI::implementation
     void WindowPage::SetupLocalization() {
         WindowTitleUid().Text(t(L"Window.Title"));
         WindowCountText().Text(t(L"Window.Loading"));
-        ShowNoTitleCheckBox().Content(tbox(L"Window.ShowNoTitle"));
-        ShowVisibleOnlyCheckBox().Content(tbox(L"Window.ShowVisibleOnly"));
+        ShowNoTitleCheckBox().Label(t(L"Window.ShowNoTitle"));
+        ShowVisibleOnlyCheckBox().Label(t(L"Window.ShowVisibleOnly"));
         RefreshButton().Label(t(L"Common.Refresh"));
         SearchBox().PlaceholderText(t(L"Window.Placeholder"));
         NameHeaderButton().Content(tbox(L"Common.Window"));

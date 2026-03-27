@@ -222,8 +222,8 @@
   "Window.Title": "窗口管理器",
   "Window.Loading": "正在加载...",
   "Window.Placeholder": "搜索窗口标题...",
-  "Window.ShowNoTitle": "显示无标题窗口",
-  "Window.ShowVisibleOnly": "仅显示可见窗口",
+  "Window.ShowNoTitle": "显示无标题",
+  "Window.ShowVisibleOnly": "仅显示可见",
   "Window.Detail": "共 %d 个窗口 (%d ms)",
 
   "Window.Header.Style": "样式",

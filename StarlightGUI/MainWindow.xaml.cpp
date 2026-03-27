@@ -235,9 +235,11 @@ namespace winrt::StarlightGUI::implementation
 
     void MainWindow::RootNavigation_ItemInvoked(Microsoft::UI::Xaml::Controls::NavigationView, Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs args)
     {
+		Navigation::FrameNavigationOptions options{};
+        options.TransitionInfoOverride(args.RecommendedNavigationTransitionInfo());
         if (args.IsSettingsInvoked())
         {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::SettingsPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::SettingsPage>(), nullptr, options);
             return;
         }
 
@@ -245,39 +247,39 @@ namespace winrt::StarlightGUI::implementation
 
         if (invokedItem == L"Home")
         {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::HomePage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::HomePage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
         }
         else if (invokedItem == L"Task") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::TaskPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::TaskPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(1));
         }
         else if (invokedItem == L"KernelModule") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::KernelModulePage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::KernelModulePage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(2));
         }
         else if (invokedItem == L"File") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::FilePage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::FilePage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(3));
         }
         else if (invokedItem == L"Window") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::WindowPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::WindowPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(4));
         }
         else if (invokedItem == L"Utility") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::UtilityPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::UtilityPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(5));
         }
         else if (invokedItem == L"Monitor") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::MonitorPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::MonitorPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(6));
         }
         else if (invokedItem == L"Disasm") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::DisasmPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::DisasmPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(7));
         }
         else if (invokedItem == L"Help") {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::HelpPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::HelpPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().FooterMenuItems().GetAt(0));
         }
     }

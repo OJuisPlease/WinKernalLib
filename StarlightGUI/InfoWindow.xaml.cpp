@@ -80,26 +80,29 @@ namespace winrt::StarlightGUI::implementation
 
     void InfoWindow::RootNavigation_ItemInvoked(Microsoft::UI::Xaml::Controls::NavigationView sender, Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs args)
     {
+        Navigation::FrameNavigationOptions options{};
+        options.TransitionInfoOverride(args.RecommendedNavigationTransitionInfo());
+
         auto invokedItem = unbox_value<winrt::hstring>(args.InvokedItemContainer().Tag());
 
         if (invokedItem == L"Thread")
         {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::Process_ThreadPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::Process_ThreadPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
         }
         else if (invokedItem == L"Handle")
         {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::Process_HandlePage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::Process_HandlePage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(1));
         }
         else if (invokedItem == L"Module")
         {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::Process_ModulePage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::Process_ModulePage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(2));
         }
         else if (invokedItem == L"KCT")
         {
-            MainFrame().Navigate(xaml_typename<StarlightGUI::Process_KCTPage>());
+            MainFrame().NavigateToType(xaml_typename<StarlightGUI::Process_KCTPage>(), nullptr, options);
             RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(3));
         }
     }
