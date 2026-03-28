@@ -11,6 +11,7 @@ namespace winrt::StarlightGUI::implementation
 {
     UpdateDialog::UpdateDialog() {
         InitializeComponent();
+        this->RequestedTheme(slg::GetConfiguredElementTheme());
         NewVersionAvailableText().Text(t(L"Update.Text.NewVersionAvailable"));
         CurrentVersionLabelRun().Text(t(L"Update.Text.CurrentVersion"));
         LatestVersionLabelRun().Text(t(L"Update.Text.LatestVersion"));

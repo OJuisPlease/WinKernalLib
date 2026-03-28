@@ -15,6 +15,7 @@ namespace winrt::StarlightGUI::implementation
 {
     LoadDriverDialog::LoadDriverDialog() {
         InitializeComponent();
+        this->RequestedTheme(slg::GetConfiguredElementTheme());
 
         this->Title(tbox(L"LoadDriver.Title"));
         this->PrimaryButtonText(t(L"LoadDriver.ButtonPrimary"));

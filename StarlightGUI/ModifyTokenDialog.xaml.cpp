@@ -12,6 +12,7 @@ namespace winrt::StarlightGUI::implementation
     ModifyTokenDialog::ModifyTokenDialog()
     {
         InitializeComponent();
+        this->RequestedTheme(slg::GetConfiguredElementTheme());
 
         this->Title(tbox(L"ModifyToken.Title"));
         this->PrimaryButtonText(t(L"ModifyToken.ButtonPrimary"));

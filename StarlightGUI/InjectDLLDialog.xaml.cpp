@@ -17,6 +17,7 @@ namespace winrt::StarlightGUI::implementation
     InjectDLLDialog::InjectDLLDialog()
     {
         InitializeComponent();
+        this->RequestedTheme(slg::GetConfiguredElementTheme());
 
         this->Title(tbox(L"InjectDLL.Title"));
         this->PrimaryButtonText(t(L"InjectDLL.ButtonPrimary"));

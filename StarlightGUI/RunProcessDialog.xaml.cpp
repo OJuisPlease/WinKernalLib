@@ -14,6 +14,7 @@ namespace winrt::StarlightGUI::implementation
     RunProcessDialog::RunProcessDialog()
     {
         InitializeComponent();
+        this->RequestedTheme(slg::GetConfiguredElementTheme());
 
         this->Title(tbox(L"RunProcess.Title"));
         this->PrimaryButtonText(t(L"RunProcess.ButtonPrimary"));

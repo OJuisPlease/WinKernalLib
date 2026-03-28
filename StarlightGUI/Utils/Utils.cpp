@@ -242,16 +242,9 @@ namespace slg {
         infobar.Message(message);
         infobar.Severity(severity);
         infobar.XamlRoot(xamlRoot);
+        infobar.RequestedTheme(GetConfiguredElementTheme());
         infobar.HorizontalAlignment(HorizontalAlignment::Right);
         infobar.VerticalAlignment(VerticalAlignment::Top);
-
-        auto themeResources = Application::Current().Resources();
-        auto color = unbox_value<Color>(themeResources.TryLookup(box_value(L"SystemChromeMediumColor")));
-
-        SolidColorBrush bg;
-        bg.Color(color);
-        bg.Opacity(0.9);
-        infobar.Background(bg);
 
         return infobar;
     }
@@ -317,6 +310,7 @@ namespace slg {
         dialog.Content(winrt::box_value(content));
         dialog.CloseButtonText(closeMessage);
         dialog.XamlRoot(xamlRoot);
+        dialog.RequestedTheme(GetConfiguredElementTheme());
 
         return dialog;
     }

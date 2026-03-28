@@ -15,6 +15,7 @@ namespace winrt::StarlightGUI::implementation
 {
     CopyFileDialog::CopyFileDialog() {
         InitializeComponent();
+        this->RequestedTheme(slg::GetConfiguredElementTheme());
 
         this->Title(tbox(L"CopyFile.Title"));
         this->PrimaryButtonText(t(L"CopyFile.ButtonPrimary"));
