@@ -501,18 +501,21 @@ namespace winrt::StarlightGUI::implementation
 
 		Flyout flyout;
 		StackPanel flyoutPanel;
+		auto createSelectableTextBlock = [](hstring const& text) {
+			TextBlock textBlock;
+			textBlock.IsTextSelectionEnabled(true);
+			textBlock.Text(text);
+			return textBlock;
+			};
 
 		// 基本信息
 		GroupBox basicInfoBox;
 		StackPanel basicInfoPanel;
 		basicInfoBox.Header(t(L"Monitor.BasicInfo"));
 		basicInfoBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
-		TextBlock name;
-		name.Text(t(L"Monitor.Label.Name") + item.Name());
-		TextBlock type;
-		type.Text(t(L"Monitor.Label.Type") + item.Type());
-		TextBlock path;
-		path.Text(t(L"Monitor.Label.FullPath") + item.Path());
+		auto name = createSelectableTextBlock(t(L"Monitor.Label.Name") + item.Name());
+		auto type = createSelectableTextBlock(t(L"Monitor.Label.Type") + item.Type());
+		auto path = createSelectableTextBlock(t(L"Monitor.Label.FullPath") + item.Path());
 		CheckBox permanent;
 		permanent.Content(tbox(L"Monitor.Permanent"));
 		permanent.IsChecked(item.Permanent());
@@ -528,10 +531,8 @@ namespace winrt::StarlightGUI::implementation
 		StackPanel referencesPanel;
 		referencesBox.Header(t(L"Monitor.ReferenceInfo"));
 		referencesBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
-		TextBlock references;
-		references.Text(t(L"Monitor.Label.References") + std::to_wstring(item.References()));
-		TextBlock handles;
-		handles.Text(t(L"Monitor.Label.Handles") + std::to_wstring(item.Handles()));
+		auto references = createSelectableTextBlock(t(L"Monitor.Label.References") + std::to_wstring(item.References()));
+		auto handles = createSelectableTextBlock(t(L"Monitor.Label.Handles") + std::to_wstring(item.Handles()));
 		referencesPanel.Children().Append(references);
 		referencesPanel.Children().Append(handles);
 		referencesBox.Content(referencesPanel);
@@ -541,10 +542,8 @@ namespace winrt::StarlightGUI::implementation
 		StackPanel quotaPanel;
 		quotaBox.Header(t(L"Monitor.QuotaInfo"));
 		quotaBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
-		TextBlock paged;
-		paged.Text(t(L"Monitor.Label.PagedPool") + FormatMemorySize(item.PagedPool()));
-		TextBlock nonPaged;
-		nonPaged.Text(t(L"Monitor.Label.NonPagedPool") + FormatMemorySize(item.NonPagedPool()));
+		auto paged = createSelectableTextBlock(t(L"Monitor.Label.PagedPool") + FormatMemorySize(item.PagedPool()));
+		auto nonPaged = createSelectableTextBlock(t(L"Monitor.Label.NonPagedPool") + FormatMemorySize(item.NonPagedPool()));
 		quotaPanel.Children().Append(paged);
 		quotaPanel.Children().Append(nonPaged);
 		quotaBox.Content(quotaPanel);
@@ -556,70 +555,56 @@ namespace winrt::StarlightGUI::implementation
 		detailBox.Margin(ThicknessHelper::FromLengths(0, 0, 0, 10));
 		if (item.Type() == L"SymbolicLink") {
 			detailBox.Header(t(L"Monitor.SymbolicLink"));
-			TextBlock creationTime;
-			creationTime.Text(t(L"Monitor.Label.CreationTime") + item.CreationTime());
-			TextBlock linkTarget;
-			linkTarget.Text(t(L"Monitor.Label.Link") + item.Link());
+			auto creationTime = createSelectableTextBlock(t(L"Monitor.Label.CreationTime") + item.CreationTime());
+			auto linkTarget = createSelectableTextBlock(t(L"Monitor.Label.Link") + item.Link());
 			detailPanel.Children().Append(creationTime);
 			detailPanel.Children().Append(linkTarget);
 		}
 		else if (item.Type() == L"Event") {
 			detailBox.Header(t(L"Monitor.Event"));
-			TextBlock eventType;
-			eventType.Text(t(L"Monitor.Label.EventType") + item.EventType());
-			TextBlock eventSignaled;
 			hstring state = item.EventSignaled() ? L"TRUE" : L"FALSE";
-			eventSignaled.Text(t(L"Monitor.Label.Signaled") + state);
+			auto eventType = createSelectableTextBlock(t(L"Monitor.Label.EventType") + item.EventType());
+			auto eventSignaled = createSelectableTextBlock(t(L"Monitor.Label.Signaled") + state);
 			detailPanel.Children().Append(eventType);
 			detailPanel.Children().Append(eventSignaled);
 		}
 		else if (item.Type() == L"Mutant") {
 			detailBox.Header(t(L"Monitor.Mutant"));
-			TextBlock mutantHoldCount;
-			mutantHoldCount.Text(t(L"Monitor.Label.HoldCount") + to_hstring(item.MutantHoldCount()));
-			TextBlock mutantAbandoned;
 			hstring state = item.MutantAbandoned() ? L"TRUE" : L"FALSE";
-			mutantAbandoned.Text(t(L"Monitor.Label.Abandoned") + state);
+			auto mutantHoldCount = createSelectableTextBlock(t(L"Monitor.Label.HoldCount") + to_hstring(item.MutantHoldCount()));
+			auto mutantAbandoned = createSelectableTextBlock(t(L"Monitor.Label.Abandoned") + state);
 			detailPanel.Children().Append(mutantHoldCount);
 			detailPanel.Children().Append(mutantAbandoned);
 		}
 		else if (item.Type() == L"Semaphore") {
 			detailBox.Header(t(L"Monitor.Semaphore"));
-			TextBlock semaphoreCount;
-			semaphoreCount.Text(t(L"Monitor.Label.CurrentCount") + to_hstring(item.SemaphoreCount()));
-			TextBlock semaphoreLimit;
-			semaphoreLimit.Text(t(L"Monitor.Label.MaxCount") + to_hstring(item.SemaphoreLimit()));
+			auto semaphoreCount = createSelectableTextBlock(t(L"Monitor.Label.CurrentCount") + to_hstring(item.SemaphoreCount()));
+			auto semaphoreLimit = createSelectableTextBlock(t(L"Monitor.Label.MaxCount") + to_hstring(item.SemaphoreLimit()));
 			detailPanel.Children().Append(semaphoreCount);
 			detailPanel.Children().Append(semaphoreLimit);
 		}
 		else if (item.Type() == L"Section") {
 			detailBox.Header(t(L"Monitor.Section"));
-			TextBlock sectionBaseAddress;
-			sectionBaseAddress.Text(t(L"Monitor.Label.Base") + ULongToHexString(item.SectionBaseAddress()));
-			TextBlock sectionMaximumSize;
-			sectionMaximumSize.Text(t(L"Monitor.Label.Size") + FormatMemorySize(item.SectionMaximumSize()));
-			TextBlock sectionAttributes;
 			hstring attr = item.SectionAttributes() == 0x200000 ? L"SEC_BASED" : item.SectionAttributes() == 0x800000 ? L"SEC_FILE" : item.SectionAttributes() == 0x4000000
 				? L"SEC_RESERVE" : item.SectionAttributes() == 0x8000000 ? L"SEC_COMMIT" : item.SectionAttributes() == 0x1000000 ? L"SEC_IMAGE" : L"NULL";
-			sectionAttributes.Text(t(L"Monitor.Label.Attributes") + attr);
+			auto sectionBaseAddress = createSelectableTextBlock(t(L"Monitor.Label.Base") + ULongToHexString(item.SectionBaseAddress()));
+			auto sectionMaximumSize = createSelectableTextBlock(t(L"Monitor.Label.Size") + FormatMemorySize(item.SectionMaximumSize()));
+			auto sectionAttributes = createSelectableTextBlock(t(L"Monitor.Label.Attributes") + attr);
 			detailPanel.Children().Append(sectionBaseAddress);
 			detailPanel.Children().Append(sectionMaximumSize);
 			detailPanel.Children().Append(sectionAttributes);
 		}
 		else if (item.Type() == L"Timer") {
 			detailBox.Header(t(L"Monitor.Timer"));
-			TextBlock timerRemainingTime;
-			timerRemainingTime.Text(t(L"Monitor.Label.RemainingTime") + to_hstring(item.TimerRemainingTime() * 100) + L"ns");
-			TextBlock timerState;
 			hstring state = item.TimerState() ? L"TRUE" : L"FALSE";
-			timerState.Text(t(L"Monitor.Label.Signaled") + state);
+			auto timerRemainingTime = createSelectableTextBlock(t(L"Monitor.Label.RemainingTime") + to_hstring(item.TimerRemainingTime() * 100) + L"ns");
+			auto timerState = createSelectableTextBlock(t(L"Monitor.Label.Signaled") + state);
 			detailPanel.Children().Append(timerRemainingTime);
 			detailPanel.Children().Append(timerState);
 		}
 		else if (item.Type() == L"IoCompletion") {
 			detailBox.Header(t(L"Monitor.IoCompletion"));
-			TextBlock ioCompletionDepth;
-			ioCompletionDepth.Text(t(L"Monitor.Label.Depth") + to_hstring(item.IoCompletionDepth()));
+			auto ioCompletionDepth = createSelectableTextBlock(t(L"Monitor.Label.Depth") + to_hstring(item.IoCompletionDepth()));
 			detailPanel.Children().Append(ioCompletionDepth);
 		}
 		else {
@@ -628,8 +613,7 @@ namespace winrt::StarlightGUI::implementation
 		detailBox.Content(detailPanel);
 		detailBox.Visibility(flag ? Visibility::Collapsed : Visibility::Visible);
 		if (!status && !flag) {
-			TextBlock errorText;
-			errorText.Text(t(L"Monitor.Msg.GetInfoError"));
+			auto errorText = createSelectableTextBlock(t(L"Monitor.Msg.GetInfoError"));
 			errorText.Foreground(Microsoft::UI::Xaml::Media::SolidColorBrush(Microsoft::UI::Colors::OrangeRed()));
 			flyoutPanel.Children().Append(errorText);
 		}

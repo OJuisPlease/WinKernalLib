@@ -118,6 +118,7 @@
                                 Grid.Column="0"
                                 MinWidth="100"
                                 FontFamily="Consolas"
+                                IsTextSelectionEnabled="True"
                                 Text="无"
                                 TextWrapping="Wrap" />
                             <Border
@@ -131,6 +132,7 @@
                                 Grid.Column="2"
                                 MinWidth="100"
                                 FontFamily="Consolas"
+                                IsTextSelectionEnabled="True"
                                 Text="无"
                                 TextWrapping="Wrap" />
                         </Grid>

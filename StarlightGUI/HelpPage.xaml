@@ -361,6 +361,7 @@
                                     x:Name="SponsorListText"
                                     Padding="10"
                                     FontSize="14"
+                                    IsTextSelectionEnabled="True"
                                     Text="加载中..."
                                     TextWrapping="Wrap" />
                             </StackPanel>
