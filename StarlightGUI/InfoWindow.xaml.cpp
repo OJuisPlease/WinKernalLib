@@ -34,6 +34,8 @@ namespace winrt::StarlightGUI::implementation
 
     InfoWindow::InfoWindow() {
         InitializeComponent();
+        g_infoWindowInstance = this;
+        slg::ApplyConfiguredTheme();
         SetupLocalization();
 
         auto windowNative{ this->try_as<::IWindowNative>() };
@@ -58,8 +60,6 @@ namespace winrt::StarlightGUI::implementation
         LoadBackground();
         LoadNavigation();
 
-        g_infoWindowInstance = this;
-
         for (auto& window : g_mainWindowInstance->m_openWindows) {
             if (window) {
                 window.Close();
@@ -69,8 +69,13 @@ namespace winrt::StarlightGUI::implementation
 
         MainFrame().Navigate(xaml_typename<StarlightGUI::Process_ThreadPage>());
         RootNavigation().SelectedItem(RootNavigation().MenuItems().GetAt(0));
-        ProcessName().Text(processForInfoWindow.Name());
+        AppTitleBar().Title(processForInfoWindow.Name());
+        AppTitleBar().Subtitle(to_hstring(processForInfoWindow.Id()));
         Title(processForInfoWindow.Name());
+
+        auto iconSource = Microsoft::UI::Xaml::Controls::ImageIconSource();
+        iconSource.ImageSource(processForInfoWindow.Icon());
+        AppTitleBar().IconSource(iconSource);
 
         Closed([this](auto&& sender, const winrt::Microsoft::UI::Xaml::WindowEventArgs& args) {
             g_mainWindowInstance->m_openWindows.clear();
@@ -107,12 +112,22 @@ namespace winrt::StarlightGUI::implementation
         }
     }
 
+    void InfoWindow::AppTitleBar_PaneToggleRequested(Microsoft::UI::Xaml::Controls::TitleBar, winrt::Windows::Foundation::IInspectable const&)
+    {
+        if (RootNavigation().PaneDisplayMode() == NavigationViewPaneDisplayMode::Top) {
+            RootNavigation().IsPaneOpen(false);
+            return;
+        }
+
+        RootNavigation().IsPaneOpen(!RootNavigation().IsPaneOpen());
+    }
+
     slg::coroutine InfoWindow::LoadBackdrop()
     {
         int option = -1;
 
         if (background_type == 1) {
-            CustomMicaBackdrop micaBackdrop = CustomMicaBackdrop();
+            MicaBackdrop micaBackdrop = MicaBackdrop();
 
             this->SystemBackdrop(micaBackdrop);
 
@@ -202,11 +217,14 @@ namespace winrt::StarlightGUI::implementation
 
     slg::coroutine InfoWindow::LoadNavigation()
     {
+        AppTitleBar().IsPaneToggleButtonVisible(true);
+
         if (navigation_style == 1) {
             RootNavigation().PaneDisplayMode(NavigationViewPaneDisplayMode::Left);
         }
         else if (navigation_style == 2) {
             RootNavigation().PaneDisplayMode(NavigationViewPaneDisplayMode::Top);
+            RootNavigation().IsPaneOpen(false);
         }
         else
         {

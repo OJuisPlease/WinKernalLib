@@ -92,6 +92,8 @@ namespace slg {
     DataTemplate GetTemplate(hstring xaml);
 
     bool CheckIllegalComboBoxAction(IInspectable const& sender, SelectionChangedEventArgs const& e);
+    Microsoft::UI::Xaml::ElementTheme GetConfiguredElementTheme();
+    void ApplyConfiguredTheme();
 
     winrt::Microsoft::UI::Xaml::Media::ImageSource CreateImageSourceFromHIcon(HICON hIcon, int iconSize = 16, bool destroyIcon = false);
 

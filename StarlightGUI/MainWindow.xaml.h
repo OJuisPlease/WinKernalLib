@@ -17,6 +17,7 @@ namespace winrt::StarlightGUI::implementation
         void SetupLocalization();
 
         void RootNavigation_ItemInvoked(Microsoft::UI::Xaml::Controls::NavigationView sender, Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs args);
+        void AppTitleBar_PaneToggleRequested(Microsoft::UI::Xaml::Controls::TitleBar sender, winrt::Windows::Foundation::IInspectable const& args);
 
         HWND GetWindowHandle();
 

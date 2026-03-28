@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <shellapi.h>
 #include <cstring>
+#include <cctype>
+#include <algorithm>
 #include <limits>
 #include <cmath>
 
@@ -372,6 +374,55 @@ namespace slg {
 
         // 正常索引，返回false
         return false;
+    }
+
+    static winrt::Microsoft::UI::Xaml::ElementTheme GetSystemElementTheme()
+    {
+        DWORD lightTheme = 1;
+        DWORD size = sizeof(lightTheme);
+        auto result = RegGetValueW(
+            HKEY_CURRENT_USER,
+            L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+            L"AppsUseLightTheme",
+            RRF_RT_REG_DWORD,
+            nullptr,
+            &lightTheme,
+            &size);
+
+        if (result == ERROR_SUCCESS) {
+            return lightTheme == 0 ? winrt::Microsoft::UI::Xaml::ElementTheme::Dark : winrt::Microsoft::UI::Xaml::ElementTheme::Light;
+        }
+
+        return winrt::Microsoft::UI::Xaml::ElementTheme::Dark;
+    }
+
+    winrt::Microsoft::UI::Xaml::ElementTheme GetConfiguredElementTheme()
+    {
+        std::string themeValue = theme;
+        std::transform(themeValue.begin(), themeValue.end(), themeValue.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+        if (themeValue == "light") {
+            return winrt::Microsoft::UI::Xaml::ElementTheme::Light;
+        }
+
+        if (themeValue == "dark") {
+            return winrt::Microsoft::UI::Xaml::ElementTheme::Dark;
+        }
+
+        return GetSystemElementTheme();
+    }
+
+    void ApplyConfiguredTheme()
+    {
+        auto targetTheme = GetConfiguredElementTheme();
+
+        if (winrt::StarlightGUI::implementation::g_mainWindowInstance) {
+            winrt::StarlightGUI::implementation::g_mainWindowInstance->MainWindowGrid().RequestedTheme(targetTheme);
+        }
+
+        if (winrt::StarlightGUI::implementation::g_infoWindowInstance) {
+            winrt::StarlightGUI::implementation::g_infoWindowInstance->InfoWindowGrid().RequestedTheme(targetTheme);
+        }
     }
 
     winrt::Microsoft::UI::Xaml::Media::ImageSource CreateImageSourceFromHIcon(HICON hIcon, int iconSize, bool destroyIcon)

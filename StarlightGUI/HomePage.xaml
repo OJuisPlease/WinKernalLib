@@ -63,7 +63,7 @@
                                         x:Name="HitokotoText"
                                         Margin="0,15,0,0"
                                         FontSize="14"
-                                        Foreground="LightGray" />
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                 </StackPanel>
                             </StackPanel>
 
@@ -92,7 +92,7 @@
                                             MinWidth="20"
                                             HorizontalAlignment="Center"
                                             FontSize="32"
-                                            FontWeight="Bold" />
+                                            FontWeight="SemiBold" />
                                     </Button>
                                     <Button
                                         Margin="2"
@@ -103,14 +103,14 @@
                                             MinWidth="20"
                                             HorizontalAlignment="Center"
                                             FontSize="32"
-                                            FontWeight="Bold" />
+                                            FontWeight="SemiBold" />
                                     </Button>
 
                                     <TextBlock
                                         Margin="4,0"
                                         VerticalAlignment="Center"
                                         FontSize="32"
-                                        FontWeight="Bold"
+                                        FontWeight="SemiBold"
                                         Text=":" />
 
                                     <!--  分钟  -->
@@ -123,7 +123,7 @@
                                             MinWidth="20"
                                             HorizontalAlignment="Center"
                                             FontSize="32"
-                                            FontWeight="Bold" />
+                                            FontWeight="SemiBold" />
                                     </Button>
                                     <Button
                                         Margin="2"
@@ -134,14 +134,14 @@
                                             MinWidth="20"
                                             HorizontalAlignment="Center"
                                             FontSize="32"
-                                            FontWeight="Bold" />
+                                            FontWeight="SemiBold" />
                                     </Button>
 
                                     <TextBlock
                                         Margin="4,0"
                                         VerticalAlignment="Center"
                                         FontSize="32"
-                                        FontWeight="Bold"
+                                        FontWeight="SemiBold"
                                         Text=":" />
 
                                     <!--  秒钟  -->
@@ -154,7 +154,7 @@
                                             MinWidth="20"
                                             HorizontalAlignment="Center"
                                             FontSize="32"
-                                            FontWeight="Bold" />
+                                            FontWeight="SemiBold" />
                                     </Button>
                                     <Button
                                         Margin="2"
@@ -165,7 +165,7 @@
                                             MinWidth="20"
                                             HorizontalAlignment="Center"
                                             FontSize="32"
-                                            FontWeight="Bold" />
+                                            FontWeight="SemiBold" />
                                     </Button>
                                 </StackPanel>
                             </StackPanel>
@@ -196,7 +196,7 @@
                                 HorizontalAlignment="Left">
                                 <TextBlock
                                     FontSize="32"
-                                    FontWeight="Bold"
+                                    FontWeight="SemiBold"
                                     Text="Starlight GUI" />
                                 <TextBlock
                                     x:Name="HomeAppIntroUid"
@@ -206,57 +206,57 @@
                                 <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
                                     <FontIcon
                                         FontSize="14"
-                                        Foreground="Gray"
+                                        Foreground="{ThemeResource AppMutedTextBrush}"
                                         Glyph="&#xecc5;" />
                                     <TextBlock
                                         x:Name="HomeVersionLabelUid"
                                         FontSize="14"
-                                        Foreground="LightGray"
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                                         Text="  版本：" />
                                     <TextBlock
                                         FontSize="14"
-                                        Foreground="LightGray"
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                                         Text="{StaticResource Version}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <FontIcon
                                         FontSize="14"
-                                        Foreground="Gray"
+                                        Foreground="{ThemeResource AppMutedTextBrush}"
                                         Glyph="&#xec92;" />
                                     <TextBlock
                                         x:Name="HomeReleaseDateLabelUid"
                                         FontSize="14"
-                                        Foreground="LightGray"
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                                         Text="  更新日期：" />
                                     <TextBlock
                                         FontSize="14"
-                                        Foreground="LightGray"
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                                         Text="{StaticResource ReleaseDate}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <FontIcon
                                         FontSize="14"
-                                        Foreground="Gray"
+                                        Foreground="{ThemeResource AppMutedTextBrush}"
                                         Glyph="&#xe943;" />
                                     <TextBlock
                                         x:Name="HomeDeveloperLabelUid"
                                         FontSize="14"
-                                        Foreground="LightGray"
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                                         Text="  开发者：" />
                                     <TextBlock
                                         FontSize="14"
-                                        Foreground="LightGray"
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                                         Text="{StaticResource Author}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <FontIcon
                                         FontSize="14"
-                                        Foreground="Gray"
+                                        Foreground="{ThemeResource AppMutedTextBrush}"
                                         Glyph="&#xe71b;" />
                                     <TextBlock
                                         x:Name="HomeOpenSourceUid"
                                         FontSize="14"
-                                        Foreground="LightGray"
+                                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                                         Text="  开源仓库：https://github.com/OpenStarlight/StarlightGUI" />
                                 </StackPanel>
                                 <TextBlock
@@ -264,7 +264,7 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Bottom"
                                     FontSize="14"
-                                    Foreground="LightGray"
+                                    Foreground="{ThemeResource AppSecondaryTextBrush}"
                                     Text="Apache 2.0 License | OSI Certified | Copyright © 2026 Starlight. Some Rights Reserved." />
                             </StackPanel>
                         </Grid>
@@ -274,7 +274,7 @@
                         Padding="10"
                         HorizontalAlignment="Left"
                         FontSize="14"
-                        FontWeight="Bold"
+                        FontWeight="SemiBold"
                         Text="系统概览" />
                     <Expander
                         x:Name="HomeChartUid"
@@ -320,7 +320,7 @@
                             <StackPanel Grid.Column="1" Margin="20,0,0,0">
                                 <TextBlock
                                     FontSize="20"
-                                    FontWeight="Bold"
+                                    FontWeight="SemiBold"
                                     Text="CPU" />
                                 <TextBlock
                                     x:Name="CpuManufacture"
@@ -330,41 +330,41 @@
                                     <StackPanel Width="200">
                                         <TextBlock>
                                             <Run x:Name="HomeCpuSpeedUid" Text="速度: " />
-                                            <Run x:Name="CpuFrequency" Foreground="LightGray" />
+                                            <Run x:Name="CpuFrequency" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeCpuProcessUid" Text="进程: " />
-                                            <Run x:Name="CpuProcess" Foreground="LightGray" />
+                                            <Run x:Name="CpuProcess" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeCpuThreadUid" Text="线程: " />
-                                            <Run x:Name="CpuThread" Foreground="LightGray" />
+                                            <Run x:Name="CpuThread" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeCpuSyscallUid" Text="系统调用: " />
-                                            <Run x:Name="CpuSyscall" Foreground="LightGray" />
+                                            <Run x:Name="CpuSyscall" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeCpuUptimeUid" Text="正常运行时间: " />
-                                            <Run x:Name="CpuRunTime" Foreground="LightGray" />
+                                            <Run x:Name="CpuRunTime" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                     </StackPanel>
                                     <StackPanel Width="200">
                                         <TextBlock>
                                             <Run x:Name="HomeCpuCoresUid" Text="核心: " />
-                                            <Run x:Name="CpuCore" Foreground="LightGray" />
+                                            <Run x:Name="CpuCore" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeCpuCacheL1Uid" Text="L1 缓存: " />
-                                            <Run x:Name="CpuCacheL1" Foreground="LightGray" />
+                                            <Run x:Name="CpuCacheL1" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeCpuCacheL2Uid" Text="L2 缓存: " />
-                                            <Run x:Name="CpuCacheL2" Foreground="LightGray" />
+                                            <Run x:Name="CpuCacheL2" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeCpuCacheL3Uid" Text="L3 缓存: " />
-                                            <Run x:Name="CpuCacheL3" Foreground="LightGray" />
+                                            <Run x:Name="CpuCacheL3" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </StackPanel>
@@ -373,7 +373,7 @@
                                 x:Name="CpuPercent"
                                 Grid.Column="3"
                                 FontSize="24"
-                                FontWeight="Bold" />
+                                FontWeight="SemiBold" />
                         </Grid>
                     </Button>
                     <!--  内存  -->
@@ -405,7 +405,7 @@
                                 <TextBlock
                                     x:Name="HomeMemTitleUid"
                                     FontSize="20"
-                                    FontWeight="Bold"
+                                    FontWeight="SemiBold"
                                     Text="内存" />
                                 <TextBlock
                                     x:Name="MemSize"
@@ -415,37 +415,37 @@
                                     <StackPanel Width="200">
                                         <TextBlock>
                                             <Run x:Name="HomeMemInUseUid" Text="使用中: " />
-                                            <Run x:Name="MemUsing" Foreground="LightGray" />
+                                            <Run x:Name="MemUsing" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeMemAvailableUid" Text="可用: " />
-                                            <Run x:Name="MemUsable" Foreground="LightGray" />
+                                            <Run x:Name="MemUsable" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeMemCommittedUid" Text="已提交: " />
-                                            <Run x:Name="MemCommitted" Foreground="LightGray" />
+                                            <Run x:Name="MemCommitted" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeMemCachedUid" Text="已缓存: " />
-                                            <Run x:Name="MemCached" Foreground="LightGray" />
+                                            <Run x:Name="MemCached" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                     </StackPanel>
                                     <StackPanel Width="200">
                                         <TextBlock>
                                             <Run x:Name="HomeMemPageReadUid" Text="页读取: " />
-                                            <Run x:Name="MemPageRead" Foreground="LightGray" />
+                                            <Run x:Name="MemPageRead" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeMemPageWriteUid" Text="页写入: " />
-                                            <Run x:Name="MemPageWrite" Foreground="LightGray" />
+                                            <Run x:Name="MemPageWrite" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeMemPageOutUid" Text="页传出: " />
-                                            <Run x:Name="MemPageInput" Foreground="LightGray" />
+                                            <Run x:Name="MemPageInput" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeMemPageInUid" Text="页传入: " />
-                                            <Run x:Name="MemPageOutput" Foreground="LightGray" />
+                                            <Run x:Name="MemPageOutput" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </StackPanel>
@@ -454,7 +454,7 @@
                                 x:Name="MemPercent"
                                 Grid.Column="3"
                                 FontSize="24"
-                                FontWeight="Bold" />
+                                FontWeight="SemiBold" />
                         </Grid>
                     </Button>
                     <!--  磁盘  -->
@@ -487,7 +487,7 @@
                             <StackPanel Grid.Column="1" Margin="20,0,0,0">
                                 <TextBlock
                                     FontSize="20"
-                                    FontWeight="Bold"
+                                    FontWeight="SemiBold"
                                     Text="GPU" />
                                 <TextBlock
                                     x:Name="GpuManufacture"
@@ -497,19 +497,19 @@
                                     <StackPanel Width="200">
                                         <TextBlock>
                                             <Run x:Name="HomeGpuMemUid" Text="内存: " />
-                                            <Run x:Name="GpuMem" Foreground="LightGray" />
+                                            <Run x:Name="GpuMem" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeGpuTempUid" Text="温度: " />
-                                            <Run x:Name="GpuTemp" Foreground="LightGray" />
+                                            <Run x:Name="GpuTemp" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeGpuClockGraphicsUid" Text="图形速度: " />
-                                            <Run x:Name="GpuClockGraphics" Foreground="LightGray" />
+                                            <Run x:Name="GpuClockGraphics" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeGpuClockMemUid" Text="内存速度: " />
-                                            <Run x:Name="GpuClockMem" Foreground="LightGray" />
+                                            <Run x:Name="GpuClockMem" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </StackPanel>
@@ -518,7 +518,7 @@
                                 x:Name="GpuPercent"
                                 Grid.Column="3"
                                 FontSize="24"
-                                FontWeight="Bold" />
+                                FontWeight="SemiBold" />
                         </Grid>
                     </Button>
                     <!--  网络  -->
@@ -550,7 +550,7 @@
                                 <TextBlock
                                     x:Name="HomeNetTitleUid"
                                     FontSize="20"
-                                    FontWeight="Bold"
+                                    FontWeight="SemiBold"
                                     Text="网络" />
                                 <TextBlock
                                     x:Name="NetManufacture"
@@ -561,19 +561,19 @@
                                     <StackPanel Width="200">
                                         <TextBlock>
                                             <Run x:Name="HomeNetDownloadUid" Text="下载: " />
-                                            <Run x:Name="NetReceive" Foreground="LightGray" />
+                                            <Run x:Name="NetReceive" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeNetUploadUid" Text="上传: " />
-                                            <Run x:Name="NetSend" Foreground="LightGray" />
+                                            <Run x:Name="NetSend" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeNetPacketSendUid" Text="数据包发送: " />
-                                            <Run x:Name="NetPacketSend" Foreground="LightGray" />
+                                            <Run x:Name="NetPacketSend" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                         <TextBlock>
                                             <Run x:Name="HomeNetPacketRecvUid" Text="数据包接收: " />
-                                            <Run x:Name="NetPacketReceive" Foreground="LightGray" />
+                                            <Run x:Name="NetPacketReceive" Foreground="{ThemeResource AppSecondaryTextBrush}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </StackPanel>

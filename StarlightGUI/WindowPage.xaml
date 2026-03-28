@@ -39,7 +39,7 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontSize="18"
-                    FontWeight="Bold"
+                    FontWeight="SemiBold"
                     Text="窗口管理器" />
 
                 <TextBlock

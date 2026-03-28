@@ -22,60 +22,26 @@
                 <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind}" />
             </Grid.Resources>
 
-            <!--  自定义标题栏  -->
-            <Grid
+            <essential:WindowCaptionButtonThemeWorkaround Height="48" Window="{x:Bind}" />
+
+            <TitleBar
                 x:Name="AppTitleBar"
-                Height="48"
-                Background="{StaticResource WindowBackgroundBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <!--  应用图标和标题  -->
-                <StackPanel
-                    Grid.Column="0"
-                    Margin="16,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <Image
-                        Width="24"
-                        Height="24"
-                        Margin="0,4,0,0"
-                        Source="/Assets/Starlight.png" />
-                    <TextBlock
-                        x:Name="ProcessName"
-                        Margin="16,0,0,0"
-                        VerticalAlignment="Center"
-                        FontSize="14"
-                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                        Text="Info Window" />
-                </StackPanel>
-
-                <!--  标题栏拖拽区域  -->
-                <Grid
-                    x:Name="DragRegion"
-                    Grid.Column="1"
-                    Background="Transparent" />
-
-                <!--  窗口控制按钮  -->
-                <essential:WindowCaptionButtonThemeWorkaround Height="48" Window="{x:Bind}" />
-            </Grid>
+                IsPaneToggleButtonVisible="True"
+                PaneToggleRequested="AppTitleBar_PaneToggleRequested">
+                <TitleBar.IconSource>
+                    <ImageIconSource ImageSource="/Assets/Starlight.png" />
+                </TitleBar.IconSource>
+            </TitleBar>
 
             <NavigationView
                 x:Name="RootNavigation"
                 Grid.Row="1"
-                Background="{StaticResource WindowBackgroundBrush}"
-                CompactModeThresholdWidth="0"
-                ExpandedModeThresholdWidth="0"
+                essential:NavigationViewHelper.AcrylicWorkaround="True"
                 IsBackButtonVisible="Collapsed"
                 IsPaneOpen="False"
-                IsPaneToggleButtonVisible="True"
+                IsPaneToggleButtonVisible="False"
                 IsSettingsVisible="False"
                 ItemInvoked="RootNavigation_ItemInvoked"
-                OpenPaneLength="280"
                 PaneDisplayMode="LeftCompact">
 
                 <!--  选项，从上到下  -->

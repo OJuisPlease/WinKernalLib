@@ -295,7 +295,7 @@
                             FontSize="16"
                             Glyph="&#xee71;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <TextBlock x:Name="ImagePathText" Foreground="LightGray" />
+                    <TextBlock x:Name="ImagePathText" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard
                             x:Name="ImportImageCard"
@@ -384,6 +384,31 @@
                         <ComboBoxItem Content="LeftCompact" />
                         <ComboBoxItem Content="Left" />
                         <ComboBoxItem Content="Top" />
+                    </ComboBox>
+                </essential:SettingsCard>
+
+                <essential:SettingsCard
+                    x:Name="ThemeCard"
+                    Margin="0,0,0,10"
+                    essential:RevealFocusPanel.AttachToPanel="{x:Bind RevealFocusPanel}"
+                    Description="应用程序的主题模式"
+                    Header="主题"
+                    IsActionIconVisible="False"
+                    IsClickEnabled="True">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="16"
+                            Glyph="&#xe790;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        x:Name="ThemeComboBox"
+                        essential:ComboBoxHelper.AcrylicWorkaround="True"
+                        ItemContainerStyle="{StaticResource ComboBoxItemStyle}"
+                        SelectionChanged="ThemeComboBox_SelectionChanged">
+                        <ComboBoxItem x:Name="ThemeSystemItem" Content="Auto" />
+                        <ComboBoxItem x:Name="ThemeLightItem" Content="浅色" />
+                        <ComboBoxItem x:Name="ThemeDarkItem" Content="深色" />
                     </ComboBox>
                 </essential:SettingsCard>
 

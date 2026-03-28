@@ -22,5 +22,6 @@ namespace winrt::StarlightGUI::implementation {
         image_stretch = ReadConfig("image_stretch", 3);
         disasm_count = ReadConfig("disasm_count", 16);
         language = ReadConfig("language", std::string("system"));
+        theme = ReadConfig("theme", std::string("system"));
     }
 }

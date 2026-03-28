@@ -177,6 +177,7 @@ namespace winrt::StarlightGUI::implementation
         ImagePathText().Text(to_hstring(background_image));
         ImageOpacitySlider().Value(image_opacity);
 		DisasmCountSlider().Value(disasm_count);
+        ThemeComboBox().SelectedIndex((theme == "light") ? 1 : (theme == "dark") ? 2 : 0);
         LanguageComboBox().SelectedIndex((language == "zh-CN") ? 1 : (language == "en-US") ? 2 : 0);
     }
 
@@ -433,6 +434,17 @@ namespace winrt::StarlightGUI::implementation
         SaveConfig("disasm_count", DisasmCountSlider().Value());
     }
 
+    void SettingsPage::ThemeComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
+    {
+        if (!IsLoaded()) return;
+        if (slg::CheckIllegalComboBoxAction(sender, e)) return;
+
+        int idx = (int)ThemeComboBox().SelectedIndex();
+        std::string selectedTheme = (idx == 1) ? "light" : (idx == 2) ? "dark" : "system";
+        SaveConfig("theme", selectedTheme);
+        slg::ApplyConfiguredTheme();
+    }
+
     void SettingsPage::LanguageComboBox_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const& e)
     {
         if (!IsLoaded()) return;
@@ -490,6 +502,11 @@ namespace winrt::StarlightGUI::implementation
         ImageOpacityCard().Description(tbox("Settings.Desc.Card.ImageOpacity"));
         NavigationCard().Header(tbox("Settings.Header.Card.Navigation"));
         NavigationCard().Description(tbox("Settings.Desc.Card.Navigation"));
+        ThemeCard().Header(tbox("Settings.Header.Card.Theme"));
+        ThemeCard().Description(tbox("Settings.Desc.Card.Theme"));
+        ThemeSystemItem().Content(tbox("Settings.Option.ThemeSystem"));
+        ThemeLightItem().Content(tbox("Settings.Option.ThemeLight"));
+        ThemeDarkItem().Content(tbox("Settings.Option.ThemeDark"));
         LanguageCard().Header(tbox("Settings.Header.Card.Language"));
         LanguageCard().Description(tbox("Settings.Desc.Card.Language"));
         DangerousConfirmCard().Header(tbox("Settings.Header.Card.DangerousConfirm"));

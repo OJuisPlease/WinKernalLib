@@ -11,7 +11,6 @@
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     PrimaryButtonText=""
-    RequestedTheme="Dark"
     SecondaryButtonText=""
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
@@ -47,7 +46,7 @@
                 IsChecked="False" />
             <TextBlock
                 x:Name="ErrorText"
-                Foreground="Red"
+                Foreground="{ThemeResource AppDangerTextBrush}"
                 Text="" />
         </StackPanel>
     </Grid>

@@ -18,7 +18,7 @@
                         x:Name="UtilityHypervisorUid" Padding="10"
                         HorizontalAlignment="Left"
                         FontSize="14"
-                        FontWeight="Bold"
+                        FontWeight="SemiBold"
                         Text="Hypervisor" />
                     <!--  开启 Hypervisor 模式  -->
                     <essential:SettingsCard
@@ -48,7 +48,7 @@
                         x:Name="UtilitySysBehaviorUid" Padding="10"
                         HorizontalAlignment="Left"
                         FontSize="14"
-                        FontWeight="Bold"
+                        FontWeight="SemiBold"
                         Text="系统行为控制" />
 
                     <!--  创建进程  -->
@@ -335,13 +335,13 @@
                         x:Name="UtilitySysOpUid" Padding="10,0,0,0"
                         HorizontalAlignment="Left"
                         FontSize="14"
-                        FontWeight="Bold"
+                        FontWeight="SemiBold"
                         Text="系统操作" />
                     <TextBlock
                         x:Name="UtilitySysOpWarningUid" Padding="10,0,0,10"
                         HorizontalAlignment="Left"
                         FontSize="12"
-                        Foreground="LightGray"
+                        Foreground="{ThemeResource AppSecondaryTextBrush}"
                         Text="(警告: 该区域的功能可能无法正常工作，导致蓝屏或崩溃是正常现象！)" />
 
                     <!--  电源状态  -->

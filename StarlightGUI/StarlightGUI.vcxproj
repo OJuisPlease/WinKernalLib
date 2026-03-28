@@ -690,8 +690,8 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.260209005\build\native\Microsoft.WindowsAppSDK.Runtime.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.260209005\build\native\Microsoft.WindowsAppSDK.Runtime.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets')" />
     <Import Project="..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -730,8 +730,8 @@
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets'))" />
     <Error Condition="!Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
   <Target Name="CopyI18nJson" AfterTargets="Build">
     <Copy SourceFiles="Strings\en-US\Resources.json" DestinationFolder="$(OutDir)Strings\en-US\" SkipUnchangedFiles="true" />

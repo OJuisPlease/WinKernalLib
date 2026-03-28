@@ -91,13 +91,13 @@
             <!--  十字准星  -->
             <Line
                 x:Name="CrosshairX"
-                Stroke="#40000000"
+                Stroke="{ThemeResource AppGraphGridBrush}"
                 StrokeDashArray="5,5"
                 StrokeThickness="1"
                 Visibility="Collapsed" />
             <Line
                 x:Name="CrosshairY"
-                Stroke="#40000000"
+                Stroke="{ThemeResource AppGraphGridBrush}"
                 StrokeDashArray="5,5"
                 StrokeThickness="1"
                 Visibility="Collapsed" />
@@ -108,8 +108,8 @@
                 Padding="8,4"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Background="#F0FFFFFF"
-                BorderBrush="#80000000"
+                Background="{ThemeResource AppGraphTooltipBackgroundBrush}"
+                BorderBrush="{ThemeResource AppGraphTooltipBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="4"
                 Visibility="Collapsed">
@@ -117,7 +117,7 @@
                     <TextBlock
                         x:Name="TooltipXText"
                         FontSize="10"
-                        Foreground="Black" />
+                        Foreground="{ThemeResource AppGraphTooltipForegroundBrush}" />
                     <StackPanel x:Name="TooltipYPanel" Margin="0,4,0,0" />
                 </StackPanel>
             </Border>

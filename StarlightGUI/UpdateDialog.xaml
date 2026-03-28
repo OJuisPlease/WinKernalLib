@@ -9,7 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
-    RequestedTheme="Dark"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
@@ -45,12 +44,12 @@
                 x:Name="UpdateTipText"
                 Margin="0,0,0,10"
                 FontSize="12"
-                Foreground="LightGray" />
+                Foreground="{ThemeResource AppSecondaryTextBrush}" />
             <Border
                 Height="1"
                 Margin="0,0,0,10"
                 HorizontalAlignment="Stretch"
-                Background="LightGray" />
+                Background="{ThemeResource AppSeparatorBrush}" />
             <TextBlock x:Name="QuarkCodeText" />
             <TextBlock x:Name="NoDirectLinkText" />
         </StackPanel>
@@ -64,7 +63,7 @@
             <TextBlock
                 Margin="0,0,0,10"
                 FontSize="12"
-                Foreground="LightGray">
+                Foreground="{ThemeResource AppSecondaryTextBrush}">
                 <Run x:Name="UpdateTimeLabelRun" />
                 <Run x:Name="UpdateTimeText" />
             </TextBlock>

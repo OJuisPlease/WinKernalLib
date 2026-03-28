@@ -15,6 +15,7 @@ namespace winrt::StarlightGUI::implementation
         HWND GetWindowHandle();
 
         void RootNavigation_ItemInvoked(Microsoft::UI::Xaml::Controls::NavigationView sender, Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs args);
+        void AppTitleBar_PaneToggleRequested(Microsoft::UI::Xaml::Controls::TitleBar sender, winrt::Windows::Foundation::IInspectable const& args);
 
         // 外观
         slg::coroutine LoadBackdrop();

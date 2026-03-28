@@ -45,6 +45,8 @@ namespace winrt::StarlightGUI::implementation
     MainWindow::MainWindow()
     {
         InitializeComponent();
+        g_mainWindowInstance = this;
+        slg::ApplyConfiguredTheme();
         SetupLocalization();
 
         auto windowNative{ this->try_as<::IWindowNative>() };
@@ -76,8 +78,6 @@ namespace winrt::StarlightGUI::implementation
         LoadBackdrop();
         LoadBackground();
         LoadNavigation();
-
-        g_mainWindowInstance = this;
 
         // 显示托盘图标
         if (tray_background_run) {
@@ -284,12 +284,22 @@ namespace winrt::StarlightGUI::implementation
         }
     }
 
+    void MainWindow::AppTitleBar_PaneToggleRequested(Microsoft::UI::Xaml::Controls::TitleBar, winrt::Windows::Foundation::IInspectable const&)
+    {
+        if (RootNavigation().PaneDisplayMode() == NavigationViewPaneDisplayMode::Top) {
+            RootNavigation().IsPaneOpen(false);
+            return;
+        }
+
+        RootNavigation().IsPaneOpen(!RootNavigation().IsPaneOpen());
+    }
+
     slg::coroutine MainWindow::LoadBackdrop()
     {
         int option = -1;
 
         if (background_type == 1) {
-            CustomMicaBackdrop micaBackdrop = CustomMicaBackdrop();
+            MicaBackdrop micaBackdrop = MicaBackdrop();
 
             this->SystemBackdrop(micaBackdrop);
 
@@ -380,11 +390,14 @@ namespace winrt::StarlightGUI::implementation
 
     slg::coroutine MainWindow::LoadNavigation()
     {
+        AppTitleBar().IsPaneToggleButtonVisible(true);
+
         if (navigation_style == 1) {
             RootNavigation().PaneDisplayMode(NavigationViewPaneDisplayMode::Left);
         }
         else if (navigation_style == 2) {
             RootNavigation().PaneDisplayMode(NavigationViewPaneDisplayMode::Top);
+            RootNavigation().IsPaneOpen(false);
         }
         else
         {
@@ -670,6 +683,4 @@ namespace winrt::StarlightGUI::implementation
         NavHelpUid().Content(tbox(L"Nav.Help"));
     }
 }
-
-
 
